@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 const FrameComponent6 = ({ className = "" }) => {
   return (
     <section
+      id="hero"
       className={`self-stretch flex flex-row items-start justify-start pt-[0rem] px-[0rem] pb-[11.875rem] box-border max-w-full shrink-0 text-left text-[5rem] text-black font-inter lg:pb-[7.688rem] lg:box-border mq825:pb-[5rem] mq825:box-border ${className}`}
     >
       <div className="flex-1 [background:linear-gradient(270deg,_rgba(217,_217,_217,_0.1)_40.1%,_rgba(228,_228,_228,_0.5)_55.6%,_rgba(238,_238,_238,_0.8)_64%,_rgba(245,_245,_245,_0.96)_82.6%,_#fff)] flex flex-col items-start justify-start pt-[3.25rem] px-[7.312rem] pb-[10.687rem] box-border relative gap-[9.187rem] max-w-full z-[3] lg:pt-[2.125rem] lg:pb-[6.938rem] lg:box-border mq450:gap-[1.125rem] mq450:pt-[1.375rem] mq450:pb-[4.5rem] mq450:box-border mq825:gap-[2.313rem] mq825:pl-[1.813rem] mq825:pr-[1.813rem] mq825:box-border mq1425:gap-[4.563rem] mq1425:pl-[3.625rem] mq1425:pr-[3.625rem] mq1425:box-border">

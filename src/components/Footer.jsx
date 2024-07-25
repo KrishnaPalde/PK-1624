@@ -1,6 +1,12 @@
 import PropTypes from "prop-types";
 
 const Footer = ({ className = "" }) => {
+  const handleClick = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
   return (
     <footer
       className={`self-stretch h-[32.487rem] bg-gray-300 flex flex-col items-start justify-start pt-[0rem] px-[0rem] pb-[6.737rem] box-border gap-[0.5rem] max-w-full text-left text-[2.375rem] text-white font-dm-sans mq825:pb-[4.375rem] mq825:box-border mq1425:h-auto ${className}`}
@@ -98,10 +104,11 @@ const Footer = ({ className = "" }) => {
           </div>
         </div>
         <img
-          className="h-[6.313rem] w-[6.25rem] absolute !m-[0] top-[-3.187rem] left-[calc(50%_-_50px)]"
+          className="h-[6.313rem] w-[6.25rem] absolute !m-[0] top-[-3.187rem] left-[calc(50%_-_50px)] cursor-pointer"
           loading="lazy"
           alt=""
           src="/back-to-top-btn.svg"
+          onClick={handleClick}
         />
       </div>
       <div className="self-stretch bg-gray-200 flex flex-row items-start justify-center py-[2.375rem] px-[1.25rem] shrink-0 text-center text-[0.875rem] font-quote">

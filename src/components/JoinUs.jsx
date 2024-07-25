@@ -55,10 +55,11 @@ const JoinUs = ({ className = "" }) => {
             </div>
           </div>
           <img
-            className="h-[24.875rem] w-[23.25rem] relative rounded-t-11xl rounded-b-none object-cover max-w-[calc(100%_-_531px)] mq750:hidden mq750:max-w-full"
+            className="cursor-pointer h-[24.875rem] w-[23.25rem] relative rounded-t-11xl rounded-b-none object-cover max-w-[calc(100%_-_531px)] mq750:hidden mq750:max-w-full"
             loading="lazy"
             alt=""
             src="/rectangle-40061@2x.png"
+           
           />
         </div>
       </div>

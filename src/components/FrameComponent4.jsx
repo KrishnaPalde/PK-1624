@@ -1,7 +1,13 @@
 import FrameComponent5 from "./FrameComponent5";
 import PropTypes from "prop-types";
+import AOS from 'aos';
+import 'aos/dist/aos.css'; 
+
 
 const FrameComponent4 = ({ className = "" }) => {
+  AOS.init({
+    duration: 1200,
+  })
   return (
     <section
       className={`w-[87.313rem] flex flex-row items-start justify-center pt-[0rem] px-[1.25rem] pb-[3.125rem] box-border max-w-full shrink-0 text-left text-[2.25rem] text-black font-inter mq825:pb-[2rem] mq825:box-border ${className}`}
@@ -11,7 +17,7 @@ const FrameComponent4 = ({ className = "" }) => {
           Find Your Perfect Stay
         </h1>
         <div className="flex flex-row items-start justify-start gap-[2.5rem] max-w-full text-[0.875rem] text-gray-700 lg:flex-wrap mq825:gap-[1.25rem]">
-          <div className="h-[38.563rem] w-[20rem] flex flex-col items-start justify-start gap-[2.25rem] mq450:gap-[1.125rem]">
+          <div className="h-[38.563rem] w-[20rem] flex flex-col items-start justify-start gap-[2.25rem] mq450:gap-[1.125rem]" data-aos="fade-right">
             <div className="self-stretch flex-1 flex flex-col items-start justify-start gap-[0.937rem]">
               <img
                 className="relative self-stretch flex-1 object-cover max-w-full max-h-full overflow-hidden rounded-11xl"
@@ -45,7 +51,7 @@ const FrameComponent4 = ({ className = "" }) => {
               </div>
             </div>
           </div>
-          <div className="h-[38.5rem] w-[26.25rem] rounded-11xl flex flex-col items-start justify-start gap-[0.937rem] max-w-full">
+          <div className="h-[38.5rem] w-[26.25rem] rounded-11xl flex flex-col items-start justify-start gap-[0.937rem] max-w-full" data-aos="fade-down">
             <img
               className="relative self-stretch flex-1 object-cover max-w-full max-h-full overflow-hidden rounded-11xl"
               loading="lazy"
@@ -73,7 +79,7 @@ const FrameComponent4 = ({ className = "" }) => {
               appartment="Midium Room"
             />
           </div> */}
-          <div className="h-[38.563rem] w-[20rem] flex flex-col items-start justify-start gap-[2.25rem] mq450:gap-[1.125rem]">
+          <div className="h-[38.563rem] w-[20rem] flex flex-col items-start justify-start gap-[2.25rem] mq450:gap-[1.125rem]" data-aos="fade-left">
             <div className="self-stretch flex-1 flex flex-col items-start justify-start gap-[0.937rem]">
               <img
                 className="relative self-stretch flex-1 object-cover max-w-full max-h-full overflow-hidden rounded-11xl"

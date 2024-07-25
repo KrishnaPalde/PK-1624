@@ -1,6 +1,12 @@
 import PropTypes from "prop-types";
+import AOS from 'aos';
+import 'aos/dist/aos.css'; 
+
 
 const GalleryWork = ({ className = "" }) => {
+  AOS.init({
+    duration: 1200,
+  })
   return (
     <div
       className={`ml-[-0.063rem] self-stretch bg-white overflow-hidden flex flex-col items-center justify-start py-[6.25rem] px-[1.25rem] box-border gap-[2.187rem] max-w-full text-center text-[1rem] text-midnightblue font-inter lg:pt-[4.063rem] lg:pb-[4.063rem] lg:box-border mq825:gap-[1.063rem] mq825:pt-[2.625rem] mq825:pb-[2.625rem] mq825:box-border ${className}`}
@@ -13,7 +19,7 @@ const GalleryWork = ({ className = "" }) => {
           Apartment Gallery in Tantra Worlds
         </h1>
       </div>
-      <div className="w-[77.5rem] flex flex-col items-start justify-start gap-[1.875rem] max-w-full text-left text-[2.188rem] text-oldlace">
+      <div className="w-[77.5rem] flex flex-col items-start justify-start gap-[1.875rem] max-w-full text-left text-[2.188rem] text-oldlace" data-aos="fade-right">
         <div className="self-stretch overflow-hidden flex flex-row items-start justify-start gap-[1.875rem] max-w-full lg:flex-wrap">
           <div className="w-[37.5rem] rounded-11xl flex flex-col items-start justify-end pt-[9.687rem] px-[2.187rem] pb-[2.187rem] box-border bg-[url('/public/active@3x.png')] bg-cover bg-no-repeat bg-[top] max-w-full">
             <div className="self-stretch flex flex-row items-center justify-start gap-[3.75rem] max-w-full mq825:flex-wrap mq825:gap-[1.875rem]">
