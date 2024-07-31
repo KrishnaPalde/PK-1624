@@ -1,125 +1,127 @@
-import PropTypes from "prop-types";
+import React from "react";
 
-const Footer = ({ className = "" }) => {
+const Footer = () => {
+  const socialIcons = [
+    {
+      src: "https://cdn.builder.io/api/v1/image/assets/TEMP/f9b61e9097571706c541a77075a5bd875ce688df938993de0531acd1271cd1e4?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
+      alt: "Facebook",
+    },
+    {
+      src: "https://cdn.builder.io/api/v1/image/assets/TEMP/61cf18c6c3f5e57131ac7edaf21d1d1918542ff9b4355fd5ae81b9d33b9518b6?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
+      alt: "Twitter",
+    },
+    {
+      src: "https://cdn.builder.io/api/v1/image/assets/TEMP/cc0daf4828fb4a3c0aecc27d6da0d883dbc9232efe70f97d3a80ad67d6ea99bb?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
+      alt: "Instagram",
+    },
+    {
+      src: "https://cdn.builder.io/api/v1/image/assets/TEMP/1be9bde8a60f614ae50b9c13ad02dcfc435291333c14a22bbdb72a197a28f2a9?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
+      alt: "LinkedIn",
+    },
+  ];
+
+  const footerLinks = [
+    {
+      title: "Lorem Ipsum",
+      links: [
+        "Room with View",
+        "Single Room",
+        "Luxary Room",
+        "Service",
+        "Web Development",
+      ],
+    },
+    {
+      title: "Quick links",
+      links: ["Booking", "Check In", "Dinning", "Site Map", "Service"],
+    },
+    {
+      title: "Company",
+      links: [
+        "About us",
+        "Contact us",
+        "How to reach us",
+        "Privacy Policy",
+        "Terms of use",
+        "Cookies",
+      ],
+    },
+  ];
+
   const handleClick = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   };
+
   return (
-    <footer
-      className={`self-stretch h-[32.487rem] bg-gray-300 flex flex-col items-start justify-start pt-[0rem] px-[0rem] pb-[6.737rem] box-border gap-[0.5rem] max-w-full text-left text-[2.375rem] text-white font-dm-sans mq825:pb-[4.375rem] mq825:box-border mq1425:h-auto ${className}`}
-    >
-      <div className="self-stretch flex flex-row items-start justify-start pt-[7.5rem] px-[9.375rem] pb-[1.25rem] box-border relative gap-[7.125rem] shrink-0 max-w-full mq450:gap-[1.75rem] mq450:pt-[4.875rem] mq450:box-border mq825:gap-[3.563rem] mq825:pl-[2.313rem] mq825:pr-[2.313rem] mq825:box-border mq1425:flex-wrap mq1425:justify-center mq1425:pl-[4.688rem] mq1425:pr-[4.688rem] mq1425:box-border">
-        <div className="w-[19.375rem] flex flex-col items-start justify-start gap-[2.5rem] min-w-[19.375rem] mq450:gap-[1.25rem] mq1425:flex-1">
-          <div className="flex flex-row items-start justify-start gap-[0.875rem] mq450:flex-wrap">
-            <div className="flex flex-col items-start justify-start pt-[0.081rem] px-[0rem] pb-[0rem]">
-              <div className="w-[2.375rem] h-[2.388rem] relative shrink-0">
-                <div className="absolute top-[1.444rem] left-[0rem] rounded-11xl bg-white w-[0.606rem] h-[0.944rem]" />
-                <div className="absolute top-[0rem] left-[0rem] rounded-11xl bg-white w-[0.606rem] h-[0.606rem]" />
-                <div className="absolute top-[0.7rem] left-[0.881rem] rounded-11xl bg-white w-[0.606rem] h-[1.688rem]" />
-                <div className="absolute top-[0rem] left-[1.769rem] rounded-11xl bg-white w-[0.606rem] h-[2.388rem]" />
-              </div>
+    <footer className="flex flex-col self-stretch w-full bg-neutral-900 ">
+      <div className="relative flex flex-col items-center w-full px-5 pb-5 mx-auto md:px-16 max-w-7xl">
+        <div className="flex flex-col justify-between w-full max-w-full md:flex-row">
+          <div className="flex flex-col w-full pt-16 md:w-1/3 max-md:mb-10">
+            <div className="flex gap-3.5 py-px text-4xl font-bold text-white rounded-[30px]">
+              <img
+                loading="lazy"
+                src="https://cdn.builder.io/api/v1/image/assets/TEMP/5a45f9b4f7ade48b0b424da01baaecab08072e240412731f06b15377a9befea9?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
+                alt=""
+                className="shrink-0 aspect-square rounded-[30px] w-[38px]"
+              />
+              <div className="flex-auto my-auto">Tantra Worlds</div>
             </div>
-            <h1 className="m-0 relative text-inherit leading-[2.5rem] font-bold font-inherit shrink-0 mq450:text-[1.438rem] mq450:leading-[1.5rem] mq825:text-[1.875rem] mq825:leading-[2rem]">
-              Tantra Worlds
-            </h1>
-          </div>
-          <div className="self-stretch flex flex-col items-start justify-start gap-[1rem] text-[0.875rem] text-lightgray font-inter">
-            <div className="self-stretch relative leading-[1.5rem]">
+            <address className="mt-10 text-sm not-italic leading-6 text-stone-300">
               A108 Adam Street New York, NY 535022 United States
-            </div>
-            <div className="self-stretch relative leading-[1.5rem]">
+            </address>
+            <p className="mt-4 text-sm leading-6 text-stone-300">
               Phone: +1 5589 55488 55
-            </div>
-            <div className="self-stretch relative leading-[1.5rem]">
+            </p>
+            <p className="mt-4 text-sm leading-6 text-stone-300">
               Email: info@example.com
+            </p>
+            <div className="flex gap-5 pt-10 ">
+              {socialIcons.map((icon, index) => (
+                <img
+                  key={index}
+                  loading="lazy"
+                  src={icon.src}
+                  alt={icon.alt}
+                  className="w-6 shrink-0 aspect-square"
+                />
+              ))}
             </div>
           </div>
-          <div className="flex flex-row items-start justify-start gap-[1.5rem]">
-            <img
-              className="h-[1.5rem] w-[1.5rem] relative overflow-hidden shrink-0 min-h-[1.5rem]"
-              loading="lazy"
-              alt=""
-              src="/facebook.svg"
-            />
-            <img
-              className="h-[1.5rem] w-[1.5rem] relative overflow-hidden shrink-0 min-h-[1.5rem]"
-              loading="lazy"
-              alt=""
-              src="/twitter.svg"
-            />
-            <img
-              className="h-[1.5rem] w-[1.5rem] relative overflow-hidden shrink-0 min-h-[1.5rem]"
-              loading="lazy"
-              alt=""
-              src="/demo.svg"
-            />
-            <img
-              className="h-[1.5rem] w-[1.5rem] relative overflow-hidden shrink-0 min-h-[1.5rem]"
-              loading="lazy"
-              alt=""
-              src="/linkedin.svg"
-            />
-          </div>
-        </div>
-        <div className="w-[35.438rem] flex flex-row items-start justify-between min-w-[35.438rem] max-w-full gap-[1.25rem] text-[1.125rem] font-inter lg:min-w-full mq450:flex-wrap mq1425:flex-1">
-          <div className="flex flex-col items-start justify-start gap-[1.5rem]">
-            <div className="relative leading-[1.5rem] font-semibold inline-block min-w-[7.563rem]">
-              Lorem Ipsum
-            </div>
-            <div className="relative text-[0.875rem] leading-[250%] text-lightgray">
-              <p className="m-0">Room with View</p>
-              <p className="m-0">Single Room</p>
-              <p className="m-0">Luxary Room</p>
-              <p className="m-0">Service</p>
-              <p className="m-0">Web Development</p>
-            </div>
-          </div>
-          <div className="flex flex-col items-start justify-start gap-[1.5rem]">
-            <div className="relative leading-[1.5rem] font-semibold inline-block min-w-[6rem]">
-              Quick links
-            </div>
-            <div className="relative text-[0.875rem] leading-[250%] text-lightgray">
-              <p className="m-0">Booking</p>
-              <p className="m-0">{`Check In `}</p>
-              <p className="m-0">{`Dinning `}</p>
-              <p className="m-0">Site Map</p>
-              <p className="m-0">Service</p>
-            </div>
-          </div>
-          <div className="flex flex-col items-start justify-start gap-[1.5rem]">
-            <div className="relative leading-[1.5rem] font-semibold inline-block min-w-[5.25rem]">
-              Company
-            </div>
-            <div className="relative text-[0.875rem] leading-[250%] text-silver">
-              <p className="m-0">About us</p>
-              <p className="m-0">Contact us</p>
-              <p className="m-0">How to reach us</p>
-              <p className="m-0">Privacy Policy</p>
-              <p className="m-0">Terms of use</p>
-              <p className="m-0">Cookies</p>
+          <div className="flex flex-col w-full pt-16 md:w-2/3">
+            <div className="flex flex-wrap justify-between">
+              {footerLinks.map((column, index) => (
+                <div key={index} className="w-full mb-8 sm:w-1/2 md:w-1/3 md:mb-0">
+                  <div className="flex flex-col">
+                    <h3 className="mb-4 text-lg font-semibold leading-6 text-white">
+                      {column.title}
+                    </h3>
+                    <ul className="text-sm leading-8 text-stone-300">
+                      {column.links.map((link, linkIndex) => (
+                        <li key={linkIndex}>{link}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
         <img
-          className="h-[6.313rem] w-[6.25rem] absolute !m-[0] top-[-3.187rem] left-[calc(50%_-_50px)] cursor-pointer"
           loading="lazy"
-          alt=""
-          src="/back-to-top-btn.svg"
+          src="https://cdn.builder.io/api/v1/image/assets/TEMP/5d1b756784f3b8d2387d3810d98603da18dd71acbf31b06453249608231f79e1?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
+          alt="Back to top"
+          className="absolute w-24 h-16 transform -translate-x-1/2 cursor-pointer lg:h-24 left-1/2 -top-12"
           onClick={handleClick}
         />
       </div>
-      <div className="self-stretch bg-gray-200 flex flex-row items-start justify-center py-[2.375rem] px-[1.25rem] shrink-0 text-center text-[0.875rem] font-quote">
-        <div className="w-[19.125rem] relative leading-[1.5rem] inline-block">{`© Copyright Tantra Worlds. All Rights Reserved `}</div>
+      <div className="w-full px-5 py-10 mt-2 text-sm leading-6 text-center text-white bg-stone-900">
+        © Copyright Tantra Worlds. All Rights Reserved
       </div>
     </footer>
   );
-};
-
-Footer.propTypes = {
-  className: PropTypes.string,
 };
 
 export default Footer;
