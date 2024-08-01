@@ -5,6 +5,7 @@ import ContactPage from "./pages/ContactPage";
 import BlogPage from "./pages/BlogPage";
 import Card from "./components/Card";
 import BookingPage from "./pages/BookingPage";
+import LoginPage from "./pages/LoginPage";
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
           <Route path="/contactus" element={<ContactPage />} />
           <Route path="/blogs" element={<BlogPage />} />     
           <Route path="/bookings" element={<BookingPage />} />         
+          <Route path="/login" element={<LoginPage/>}/>
         </Routes>
       </BrowserRouter>
     </>

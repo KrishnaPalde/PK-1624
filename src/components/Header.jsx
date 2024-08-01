@@ -9,6 +9,7 @@ const navItems = [
   { label: "Booking", to: "/bookings" },
   { label: "About us", to: "#" },
   { label: "Contact us", to: "/contactus" },
+  { label: "Log In", to: "/login" },
 ];
 
 function Header() {
@@ -36,12 +37,12 @@ function Header() {
               <NavItem label={item.label} />
             </Link>
           ))}
-          <a
+          {/* <a
             href="#login"
             className="px-4 py-2 text-white transition-colors duration-300 rounded-lg bg-[#3FA2F6] hover:bg-sky-500"
           >
             Log In
-          </a>
+          </a> */}
         </nav>
       </div>
       <div
@@ -51,22 +52,32 @@ function Header() {
       >
         <div className="p-4 space-y-4">
           {navItems.map((item, index) => (
-            <Link 
-              key={index} 
-              to={item.to} 
-              onClick={() => setIsOpen(false)}
-              className="block py-2 text-lg font-medium text-gray-800 transition-colors duration-200 hover:text-[#3FA2F6]"
-            >
-              {item.label}
-            </Link>
-          ))}
-          <a
-            href="#login"
+            item.label == "Log In" 
+            ? <Link 
+            key={index} 
+            to={item.to} 
             onClick={() => setIsOpen(false)}
             className="block w-full py-3 text-center text-white transition-colors duration-300 rounded-lg bg-[#3FA2F6] hover:bg-sky-500"
           >
-            Log In
-          </a>
+            {item.label}
+          </Link>
+            : <Link 
+            key={index} 
+            to={item.to} 
+            onClick={() => setIsOpen(false)}
+            className="block py-2 text-lg font-medium text-gray-800 transition-colors duration-200 hover:text-[#3FA2F6]"
+          >
+            {item.label}
+          </Link>
+            
+          ))}
+          {/* <a
+            href="login"
+            onClick={() => setIsOpen(false)}
+            className="block w-full py-3 text-center text-white transition-colors duration-300 rounded-lg bg-[#3FA2F6] hover:bg-sky-500"
+          >
+            LogIn
+          </a> */}
         </div>
       </div>
     </header>
