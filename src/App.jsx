@@ -1,26 +1,35 @@
-import { useState } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import LandingPage from "./pages/LandingPage";
-import ContactPage from "./pages/ContactPage";
-import BlogPage from "./pages/BlogPage";
-import Card from "./components/Card";
-import BookingPage from "./pages/BookingPage";
-import LoginPage from "./pages/LoginPage";
-
+// src/App.jsx
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './AuthContext';
+import LandingPage from './pages/LandingPage';
+import ContactPage from './pages/ContactPage';
+import BlogPage from './pages/BlogPage';
+import BookingPage from './pages/BookingPage';
+import LoginPage from './pages/LoginPage';
+import AdminPanel from './pages/AdminPanel';
+import ProtectedRoute from './ProtectedRoute';
 
 function App() {
   return (
-    <>
+    <AuthProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/contactus" element={<ContactPage />} />
-          <Route path="/blogs" element={<BlogPage />} />     
-          <Route path="/bookings" element={<BookingPage />} />         
-          <Route path="/login" element={<LoginPage/>}/>
+          <Route path="/blogs" element={<BlogPage />} />
+          <Route path="/bookings" element={<BookingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/admin-panel"
+            element={
+              <ProtectedRoute>
+                <AdminPanel />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
-    </>
+    </AuthProvider>
   );
 }
 

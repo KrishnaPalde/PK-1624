@@ -1,5 +1,9 @@
-import React from 'react';
-import { Box, Container, TextField, Typography, Button, Grid, Paper } from '@mui/material';
+// src/pages/LoginPage.jsx
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
+import { Box, Container, TextField, Typography, Button, Grid, Paper, Alert } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { styled } from '@mui/system';
@@ -7,14 +11,14 @@ import { styled } from '@mui/system';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#00796b', // Customize primary color
+      main: '#00796b',
     },
     secondary: {
-      main: '#004d40', // Customize secondary color
+      main: '#004d40',
     },
   },
   typography: {
-    fontFamily: 'Nunito, sans-serif', // Use Nunito font
+    fontFamily: 'Nunito, sans-serif',
   },
 });
 
@@ -27,6 +31,24 @@ const StyledPaper = styled(Paper)({
 });
 
 const LoginPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:3000/authenticateAdmin', { email, password });
+      login();
+      setError(null);
+      navigate('/admin-panel');
+    } catch (error) {
+      setError(error.response.data.error);
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -35,7 +57,8 @@ const LoginPage = () => {
           <Typography component="h1" variant="h5" sx={{ marginTop: 2 }}>
             Admin Login
           </Typography>
-          <Box component="form" sx={{ marginTop: 1 }}>
+          {error && <Alert severity="error">{error}</Alert>}
+          <Box component="form" onSubmit={handleLogin} sx={{ marginTop: 1 }}>
             <TextField
               variant="outlined"
               margin="normal"
@@ -46,6 +69,8 @@ const LoginPage = () => {
               name="email"
               autoComplete="email"
               autoFocus
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
               variant="outlined"
@@ -57,6 +82,8 @@ const LoginPage = () => {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <Button
               type="submit"
