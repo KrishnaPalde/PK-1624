@@ -1,20 +1,15 @@
-// src/pages/AdminPanel.jsx
 import React from 'react';
-import { Container, Typography, Button } from '@mui/material';
-import { useAuth } from '../AuthContext';
+import SideNav from '../components/SideNav';
+
 
 const AdminPanel = () => {
-  const { logout } = useAuth();
 
   return (
-    <Container>
-      <Typography variant="h3" gutterBottom>
-        Admin Panel
-      </Typography>
-      <Button variant="contained" color="primary" onClick={logout}>
-        Logout
-      </Button>
-    </Container>
+    <div className="max-w-full">
+      <div className="w-1/2">
+        <SideNav/>
+      </div>
+    </div>
   );
 };
 
