@@ -1,46 +1,59 @@
+// src/routes/paymentRoutes.js
 const express = require("express");
 const router = express.Router();
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 const Booking = require("../models/Bookings");
+const {
+  validateWebhookSignature,
+} = require("razorpay/dist/utils/razorpay-utils");
 
 const razorpay = new Razorpay({
-  key_id: "YOUR_KEY_ID",
-  key_secret: "YOUR_KEY_SECRET",
+  key_id: "rzp_test_3XPl2MOocYaXjD",
+  key_secret: "UfRM9Kdwj7sVapSQxsHEX4PS",
 });
 
 // Create an order
 router.post("/create-order", async (req, res) => {
-  const { amount } = req.body; // Amount in rupees
-
+  const { amount } = req.body;
   const options = {
-    amount: amount * 100, // Convert amount to paise
+    amount: amount * 100, // Amount in paise
     currency: "INR",
     receipt: crypto.randomBytes(16).toString("hex"),
   };
 
   try {
     const order = await razorpay.orders.create(options);
+    console.log(order.id);
     res.json({ orderId: order.id });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Handle payment verification
-router.post("/payment-verification", async (req, res) => {
-  const secret = "YOUR_WEBHOOK_SECRET"; // Replace with your webhook secret
-  const body = JSON.stringify(req.body);
-  const sig = req.headers["x-razorpay-signature"];
-  const generatedSig = crypto
-    .createHmac("sha256", secret)
-    .update(body)
-    .digest("hex");
+// Verify payment
+router.post("/verify-payment", async (req, res) => {
+  const {
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
+    amount,
+    bookingDetails,
+  } = req.body;
 
-  if (sig === generatedSig) {
-    // Payment is verified, proceed with creating the booking
-    const { orderId, paymentId, amount, bookingDetails } = req.body;
+  // Construct the expected signature
+  const secret = razorpay.key_secret;
+  const body = razorpay_order_id + "|" + razorpay_payment_id;
 
+  console.log(req.body);
+  console.log(razorpay_signature);
+
+  const isValidSignature = validateWebhookSignature(
+    body,
+    razorpay_signature,
+    secret
+  );
+  if (isValidSignature) {
     try {
       // Create a unique booking ID
       const bookingId = crypto.randomBytes(16).toString("hex");
@@ -69,10 +82,10 @@ router.post("/payment-verification", async (req, res) => {
         numberOfInfants: bookingDetails.numberOfInfants,
         transactions: [
           {
-            transactionId: paymentId,
-            orderId,
-            paymentId,
-            paymentMethod: "card", // Example; use actual payment method if available
+            transactionId: razorpay_payment_id,
+            orderId: razorpay_order_id,
+            paymentId: razorpay_payment_id,
+            paymentMethod: "card",
             amount,
             currency: "INR",
             paymentStatus: "success",
@@ -84,10 +97,10 @@ router.post("/payment-verification", async (req, res) => {
         ],
       });
 
-      console.log(booking);
-
       await booking.save();
-      res.json({ status: "success", message: "Booking created successfully" });
+      res
+        .status(200)
+        .json({ status: "success", message: "Booking created successfully" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

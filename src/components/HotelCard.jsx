@@ -1,5 +1,5 @@
 import React from "react";
-// import PaymentButton from '../components/PaymentButton';
+import PaymentButton from '../components/PaymentButton';
 
 function HotelCard({
   imageUrl,
@@ -94,7 +94,7 @@ function HotelCard({
                 <button className="px-4 py-4 text-white rounded whitespace-nowrap bg-sky-400">
                   Next
                 </button>
-                {/* <PaymentButton amount={1000} /> */}
+                <PaymentButton amount={1000} />
               </div>
             </div>
           </div>
