@@ -4,6 +4,7 @@ const {
   checkIfAvailable,
   getRoomDetails,
 } = require("../controller/bookingsController");
+const Booking = require("../models/Bookings");
 
 const router = express.Router();
 
