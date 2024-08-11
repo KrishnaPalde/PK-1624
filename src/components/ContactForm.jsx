@@ -55,7 +55,7 @@ const ContactForm = () => {
         Phone number
       </label>
       <div className="flex mt-1.5 text-base leading-6 bg-white rounded-lg border border-gray-300 border-solid shadow-sm">
-        <div className="flex justify-between py-3 pl-4 pr-3 text-gray-900 whitespace-nowrap" >
+        {/* <div className="flex justify-between py-3 pl-4 pr-3 text-gray-900 whitespace-nowrap" >
           <span>US</span>
           <img
             loading="lazy"
@@ -64,11 +64,11 @@ const ContactForm = () => {
             className="w-5 my-auto shrink-0 aspect-square"
             
           />
-        </div>
+        </div> */}
         <input
           id="phone"
           type="tel"
-          placeholder="+1 (555) 000-0000"
+          placeholder="+91 00000-00000"
           className="flex-1 py-3 pr-4 text-gray-500"
         />
       </div>

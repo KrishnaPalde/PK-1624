@@ -9,16 +9,16 @@ import Footer from "../components/Footer";
 const BookingPage = () => {
   return (
     <div className="flex flex-col max-w-full pt-12 bg-white">
-      <div className="flex flex-col self-center  w-full max-w-[1393px] max-md:max-w-full px-10">
+      <div className="flex flex-col self-center  w-full max-w-[1323px] max-md:max-w-full px-10">
         <Header />
         <main>
           <div className="mt-10">
             <BookingForm />
-            <div className="flex flex-row mt-10">
-              <div className="w-1/3 mt-10">
+            <div className="flex flex-col mt-10 md:flex-row">
+              <div className="w-full mt-10 md:w-1/3">
                 <FilterSection />
               </div>
-              <div className="w-2/3">
+              <div className="md:w-2/3">
                 <HotelListing />
               </div>
             </div>

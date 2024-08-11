@@ -1,17 +1,26 @@
 import React from "react";
 
-function FilterHeader({ title }) {
+function FilterHeader({ title, isExpanded, onClick }) {
   return (
-    <header className="flex gap-5 justify-between mt-8 text-base font-semibold whitespace-nowrap text-neutral-900">
+    <header 
+      className="flex justify-between gap-5 mt-8 text-base font-semibold cursor-pointer whitespace-nowrap text-neutral-900"
+      onClick={onClick}
+    >
       <h3>{title}</h3>
-      <img
-        loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/30b374b7723f4ef7f95977d2ac62a4a31fdcf68152f74947fe62971a880b0b8c?apiKey=e6b8c17325a24fb29c274ce450ea26a7&&apiKey=e6b8c17325a24fb29c274ce450ea26a7"
-        className="shrink-0 w-6 aspect-square"
-        alt=""
-      />
+      <svg 
+        className={`w-6 h-6 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
     </header>
   );
 }
 
 export default FilterHeader;
+

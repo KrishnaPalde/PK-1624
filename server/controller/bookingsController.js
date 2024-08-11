@@ -85,7 +85,17 @@ const getRoomDetails = async (req, res) => {
   }
 };
 
+const getAllRooms = async (req, res) => {
+  try {
+    const rooms = await Room.find({}).select('-reviews'); // Exclude reviews for the listing
+    res.status(200).json(rooms);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   checkIfAvailable,
   getRoomDetails,
+  getAllRooms,
 };

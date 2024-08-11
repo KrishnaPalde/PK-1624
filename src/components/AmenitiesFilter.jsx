@@ -1,27 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
 import FilterHeader from "./FilterHeader";
 
 function AmenitiesFilter() {
   const amenities = ["24hr front desk", "Air-conditioned", "Fitness", "Pool"];
+  const [selectedAmenities, setSelectedAmenities] = useState([]);
+
+  const handleAmenityClick = (amenity) => {
+    setSelectedAmenities((prevSelected) =>
+      prevSelected.includes(amenity)
+        ? prevSelected.filter((item) => item !== amenity)
+        : [...prevSelected, amenity]
+    );
+  };
+
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
 
   return (
     <div>
-      <FilterHeader title="Amenities" />
-      {amenities.map((amenity, index) => (
-        <div
-          key={index}
-          className="flex gap-2 self-start mt-2 text-sm font-medium whitespace-nowrap text-neutral-900"
-        >
-          <img
-            loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/39b9570ebeb25e86ecf567009d357ba1e63d9a5e9d477b8ef848f93d481afe15?apiKey=e6b8c17325a24fb29c274ce450ea26a7&&apiKey=e6b8c17325a24fb29c274ce450ea26a7"
-            className="shrink-0 w-6 aspect-square"
-            alt=""
-          />
-          <div className="my-auto">{amenity}</div>
-        </div>
-      ))}
-      <div className="mt-2 text-sm font-bold text-violet-700">+24 more</div>
+      <FilterHeader title="Amenities" isExpanded={isExpanded} onClick={toggleExpand} />
+      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-40' : 'max-h-0'}`}>
+        {amenities.map((amenity, index) => (
+          <div
+            key={index}
+            onClick={() => handleAmenityClick(amenity)}
+            className="flex gap-2 mt-2 text-sm font-medium cursor-pointer text-neutral-900"
+          >
+            <div className="relative flex items-center justify-center w-6 h-6 border rounded-sm shrink-0 border-sky-400">
+              {selectedAmenities.includes(amenity) && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-4 h-4 text-sky-500"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              )}
+            </div>
+            <div className="my-auto">{amenity}</div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

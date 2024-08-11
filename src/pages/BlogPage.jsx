@@ -67,7 +67,7 @@ const BlogPage = () => {
 
   return (
     <div className="flex flex-col pt-12 bg-white">
-      <div className="flex flex-col self-center px-5 w-full max-w-[1193px] max-md:max-w-full">
+      <div className="flex flex-col self-center px-10 w-full max-w-[1323px] max-md:max-w-full">
         <Header />
         <main>
           <h1 className="mt-12 text-4xl font-semibold text-zinc-900 max-md:mt-10 max-md:max-w-full">

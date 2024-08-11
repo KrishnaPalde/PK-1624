@@ -7,13 +7,13 @@ import Footer from '../components/Footer';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; 
 
-const MainContent = () => {
+const MainContent = () => { 
   AOS.init({
     duration: 1600,
   })
   return (
     <main className="flex flex-col items-center pt-12 bg-white font-paragraph">
-      <div className="flex flex-col self-center px-5 w-full max-w-[1193px] max-md:max-w-full">
+      <div className="flex flex-col self-center px-10 w-full max-w-[1323px] max-md:max-w-full">
       <Header />
       <section className="pl-6 mt-24 mr-auto text-2xl leading-9 text-black max-md:pl-8 max-md:mt-10 max-md:mr-auto max-md:max-w-full max-sm:pl-4">
         Get Started

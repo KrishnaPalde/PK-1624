@@ -76,7 +76,7 @@ const PaymentButton = ({ amount }) => {
   };
 
   return (
-    <button onClick={handlePayment}>Pay {amount} INR</button>
+    <button onClick={handlePayment} className='pl-4'>Pay {amount} INR</button>
   );
 };
 

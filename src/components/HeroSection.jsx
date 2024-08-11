@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "./Header";
-import BookingForm from "./BookingForm"; 
+import BookingForm from "./BookingForm";
 
 function HeroSection() {
   return (
@@ -15,7 +15,7 @@ function HeroSection() {
       <div className="relative flex flex-col justify-center w-full max-md:max-w-full">
         <div className="flex flex-col justify-center w-full max-md:max-w-full">
           <div className="flex flex-col items-center w-full px-4 pt-12 pb-20 md:pt-12 max-md:px-5 max-md:max-w-full">
-            <div className="flex flex-col w-full max-w-6xl mb-14 max-md:mb-10 max-md:max-w-full">
+            <div className="flex flex-col w-full max-w-[1323px] mb-14 max-md:mb-10 max-md:max-w-full md:px-10">
               <Header />
               <div className="flex flex-col items-start w-full md:w-[630px] mt-20 ml-4 text-black text-7xl max-md:mt-5 max-md:text-3xl">
                 <h1 className="italic font-normal max-md:text-3xl">
@@ -33,7 +33,7 @@ function HeroSection() {
           </div>
         </div>
       </div>
-      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 w-full max-w-[1224px] z-10">
+      <div className="hidden md:block absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 w-full max-w-[1224px] z-10">
         <BookingForm />
       </div>
     </section>

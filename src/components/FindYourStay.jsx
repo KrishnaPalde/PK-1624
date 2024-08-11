@@ -17,7 +17,7 @@ function FindYourStay() {
   })
   
   return (
-    <section className="flex flex-col px-8 md:px-24">
+    <section className="flex flex-col items-center justify-center max-w-full px-8 overflow-x-hidden lg:px-28">
       <h1 className="w-full text-4xl font-bold text-black max-md:max-w-full">
         Find Your Perfect Stay
       </h1>

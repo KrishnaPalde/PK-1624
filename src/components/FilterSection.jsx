@@ -7,14 +7,14 @@ import AmenitiesFilter from "./AmenitiesFilter";
 
 function FilterSection() {
   return (
-    <section className="flex flex-col px-5 max-md:mt-7">
+    <section className="flex-col px-5 md:flex max-md:mt-7">
       <h2 className="text-xl font-semibold text-neutral-900">Filters</h2>
       <PriceFilter />
-      <hr className="shrink-0 mt-8 h-px bg-neutral-900" />
+      <hr className="h-px mt-8 shrink-0 bg-neutral-900" />
       <RatingFilter />
-      <hr className="shrink-0 mt-8 h-px bg-neutral-900" />
+      <hr className="h-px mt-8 shrink-0 bg-neutral-900" />
       <FreebiesFilter />
-      <hr className="shrink-0 mt-8 h-px bg-neutral-900" />
+      <hr className="h-px mt-8 shrink-0 bg-neutral-900" />
       <AmenitiesFilter />
     </section>
   );

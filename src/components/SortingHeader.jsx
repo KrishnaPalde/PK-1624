@@ -2,7 +2,7 @@ import React from "react";
 
 function SortingHeader({ totalPlaces, shownPlaces }) {
   return (
-    <header className="flex gap-5 justify-between px-5 w-full text-sm font-semibold max-md:flex-wrap max-md:max-w-full">
+    <header className="flex justify-between w-full gap-5 px-5 text-sm font-semibold max-md:flex-wrap max-md:max-w-full">
       <div className="text-rose-400">
         Showing {shownPlaces} of{" "}
         <span className="text-rose-400">{totalPlaces} places</span>

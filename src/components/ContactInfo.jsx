@@ -16,7 +16,7 @@ const ContactInfo = () => {
           <div className="grow max-md:mt-10 max-md:max-w-full">
             <div className="flex gap-5 max-md:flex-col">
               <div className="flex flex-col w-6/12 max-md:ml-0 max-md:w-full">
-                <div className="flex flex-col grow p-8 text-2xl font-semibold text-black max-md:px-5 max-md:mt-10">
+                <div className="flex flex-col p-8 text-2xl font-semibold text-black grow max-md:px-5 max-md:mt-10">
                   <h3>Email Address</h3>
                   <div className="shrink-0 mt-6 bg-black h-[3px]" />
                   <p className="mt-7">help@info.com</p>
@@ -25,8 +25,8 @@ const ContactInfo = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex flex-col ml-5 w-6/12 max-md:ml-0 max-md:w-full">
-                <div className="flex flex-col grow p-8 text-2xl font-semibold text-black max-md:px-5 max-md:mt-10">
+              <div className="flex flex-col w-6/12 ml-5 max-md:ml-0 max-md:w-full">
+                <div className="flex flex-col p-8 text-2xl font-semibold text-black grow max-md:px-5 max-md:mt-10">
                   <h3>Number</h3>
                   <div className="shrink-0 mt-6 bg-black h-[3px]" />
                   <p className="mt-7">(808) 998-34256</p>
