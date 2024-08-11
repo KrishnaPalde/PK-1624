@@ -3,6 +3,7 @@ import PriceDetail from "./PriceDetail";
 import DateDisplay from "./DateDisplay";
 import StayInfo from "./StayInfo";
 import { Link } from "react-router-dom";
+import PaymentButton from "./PaymentButton";
 
 function StayDetails() {
   const priceDetails = [
@@ -63,11 +64,11 @@ function StayDetails() {
           <div className="font-medium">Total </div>
           <div className="font-semibold">₹2650</div>
         </div>
-        <Link to="/bookingconfirm">
-        <button className="flex-1 shrink gap-2.5 self-stretch px-4 py-4 mt-4 max-w-full text-xl text-center text-white bg-sky-400 rounded w-[150px]">
-          Pay Now
+        
+        <button className="flex-1 shrink gap-2.5 self-stretch px-2 py-2 mt-4 max-w-full text-xl text-center text-white bg-sky-400 rounded w-[150px]">
+        <PaymentButton amount={2650} />
         </button>
-        </Link>
+        
       </div>
     </section>
   );

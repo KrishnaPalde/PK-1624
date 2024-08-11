@@ -1,11 +1,15 @@
 // src/components/PaymentButton.jsx
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const PaymentButton = ({ amount }) => {
+  const navigate = useNavigate();
   const handlePayment = async () => {
     try {
       // Create an order on the server
-      const response = await fetch('http://localhost:4444/api/payments/create-order', {
+      // const response = await fetch('http://localhost:4444/api/payments/create-order', {
+      const response = await fetch('https://pk-1624.onrender.com/api/payments/create-order', {
+
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount })
@@ -38,7 +42,8 @@ const PaymentButton = ({ amount }) => {
         order_id: orderId,
         handler: async function (response) {
           // Verify payment on server
-          const verificationResponse = await fetch('http://localhost:4444/api/payments/verify-payment', {
+          // const verificationResponse = await fetch('http://localhost:4444/api/payments/verify-payment', {
+            const verificationResponse = await fetch('https://pk-1624.onrender.com/api/payments/verify-payment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -53,9 +58,9 @@ const PaymentButton = ({ amount }) => {
           const result = await verificationResponse.json();
 
           if (result.status === 'success') {
-            alert('Payment successful!');
-            // Redirect to booking confirmation page or any other action
-            // window.location.href = '/booking-confirmation';
+            // alert('Payment successful!');
+            navigate('/bookingconfirm')
+            
           } else {
             alert('Payment verification failed!');
           }
@@ -76,7 +81,7 @@ const PaymentButton = ({ amount }) => {
   };
 
   return (
-    <button onClick={handlePayment} className='pl-4'>Pay {amount} INR</button>
+    <button onClick={handlePayment} className=''>Pay {amount} INR</button>
   );
 };
 

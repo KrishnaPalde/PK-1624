@@ -11,11 +11,13 @@ import ProtectedRoute from './ProtectedRoute';
 import RoomDetailsPage from './pages/RoomDetailsPage';
 import YourBookingDetails from './pages/YourBookingDetails';
 import BookingConfirm from './pages/BookingConfirm';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+      <ScrollToTop/>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/contactus" element={<ContactPage />} />

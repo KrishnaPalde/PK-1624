@@ -1,6 +1,6 @@
 import React from "react";
 import PaymentButton from '../components/PaymentButton';
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 
 function HotelCard({
   id,
@@ -94,10 +94,13 @@ function HotelCard({
           <button className="px-4 py-2 mr-2 border rounded text-sky-400 border-sky-400" onClick={handleCardClick}>
             View Detail
           </button>
-          <button className="px-4 py-2 text-white rounded bg-sky-400" onClick={handleCardClick}>
+          <Link to="/yourdetails">
+          <button className="px-4 py-2 text-white rounded bg-sky-400">
             Next
           </button>
-<PaymentButton amount={1000} />
+          </Link>
+          
+{/* <PaymentButton amount={1000} /> */}
         </div>
       </div>
     </div>

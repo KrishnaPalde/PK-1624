@@ -136,6 +136,7 @@ function HotelListing() {
     const fetchRooms = async () => {
       try {
         const response = await axios.get("https://pk-1624.onrender.com/api/rooms");
+        // const response = await axios.get("http://localhost:4444/api/rooms");
         setHotelData(response.data);
         setLoading(false);
       } catch (error) {
