@@ -40,7 +40,7 @@ function BookingForm() {
     setError("");
 
     try {
-      const response = await axios.get("http://localhost:4444/api/check_availability_dates", {
+      const response = await axios.get("https://pk-1624.onrender.com/api/check_availability_dates", {
         params: {
           checkinDate: checkIn.toISOString(),
           checkoutDate: checkOut.toISOString(),
