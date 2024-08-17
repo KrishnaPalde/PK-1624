@@ -36,6 +36,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path='/admin-panel/booking'/>
         </Routes>
       </BrowserRouter>
       </BookingFormContext>
