@@ -12,20 +12,21 @@ import RoomDetailsPage from './pages/RoomDetailsPage';
 import YourBookingDetails from './pages/YourBookingDetails';
 import BookingConfirm from './pages/BookingConfirm';
 import ScrollToTop from './components/ScrollToTop';
+import BookingFormContext from './contexts/BookingFormContext';
 
 function App() {
   return (
     <AuthProvider>
+      <BookingFormContext>
       <BrowserRouter>
-      <ScrollToTop/>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/contactus" element={<ContactPage />} />
           <Route path="/blogs" element={<BlogPage />} />
-          <Route path="/bookings" element={<BookingPage />} />
-          <Route path="/room/:id" element={<RoomDetailsPage />} />
-          <Route path="/yourdetails" element={<YourBookingDetails/>}/>
-          <Route path="/bookingconfirm" element={<BookingConfirm/>}/>
+          <Route path="/bookings" element={<><ScrollToTop/> <BookingPage /></>} />
+          <Route path="/room/:id" element={<><ScrollToTop/> <RoomDetailsPage /></>} />
+          <Route path="/room/:id/details" element={<><ScrollToTop/><YourBookingDetails/></>}/>
+          <Route path="/room/:id/bookingconfirm" element={<><ScrollToTop/><BookingConfirm/></>}/>
           <Route path="/login" element={<LoginPage />} />
           <Route
             path="/admin-panel"
@@ -37,6 +38,7 @@ function App() {
           />
         </Routes>
       </BrowserRouter>
+      </BookingFormContext>
     </AuthProvider>
   );
 }

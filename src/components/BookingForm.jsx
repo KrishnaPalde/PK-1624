@@ -1,48 +1,89 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Select from "react-select";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { useBooking } from '../contexts/BookingFormContext';
+import axios from 'axios';
 
 function BookingForm() {
-  const [location, setLocation] = useState("New York, USA");
-  const [checkIn, setCheckIn] = useState(new Date());
-  const [checkOut, setCheckOut] = useState(new Date());
-  const [adults, setAdults] = useState(2);
-  const [children, setChildren] = useState(2);
+  const navigate = useNavigate();
+  const { bookingInfo, setBookingInfo } = useBooking();
+
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  // Initialize state from context
+  const [checkIn, setCheckIn] = useState( bookingInfo.checkIn ||today);
+  const [checkOut, setCheckOut] = useState(bookingInfo.checkOut || tomorrow);
+  const [adults, setAdults] = useState(bookingInfo.adults || 2);
+  const [children, setChildren] = useState(bookingInfo.children || 2);
+  const [isGuestDropdownOpen, setIsGuestDropdownOpen] = useState(false);
+
+  const [unavailableDates, setUnavailableDates] = useState([]);
+
+  // Update state when context values change
+  useEffect(() => {
+    setCheckIn(bookingInfo.checkIn || today);
+    setCheckOut(bookingInfo.checkOut || tomorrow);
+    setAdults(bookingInfo.adults || 2);
+    setChildren(bookingInfo.children || 2);
+  }, [bookingInfo]);
+
+  // Fetch unavailable dates
+  useEffect(() => {
+    const fetchUnavailableDates = async () => {
+      try {
+        const response = await axios.get("http://localhost:4444/api/unavailable_dates");
+        setUnavailableDates(response.data.unavailableDates.map(date => new Date(date)));
+      } catch (error) {
+        console.error('Error fetching unavailable dates:', error);
+      }
+    };
+
+    fetchUnavailableDates();
+  }, []);
 
   const handleCheckInChange = (date) => {
-    setCheckIn(date);
+    if (date) {
+      const nextDay = new Date(date);
+      nextDay.setDate(nextDay.getDate() + 1);
+
+      setCheckIn(date);
+      setCheckOut(nextDay);
+    }
   };
 
   const handleCheckOutChange = (date) => {
+    if (date && date <= checkIn) {
+      // Prevent setting a check-out date before or on the same day as check-in
+      alert('Check-out date must be after check-in date');
+      return;
+    }
     setCheckOut(date);
   };
 
   const handleAdultsChange = (type) => {
-    if (type === "increment") {
-      setAdults(adults + 1);
-    } else {
-      setAdults(adults > 0 ? adults - 1 : 0);
-    }
+    setAdults(prev => type === "increment" ? prev + 1 : (prev > 0 ? prev - 1 : 0));
   };
 
   const handleChildrenChange = (type) => {
-    if (type === "increment") {
-      setChildren(children + 1);
-    } else {
-      setChildren(children > 0 ? children - 1 : 0);
-    }
+    setChildren(prev => type === "increment" ? prev + 1 : (prev > 0 ? prev - 1 : 0));
+  };
+
+  const handleGuestDropdownToggle = () => {
+    setIsGuestDropdownOpen(!isGuestDropdownOpen);
+  };
+
+  const handleApplyGuests = () => {
+    setIsGuestDropdownOpen(false);
   };
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    setError("");
 
     try {
-      const response = await axios.get("https://pk-1624.onrender.com/api/check_availability_dates", {
-      // const response = await axios.get("https://localhost:4444/api/check_availability_dates", {
-
+      const response = await axios.get("http://localhost:4444/api/check_availability_dates", {
         params: {
           checkinDate: checkIn.toISOString(),
           checkoutDate: checkOut.toISOString(),
@@ -50,21 +91,20 @@ function BookingForm() {
       });
 
       if (response.data.available) {
-        navigate("/bookings", {
-          state: { checkIn, checkOut, adults, children },
-        });
+        // Update the context with the current form values
+        setBookingInfo({ checkIn, checkOut, adults, children });
+        navigate("/bookings");
       } else {
-        setError("Selected dates are not available. Please choose different dates.");
+        console.log("Selected dates are not available. Please choose different dates.");
       }
     } catch (error) {
-      setError("An error occurred. Please try again.");
+      console.log("An error occurred. Please try again.");
       console.error("Error checking availability:", error);
     }
   };
-  
-  
+
   return (
-    <form onSubmit={handleSearch} className="mb-5 w-full max-w-[1224px] bg-white rounded-2xl border border-solid border-zinc-200 shadow-[0px_4px_30px_rgba(36,76,236,0.15)] p-7 space-y-5 ">
+    <form onSubmit={handleSearch} className="mb-5 w-full max-w-[1224px] bg-white rounded-2xl border border-solid border-zinc-200 shadow-[0px_4px_30px_rgba(36,76,236,0.15)] p-7 space-y-5">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-medium text-black">Book a Room</h2>
@@ -76,7 +116,6 @@ function BookingForm() {
           className="w-[133px] h-auto"
         />
       </div>
-      
       <div className="flex flex-col items-start gap-5 p-5 bg-white border border-solid md:flex-row rounded-2xl border-zinc-200">
         <div className="flex-1 space-y-2 md:w-1/4">
           <label htmlFor="checkIn" className="text-sm font-medium text-neutral-500">
@@ -94,6 +133,9 @@ function BookingForm() {
               onChange={handleCheckInChange}
               dateFormat="dd/MM/yyyy"
               className="w-full text-base font-medium bg-transparent focus:outline-none"
+              minDate={new Date()} 
+              maxDate={new Date().setDate(new Date().getDate() + 30)} 
+              excludeDates={unavailableDates} 
             />
           </div>
         </div>
@@ -116,65 +158,78 @@ function BookingForm() {
               onChange={handleCheckOutChange}
               dateFormat="dd/MM/yyyy"
               className="w-full text-base font-medium bg-transparent focus:outline-none"
+              minDate={tomorrow}  
+              maxDate={new Date(today.setDate(today.getDate() + 30))}  
+              excludeDates={unavailableDates}  
             />
           </div>
         </div>
 
         <div className="hidden w-px md:block h-14 bg-zinc-200"></div>
 
-        <div className="flex-1 space-y-2 md:w-1/3">
+        <div className="relative flex-1 w-full md:w-1/3">
           <label className="text-sm font-medium text-neutral-500">Guest</label>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <img
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/3d7c87ccfa99edd3fc6effb16ea90ada291298e87e8d25b3615e2a9f513cdff9?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
-                  alt=""
-                  className="w-4 h-4"
-                />
-                <span className="text-base font-medium">Adults</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <button type="button" onClick={() => handleAdultsChange("decrement")} className="w-6 h-6 rounded-full bg-zinc-100 text-zinc-500 hover:bg-zinc-200">-</button>
-                <span className="text-base font-medium">{adults}</span>
-                <button type="button" onClick={() => handleAdultsChange("increment")} className="w-6 h-6 rounded-full bg-zinc-100 text-zinc-500 hover:bg-zinc-200">+</button>
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <img
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/3d7c87ccfa99edd3fc6effb16ea90ada291298e87e8d25b3615e2a9f513cdff9?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
-                  alt=""
-                  className="w-4 h-4"
-                />
-                <span className="text-base font-medium">Children</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <button type="button" onClick={() => handleChildrenChange("decrement")} className="w-6 h-6 rounded-full bg-zinc-100 text-zinc-500 hover:bg-zinc-200">-</button>
-                <span className="text-base font-medium">{children}</span>
-                <button type="button" onClick={() => handleChildrenChange("increment")} className="w-6 h-6 rounded-full bg-zinc-100 text-zinc-500 hover:bg-zinc-200">+</button>
-              </div>
-            </div>
+          <div 
+            className="flex items-center justify-between p-2 rounded-md cursor-pointer"
+            onClick={handleGuestDropdownToggle}
+          >
+            <span className="text-base font-medium">
+              {adults} Adults, {children} Children
+            </span>
           </div>
+          {isGuestDropdownOpen && (
+            <div className="absolute left-0 z-10 w-full p-8 mt-2 bg-white border border-gray-300 rounded-md shadow-lg top-full">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-medium">Adults</h3>
+                    <p className="text-sm text-gray-500">Aged 18+</p>
+                  </div>
+                  <div className="flex items-center md:gap-2">
+                    <button type="button" onClick={() => handleAdultsChange("decrement")} className="flex items-center justify-center w-8 h-8 text-gray-600 bg-gray-200 rounded-full hover:bg-gray-300">-</button>
+                    <span className="w-8 text-lg font-medium text-center">{adults}</span>
+                    <button type="button" onClick={() => handleAdultsChange("increment")} className="flex items-center justify-center w-8 h-8 text-gray-600 bg-gray-200 rounded-full hover:bg-gray-300">+</button>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-medium">Children</h3>
+                    <p className="text-sm text-gray-500">Aged 0 to 17</p>
+                  </div>
+                  <div className="flex items-center md:gap-2">
+                    <button type="button" onClick={() => handleChildrenChange("decrement")} className="flex items-center justify-center w-8 h-8 text-gray-600 bg-gray-200 rounded-full hover:bg-gray-300">-</button>
+                    <span className="w-8 text-lg font-medium text-center">{children}</span>
+                    <button type="button" onClick={() => handleChildrenChange("increment")} className="flex items-center justify-center w-8 h-8 text-gray-600 bg-gray-200 rounded-full hover:bg-gray-300">+</button>
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleApplyGuests}
+                className="w-full py-2 mt-4 text-white transition-colors duration-300 bg-blue-500 rounded-md hover:bg-blue-600"
+              >
+                Apply
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex-none mt-4 md:self-end md:mt-0">
-          <Link to="/bookings">
-            <button
-              type="submit"
-              className="flex items-center gap-3 px-8 py-4 text-base font-medium text-white transition-colors duration-300 rounded-full bg-sky-400 hover:bg-sky-500"
-            >
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/aa64914cca97a3fae2c7790d2c452bfa83ddb2b2198d998ffa1b86cddf144d7f?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
-                alt=""
-                className="w-5 h-5"
-              />
-              <span>Search</span>
-            </button>
-          </Link>
+          <button
+            type="submit"
+            className="flex items-center gap-3 px-8 py-4 text-base font-medium text-white transition-colors duration-300 rounded-full bg-sky-400 hover:bg-sky-500"
+          >
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/aa64914cca97a3fae2c7790d2c452bfa83ddb2b2198d998ffa1b86cddf144d7f?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
+              alt=""
+              className="w-5 h-5"
+            />
+            <span>Search</span>
+          </button>
         </div>
       </div>
     </form>
   );
 }
+
 export default BookingForm;

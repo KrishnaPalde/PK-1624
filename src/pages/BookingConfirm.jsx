@@ -5,8 +5,21 @@ import TermsAndConditions from "../components/TermsAndConditions";
 import NewsLetter from "../components/NewsLetter";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const BookingConfirm = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const roomData = location.state;
+
+  if (!roomData) {
+    React.useEffect(() => {
+      navigate("/");
+    }, [navigate]);
+
+    return <div>No room data available. Redirecting...</div>;
+  }
+  
   return (
     <div className="flex flex-col pt-12 bg-white">
       <div className="flex flex-col self-center px-10 w-full max-w-[1323px] max-md:max-w-full">
@@ -15,7 +28,7 @@ const BookingConfirm = () => {
             <div>
                 <BookingConfirmTitle/>
                 <div className="mt-10">
-                    <BookingConfirmationCard/>
+                    <BookingConfirmationCard {...roomData}/>
                 </div>
                 <div className="mt-10">
                     <TermsAndConditions/>

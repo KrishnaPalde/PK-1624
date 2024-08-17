@@ -1,15 +1,38 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const RoomDetailsCard = ({ 
   title, 
+  id,
   description, 
   rating, 
+  images,
+  imageCount,
   reviews, 
   price, 
   guestCount,
   amenities = []
 }) => {
+
+  const navigate = useNavigate();
+  const handleNextClick = () => {
+    navigate(`/room/${id}/details`, { 
+      state: { 
+        id, 
+        images, 
+        imageCount, 
+        title, 
+        description, 
+        guestCount, 
+        rating, 
+        price, 
+        reviews 
+      } 
+    });
+  };
+
+
+  
   return (
     <article className="flex flex-col items-start justify-between gap-5 p-4 mt-6 mb-6 sm:flex-row">
       <div className="flex flex-col w-full sm:w-2/3 text-neutral-900">
@@ -64,11 +87,11 @@ const RoomDetailsCard = ({
             </div>
           ))}
         </div>
-        <Link to="/yourdetails">
-        <button className="w-full sm:w-[150px] mt-4 p-3 bg-sky-400 rounded text-sm font-semibold text-white">
+        {/* <Link to="/yourdetails"> */}
+        <button className="w-full sm:w-[150px] mt-4 p-3 bg-sky-400 rounded text-sm font-semibold text-white" onClick={handleNextClick}>
           Book now
         </button>
-        </Link>
+        {/* </Link> */}
       </div>
     </article>
   );

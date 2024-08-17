@@ -20,7 +20,7 @@ const features = [
   },
 ];
 
-function RoomOverview() {
+function RoomOverview({ rating }) {
   return (
     <section className="flex flex-col w-full mt-8 max-md:max-w-full">
       <header className="flex flex-col w-full text-neutral-900 max-md:max-w-full">
@@ -43,7 +43,7 @@ function RoomOverview() {
       <div className="grid items-start self-start grid-cols-2 gap-4 mt-8 md:flex md:flex-wrap max-md:max-w-full">
         <div className="flex gap-2.5 items-start py-4 pr-16 pl-4 bg-sky-400 rounded-xl min-h-[145px] w-[166px] max-md:pr-5">
           <div className="flex flex-col">
-            <div className="text-3xl font-bold text-white">4.2</div>
+            <div className="text-3xl font-bold text-white">{rating}</div>
             <div className="flex flex-col mt-8 text-white">
               <div className="text-base font-bold">Very good</div>
               <div className="mt-1 text-sm font-medium">371 reviews</div>

@@ -10,6 +10,7 @@ import RoomReviewSection from "../components/RoomReviewSection";
 import Testimonials from "../components/Testimonials";
 import NewsLetter from "../components/NewsLetter";
 import Footer from "../components/Footer";
+import { useBooking } from "../contexts/BookingFormContext";
 
 const RoomDetailsPage = () => {
   const location = useLocation();
@@ -38,7 +39,7 @@ const RoomDetailsPage = () => {
               <RoomImages images={roomData.images} />
             </div>
             <div>
-              <RoomOverview />
+              <RoomOverview rating={roomData.rating}/>
             </div>
             <div className="mt-10">
               <AmenitiesList />

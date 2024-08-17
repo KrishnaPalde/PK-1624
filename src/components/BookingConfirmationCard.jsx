@@ -1,14 +1,16 @@
 import * as React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useBooking } from "../contexts/BookingFormContext";
 
 const CheckInOutInfo = ({ time, label }) => (
-  <div className="flex gap-2 items-center">
+  <div className="flex items-center gap-2">
     <img
       loading="lazy"
       src="https://cdn.builder.io/api/v1/image/assets/TEMP/bae163baef7a9999b02e6db4daa72808284b603061691c7ceb228dd5ca99b480?apiKey=e6b8c17325a24fb29c274ce450ea26a7&&apiKey=e6b8c17325a24fb29c274ce450ea26a7"
       alt=""
-      className="object-contain shrink-0 self-stretch my-auto w-8 rounded aspect-square"
+      className="self-stretch object-contain w-8 my-auto rounded shrink-0 aspect-square"
     />
-    <div className="flex flex-col justify-center self-stretch my-auto">
+    <div className="flex flex-col self-stretch justify-center my-auto">
       <div className="text-xs font-semibold opacity-60">{label}</div>
       <div className="text-base font-medium">{time}</div>
     </div>
@@ -30,9 +32,23 @@ const HotelLogo = () => (
 );
 
 function BookingConfirmationCard() {
+  const { bookingInfo } = useBooking();
+  const location = useLocation();
+  const {roomData, formData} = location.state || {};
+  console.log(formData);
+
+  const formatDate = (date) => {
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+
+  
   const checkInOutData = [
-    { date: "Thur, Dec 8", label: "Check-In" },
-    { date: "Fri, Dec 9", label: "Check-Out" },
+    { date: formatDate(bookingInfo.checkIn), label: "Check-In" },
+    { date: formatDate(bookingInfo.checkOut), label: "Check-Out" },
   ];
 
   const checkInOutTimes = [
@@ -61,7 +77,7 @@ function BookingConfirmationCard() {
                   loading="lazy"
                   src="https://cdn.builder.io/api/v1/image/assets/TEMP/b15c651e47940c6412188abdd0a4339dfafba9905bcfbaad316405d180a104bc?apiKey=e6b8c17325a24fb29c274ce450ea26a7&&apiKey=e6b8c17325a24fb29c274ce450ea26a7"
                   alt=""
-                  className="object-contain mt-2 w-full aspect-square"
+                  className="object-contain w-full mt-2 aspect-square"
                 />
                 <img
                   loading="lazy"
@@ -73,26 +89,27 @@ function BookingConfirmationCard() {
             </div>
           </aside>
           <div className="flex flex-col ml-5 w-[71%] max-md:ml-0 max-md:w-full">
-            <header className="flex overflow-hidden flex-col mx-auto w-full bg-white max-md:max-w-full">
-              <div className="flex gap-10 items-start p-6 font-bold text-white bg-sky-300 max-md:px-5">
+            <header className="flex flex-col w-full mx-auto overflow-hidden bg-white max-md:max-w-full">
+              <div className="flex items-start gap-10 p-6 font-bold text-white bg-sky-300 max-md:px-5">
                 <div className="flex flex-wrap flex-1 shrink gap-10 justify-between items-center w-full basis-0 min-w-[240px] max-md:max-w-full">
-                  <div className="flex gap-4 items-center self-stretch my-auto text-xl">
+                  <div className="flex items-center self-stretch gap-4 my-auto text-xl">
                     <img
                       loading="lazy"
                       src="https://cdn.builder.io/api/v1/image/assets/TEMP/d32045c180ef538085cd4b3473c097a082242b3ba121b8d82e01adff6b37d5c2?apiKey=e6b8c17325a24fb29c274ce450ea26a7&&apiKey=e6b8c17325a24fb29c274ce450ea26a7"
                       alt="Profile"
-                      className="object-contain shrink-0 self-stretch my-auto w-12 rounded-full aspect-square"
+                      className="self-stretch object-contain w-12 my-auto rounded-full shrink-0 aspect-square"
                     />
                     <div className="self-stretch my-auto w-[141px]">
-                      Jack Roy
+                      {formData.firstName +" "+ formData.lastName}
                     </div>
                   </div>
                   <div className="my-auto text-sm text-right w-[228px]">
-                    Superior room - 1 double bed or 2 twin beds
+                    {/* Superior room - 1 double bed or 2 twin beds */}
+                    {roomData.title}
                   </div>
                 </div>
               </div>
-              <main className="flex flex-wrap gap-8 items-start p-6 w-full text-neutral-900 max-md:px-5 max-md:max-w-full">
+              <main className="flex flex-wrap items-start w-full gap-8 p-6 text-neutral-900 max-md:px-5 max-md:max-w-full">
                 {checkInOutTimes.map((info, index) => (
                   <CheckInOutInfo
                     key={index}
@@ -108,7 +125,7 @@ function BookingConfirmationCard() {
                     ABC12345
                   </div>
                 </div>
-                <div className="flex justify-center items-center p-4 mt-3">
+                <div className="flex items-center justify-center p-4 mt-3">
                   <img
                     loading="lazy"
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/6c87486076c9b402bd6f4d591103b05ac941d6e373e6fb7727f3b7252be8b62c?apiKey=e6b8c17325a24fb29c274ce450ea26a7&&apiKey=e6b8c17325a24fb29c274ce450ea26a7"
@@ -177,3 +194,5 @@ function BookingConfirmationCard() {
 }
 
 export default BookingConfirmationCard;
+
+

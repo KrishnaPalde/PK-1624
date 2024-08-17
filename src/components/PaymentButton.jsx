@@ -1,14 +1,19 @@
 // src/components/PaymentButton.jsx
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useBooking } from '../contexts/BookingFormContext';
 
-const PaymentButton = ({ amount }) => {
+const PaymentButton = ({ roomData, formData, adults, children, amount, onClick }) => {
+
   const navigate = useNavigate();
+  const { bookingInfo } = useBooking();
+  const location = useLocation();
   const handlePayment = async () => {
+    onClick();
     try {
       // Create an order on the server
-      // const response = await fetch('http://localhost:4444/api/payments/create-order', {
-      const response = await fetch('https://pk-1624.onrender.com/api/payments/create-order', {
+      const response = await fetch('http://localhost:4444/api/payments/create-order', {
+      // const response = await fetch('https://pk-1624.onrender.com/api/payments/create-order', {
 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -19,16 +24,18 @@ const PaymentButton = ({ amount }) => {
 
       // Test booking details
       const bookingDetails = {
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        phoneNumber: '1234567890',
-        idDocument: '123456789012', // Example Aadhar number
-        roomId: 'room_001',
-        checkInDate: new Date().toISOString(),
-        checkOutDate: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(),
-        numberOfAdults: 2,
-        numberOfChildren: 1,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        idDocument: formData.idNumber, // Example Aadhar number
+        roomId: roomData.id,
+        // checkInDate: new Date().toISOString(),
+        checkInDate: bookingInfo.checkIn.toISOString(),
+        // checkOutDate: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(),
+        checkOutDate: bookingInfo.checkOut.toISOString(),
+        numberOfAdults: adults,
+        numberOfChildren: children,
         numberOfInfants: 0
       };
 
@@ -42,8 +49,8 @@ const PaymentButton = ({ amount }) => {
         order_id: orderId,
         handler: async function (response) {
           // Verify payment on server
-          // const verificationResponse = await fetch('http://localhost:4444/api/payments/verify-payment', {
-            const verificationResponse = await fetch('https://pk-1624.onrender.com/api/payments/verify-payment', {
+          const verificationResponse = await fetch('http://localhost:4444/api/payments/verify-payment', {
+            // const verificationResponse = await fetch('https://pk-1624.onrender.com/api/payments/verify-payment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -59,7 +66,7 @@ const PaymentButton = ({ amount }) => {
 
           if (result.status === 'success') {
             // alert('Payment successful!');
-            navigate('/bookingconfirm')
+            navigate(`/room/${roomData.id}/bookingconfirm`,  { state: {roomData, formData} })
             
           } else {
             alert('Payment verification failed!');

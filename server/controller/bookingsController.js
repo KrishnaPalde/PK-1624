@@ -17,7 +17,7 @@ const Room = require("../models/Room");
 // Method to check if dates are available for booking
 const checkIfAvailable = async (req, res) => {
   const { checkinDate, checkoutDate } = req.query;
-
+  
   if (!checkinDate || !checkoutDate) {
     return res
       .status(400)
@@ -87,15 +87,44 @@ const getRoomDetails = async (req, res) => {
 
 const getAllRooms = async (req, res) => {
   try {
-    const rooms = await Room.find({}).select('-reviews'); // Exclude reviews for the listing
+    const rooms = await Room.find({}).select('-reviews'); 
     res.status(200).json(rooms);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
+const getUnavailableDates = async (req, res) => {
+  try {
+    // Fetch all bookings for the next 30 days
+    const today = new Date();
+    const thirtyDaysFromNow = new Date();
+    thirtyDaysFromNow.setDate(today.getDate() + 30);
+
+    const bookings = await Booking.find({
+      checkInDate: { $gte: today, $lte: thirtyDaysFromNow },
+    }).select('checkInDate checkOutDate');
+
+    const unavailableDates = [];
+
+    bookings.forEach((booking) => {
+      let currentDate = new Date(booking.checkInDate);
+      while (currentDate <= new Date(booking.checkOutDate)) {
+        unavailableDates.push(new Date(currentDate).toISOString().split('T')[0]); // Store the date in YYYY-MM-DD format
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    });
+
+    res.status(200).json({ unavailableDates });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 module.exports = {
   checkIfAvailable,
   getRoomDetails,
   getAllRooms,
+  getUnavailableDates,
 };
