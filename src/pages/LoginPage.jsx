@@ -30,6 +30,17 @@ const StyledPaper = styled(Paper)({
   alignItems: 'center',
 });
 
+const StyledButton = styled(Button)({
+  marginTop: theme.spacing(2),
+  padding: theme.spacing(1, 4),
+  borderRadius: '20px',
+  backgroundColor: '#004d40',
+  color: '#fff',
+  '&:hover': {
+    backgroundColor: '#00796b',
+  },
+});
+
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,13 +51,17 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-  const response = await axios.post('http://localhost:4444/api/authenticateAdmin', { email, password }); 
+      const response = await axios.post('http://localhost:4444/api/authenticateAdmin', { email, password });
       login();
       setError(null);
       navigate('/admin-panel');
     } catch (error) {
       setError(error.response.data.error);
     }
+  };
+
+  const handleBackToMainSite = () => {
+    window.location.href = '/'; // Adjust this to the correct main website URL
   };
 
   return (
@@ -102,6 +117,9 @@ const LoginPage = () => {
               </Grid>
             </Grid>
           </Box>
+          <StyledButton onClick={handleBackToMainSite}>
+            Back to Main Website
+          </StyledButton>
         </StyledPaper>
       </Container>
     </ThemeProvider>

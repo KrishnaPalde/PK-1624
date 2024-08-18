@@ -4,6 +4,7 @@ import { AuthProvider } from './AuthContext';
 import LandingPage from './pages/LandingPage';
 import ContactPage from './pages/ContactPage';
 import BlogPage from './pages/BlogPage';
+import BlogPage2 from './pages/BlogPage2';
 import BookingPage from './pages/BookingPage';
 import LoginPage from './pages/LoginPage';
 import AdminPanel from './pages/AdminPanel';

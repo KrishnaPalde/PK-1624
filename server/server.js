@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const routes = require("./routes/routes");
+const blogRoutes = require("./routes/blogRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const { connectDb } = require("./utils/dbConnection");
 const cors = require("cors");
@@ -29,4 +30,5 @@ connectDb()
   });
 
 app.use("/api", routes);
+app.use("/api", blogRoutes);
 app.use("/api/payments", paymentRoutes);
