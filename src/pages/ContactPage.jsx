@@ -4,6 +4,7 @@ import ContactForm from '../components/ContactForm';
 import ContactInfo from '../components/ContactInfo';
 import Newsletter from '../components/NewsLetter';
 import Footer from '../components/Footer';
+import GoogleMap from '../components/ContactUsMapComponent';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; 
 
@@ -34,6 +35,7 @@ const MainContent = () => {
         </div>
       </div>
       </div>
+      <div><GoogleMap /></div>
       <ContactInfo />
       <Newsletter />
       <Footer />
