@@ -1,14 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FilterHeader from "./FilterHeader";
 
-function RatingFilter() {
+function RatingFilter({ selectedRating, setSelectedRating }) {
   const ratings = ["0+", "1+", "2+", "3+", "4+"];
-  const [selectedRating, setSelectedRating] = useState(null);
   const [isExpanded, setIsExpanded] = useState(true);
-
-  const handleRatingClick = (rating) => {
-    setSelectedRating(rating);
-  };
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -22,17 +17,20 @@ function RatingFilter() {
           isExpanded ? "max-h-40" : "max-h-0"
         }`}
       >
-        <div className="flex gap-4 pr-20 text-xs font-medium whitespace-nowrap text-neutral-900 max-md:pr-5">
+        <div className="flex flex-col space-y-3">
           {ratings.map((rating, index) => (
-            <button
+            <label
               key={index}
-              onClick={() => handleRatingClick(rating)}
-              className={`px-4 py-2 rounded border border-sky-400 border-solid ${
-                selectedRating === rating ? "bg-sky-400 text-white" : ""
-              }`}
+              className="flex items-center gap-3 transition-transform cursor-pointer text-neutral-900 hover:scale-105"
             >
-              {rating}
-            </button>
+              <input
+                type="radio"
+                className="form-radio h-4 w-4 text-sky-400 border-sky-400 transition duration-150 ease-in-out"
+                checked={selectedRating === index}
+                onChange={() => setSelectedRating(index)}
+              />
+              {rating} Stars
+            </label>
           ))}
         </div>
       </div>

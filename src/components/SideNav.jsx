@@ -20,12 +20,12 @@ const SideNav = () => {
   }, []);
 
   const menuItems = [
-    { icon: 'home', label: 'Dashboard' },
-    { icon: 'bar-chart', label: 'Analytics' },
-    { icon: 'users', label: 'Team' },
-    { icon: 'folder', label: 'Projects' },
-    { icon: 'calendar', label: 'Calendar' },
-    { icon: 'settings', label: 'Settings' },
+    { icon: 'home', label: 'Dashboard', location: 'blogs'},
+    { icon: 'bar-chart', label: 'Booking', location: 'blogs'},
+    { icon: 'users', label: 'Room', location: 'blogs'},
+    { icon: 'folder', label: 'Blogs', location: 'blogs'},
+    // { icon: 'calendar', label: 'Settings' },
+    { icon: 'settings', label: 'Settings', location: 'blogs'},
   ];
 
   const variants = {
@@ -62,15 +62,15 @@ const SideNav = () => {
               whileHover={{ x: 5 }}
               whileTap={{ scale: 0.95 }}
             >
-              <a
-                href="#"
+              <Link
+                to={item.location}
                 className="flex items-center p-2 space-x-3 transition-all duration-300 rounded-md hover:bg-gray-200"
               >
                 <span className="text-gray-600">
                   <i className={`fas fa-${item.icon}`}></i>
                 </span>
                 <span className="font-medium">{item.label}</span>
-              </a>
+              </Link>
             </motion.li>
           ))}
         </ul>

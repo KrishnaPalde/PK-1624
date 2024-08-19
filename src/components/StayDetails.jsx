@@ -98,7 +98,39 @@ function StayDetails() {
         <button className="flex-1 shrink gap-2.5 self-stretch px-2 py-2 mt-4 max-w-full text-xl text-center text-white bg-sky-400 rounded w-[150px]">
         <PaymentButton amount={2650}  roomData={roomData}/>
         </button> */}
+        {/* <p className="mt-4 text-base font-medium text-neutral-900">
+          Your booking is protected by{" "}
+          <span className="font-bold">Tantra Worlds</span>
+        </p>
+        <hr className="w-full mt-4 bg-neutral-900 bg-opacity-30" />
+        <div className="flex flex-col w-full mt-4 text-base text-neutral-900 max-md:max-w-full">
+          <h2 className="font-semibold">Price Details</h2>
+          {priceDetails.map((detail, index) => (
+            <PriceDetail
+              key={index}
+              label={detail.label}
+              amount={detail.amount}
+            />
+          ))}
+        </div>
+        <hr className="w-full mt-4 bg-neutral-900 bg-opacity-30" />
+        <div className="flex items-start justify-between w-full gap-10 mt-4 text-base text-neutral-900 max-md:max-w-full">
+          <div className="font-medium">Total </div>
+          <div className="font-semibold">₹2650</div>
+        </div>
         
+        
+        <button className="flex-1 shrink gap-2.5 self-stretch px-2 py-2 mt-4 max-w-full text-xl text-center text-white bg-sky-400 rounded w-[150px]">
+          <PaymentButton 
+            roomData={roomData} 
+            formData={formData}
+            amount={roomData.price}
+            adults={adults}
+            children={children}
+            onClick={handleSave}
+          />
+        
+        </button> */}
         
       </div>
     </section>
