@@ -1,46 +1,52 @@
-import React from "react";
+import PropTypes from "prop-types";
 
-const ContactInfo = () => {
+const ContactInfo = ({ className = "" }) => {
   return (
-    <section className="self-stretch p-20 mt-28 w-full max-md:px-5 max-md:mt-10 max-md:max-w-full max-sm:py-2.5 max-sm:mt-5">
-      <div className="flex gap-5 max-md:flex-col">
-        <div className="flex flex-col w-[33%] max-md:ml-0 max-md:w-full">
-          <div className="flex flex-col max-md:mt-10">
-            <h2 className="text-2xl leading-9 text-black">Contact Info</h2>
-            <p className="mt-6 text-4xl font-bold leading-10 text-black">
-              We are always happy to assist you
-            </p>
-          </div>
-        </div>
-        <div className="flex flex-col ml-5 w-[67%] max-md:ml-0 max-md:w-full">
-          <div className="grow max-md:mt-10 max-md:max-w-full">
-            <div className="flex gap-5 max-md:flex-col">
-              <div className="flex flex-col w-6/12 max-md:ml-0 max-md:w-full">
-                <div className="flex flex-col p-8 text-2xl font-semibold text-black grow max-md:px-5 max-md:mt-10">
-                  <h3>Email Address</h3>
-                  <div className="shrink-0 mt-6 bg-black h-[3px]" />
-                  <p className="mt-7">help@info.com</p>
-                  <p className="mt-6 text-xl leading-8">
-                    Assistance hours: <br /> Monday - Friday 6 am to 8 pm EST
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-col w-6/12 ml-5 max-md:ml-0 max-md:w-full">
-                <div className="flex flex-col p-8 text-2xl font-semibold text-black grow max-md:px-5 max-md:mt-10">
-                  <h3>Number</h3>
-                  <div className="shrink-0 mt-6 bg-black h-[3px]" />
-                  <p className="mt-7">(808) 998-34256</p>
-                  <p className="mt-6 text-xl leading-8">
-                    Assistance hours: <br /> Monday - Friday 6 am to 8 pm EST
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+    <div
+      className={`max-w-full flex flex-row flex-wrap items-end justify-start pt-[60px] pb-[84px] pl-[153px] pr-[93px] box-border gap-[75.7px] bg-[url('/public/contact-info@3x.png')] bg-cover bg-no-repeat bg-[top] leading-[normal] tracking-[normal] text-left text-base-5 text-black font-inter mq450:gap-[19px] mq450:pl-5 mq450:pr-5 mq450:box-border mq550:gap-[38px] mq550:pl-[76px] mq550:pr-[46px] mq550:box-border ${className}`}
+    >
+      <div className="h-[196px] w-[264.8px] flex flex-col items-start justify-start text-[18px]">
+        <div className="self-stretch flex flex-col items-start justify-start gap-[18px]">
+          <a className="[text-decoration:none] relative leading-[27px] text-[inherit] inline-block min-w-[105px]">
+            Contact Info
+          </a>
+          <h2 className="m-0 self-stretch relative text-[27px] leading-[130%] font-bold font-[inherit] mq450:text-[22px] mq450:leading-[28px]">
+            We are always happy to assist you
+          </h2>
         </div>
       </div>
-    </section>
+      <div className="w-[233.3px] flex flex-col items-start justify-start py-0 pl-0 pr-5 box-border gap-[19.2px]">
+        <a className="[text-decoration:none] relative font-semibold text-[inherit] inline-block min-w-[114px]">
+          Email Address
+        </a>
+        <div className="w-[20.3px] h-[2.3px] relative bg-black" />
+        <a className="[text-decoration:none] relative font-semibold text-[inherit] inline-block min-w-[122px] whitespace-nowrap">
+          help@info.com
+        </a>
+        <div className="relative text-mini leading-[24px]">
+          <p className="m-0">{`Assistance hours: `}</p>
+          <p className="m-0">Monday - Friday 6 am to 8 pm EST</p>
+        </div>
+      </div>
+      <div className="w-[184.5px] flex flex-col items-start justify-start gap-[19.2px]">
+        <a className="[text-decoration:none] relative font-semibold text-[inherit] inline-block min-w-[65px]">
+          Number
+        </a>
+        <div className="w-[20.3px] h-[2.3px] relative bg-black" />
+        <a className="[text-decoration:none] relative font-semibold text-[inherit]">
+          (808) 998-34256
+        </a>
+        <div className="relative text-mini leading-[24px]">
+          <p className="m-0">{`Assistance hours: `}</p>
+          <p className="m-0">Monday - Friday 6 am to 8 pm EST</p>
+        </div>
+      </div>
+    </div>
   );
+};
+
+ContactInfo.propTypes = {
+  className: PropTypes.string,
 };
 
 export default ContactInfo;

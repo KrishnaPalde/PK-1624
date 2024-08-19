@@ -5,8 +5,9 @@ import SortingHeader from "./SortingHeader";
 import HotelCard from "./HotelCard";
 import { motion, AnimatePresence } from "framer-motion";
 
-function HotelListing() {
+function HotelListing({ priceRange, selectedRating }) {  // Accept the filters as props
   const [hotelData, setHotelData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -17,9 +18,9 @@ function HotelListing() {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        // const response = await axios.get("https://pk-1624.onrender.com/api/rooms");
         const response = await axios.get("http://localhost:4444/api/rooms");
         setHotelData(response.data);
+        setFilteredData(response.data);  // Initialize filtered data with all hotels
         setLoading(false);
       } catch (error) {
         setError("Failed to fetch room data");
@@ -31,10 +32,26 @@ function HotelListing() {
     fetchRooms();
   }, []);
 
-  const totalPages = Math.ceil(hotelData.length / cardsPerPage);
+  useEffect(() => {
+    const applyFilters = () => {
+      const filtered = hotelData.filter((hotel) => {
+        return (
+          hotel.price >= priceRange[0] &&
+          hotel.price <= priceRange[1] &&
+          hotel.rating >= selectedRating
+        );
+      });
+      setFilteredData(filtered);
+      setCurrentPage(1); // Reset to the first page after filtering
+    };
+
+    applyFilters();
+  }, [hotelData, priceRange, selectedRating]);  // Re-apply filters whenever these dependencies change
+
+  const totalPages = Math.ceil(filteredData.length / cardsPerPage);
   const indexOfLastCard = currentPage * cardsPerPage;
   const indexOfFirstCard = indexOfLastCard - cardsPerPage;
-  const currentCards = hotelData.slice(indexOfFirstCard, indexOfLastCard);
+  const currentCards = filteredData.slice(indexOfFirstCard, indexOfLastCard);
 
   const nextPage = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
@@ -54,7 +71,6 @@ function HotelListing() {
 
   return (
     <main className="flex flex-col grow max-md:mt-6 max-md:max-w-full">
-      {/* <SortingHeader totalPlaces={hotelData.length} shownPlaces={cardsPerPage} /> */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentPage}
@@ -75,7 +91,6 @@ function HotelListing() {
               guestCount={2} 
               rating={room.rating}
               price={room.price}
-              // reviews={room.reviews.length}
             />
           ))}
         </motion.div>

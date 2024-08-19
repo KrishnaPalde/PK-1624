@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FilterHeader from "./FilterHeader";
 import {
   RangeSlider,
@@ -7,13 +7,8 @@ import {
   RangeSliderThumb,
 } from '@chakra-ui/react';
 
-function PriceFilter() {
-  const [priceRange, setPriceRange] = useState([50, 1200]);
+function PriceFilter({ priceRange, setPriceRange }) {
   const [isExpanded, setIsExpanded] = useState(true);
-
-  const handlePriceRangeChange = (newValues) => {
-    setPriceRange(newValues);
-  };
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -29,8 +24,8 @@ function PriceFilter() {
             min={50}
             max={1200}
             step={1}
-            defaultValue={[50, 1200]}
-            onChange={handlePriceRangeChange}
+            value={priceRange}
+            onChange={(newValues) => setPriceRange(newValues)}
           >
             <RangeSliderTrack className="h-0.5 bg-neutral-900">
               <RangeSliderFilledTrack className="bg-sky-400" />

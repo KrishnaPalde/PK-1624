@@ -4,7 +4,6 @@ import { AuthProvider } from './AuthContext';
 import LandingPage from './pages/LandingPage';
 import ContactPage from './pages/ContactPage';
 import BlogPage from './pages/BlogPage';
-import BlogPage2 from './pages/BlogPage2';
 import BookingPage from './pages/BookingPage';
 import LoginPage from './pages/LoginPage';
 import AdminPanel from './pages/AdminPanel';
@@ -30,14 +29,18 @@ function App() {
           <Route path="/room/:id/bookingconfirm" element={<><ScrollToTop/><BookingConfirm/></>}/>
           <Route path="/login" element={<LoginPage />} />
           <Route
-            path="/admin-panel"
+            path="/admin"
             element={
               <ProtectedRoute>
                 <AdminPanel />
               </ProtectedRoute>
             }
           />
-          <Route path='/admin-panel/booking'/>
+          <Route path='/admin/booking'/>
+          <Route path="/admin/dashboard" />
+          <Route path="/admin/blogs" element={<ProtectedRoute></ProtectedRoute>}/>
+          <Route path="/admin/room" />
+          <Route path="/admin/settings" />
         </Routes>
       </BrowserRouter>
       </BookingFormContext>

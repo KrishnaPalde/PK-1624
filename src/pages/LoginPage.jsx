@@ -54,7 +54,7 @@ const LoginPage = () => {
       const response = await axios.post('http://localhost:4444/api/authenticateAdmin', { email, password });
       login();
       setError(null);
-      navigate('/admin-panel');
+      navigate('/admin');
     } catch (error) {
       setError(error.response.data.error);
     }
