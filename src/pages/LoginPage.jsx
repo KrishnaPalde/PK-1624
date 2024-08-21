@@ -54,14 +54,14 @@ const LoginPage = () => {
       const response = await axios.post('http://localhost:4444/api/authenticateAdmin', { email, password });
       login();
       setError(null);
-      navigate('/admin');
+      navigate('/admin/dashboard');
     } catch (error) {
       setError(error.response.data.error);
     }
   };
 
   const handleBackToMainSite = () => {
-    window.location.href = '/'; // Adjust this to the correct main website URL
+    window.location.href = '/'; 
   };
 
   return (

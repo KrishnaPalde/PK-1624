@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Import the Link component
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const BookingTable = () => {
   const allBookings = [
-    { id: '#5644', name: 'Alexander', roomType: 'Room with View', totalAmount: '₹ 4670', amountPaid: '₹ 2000', status: 'Booked' },
+    { id: '#5644', name: 'Alexander Mcqueen', roomType: 'Room with View', totalAmount: '₹ 4670', amountPaid: '₹ 2000', status: 'Booked' },
     { id: '#6112', name: 'Pegasus', roomType: 'Deluxe Room', totalAmount: '₹ 6450', amountPaid: '₹ 6450', status: 'Check Out' },
     { id: '#6141', name: 'Martin', roomType: 'Penthouse', totalAmount: '₹ 686', amountPaid: '₹ 400', status: 'Check Out' },
     { id: '#6535', name: 'Cecil', roomType: 'Penthouse', totalAmount: '₹ 8413', amountPaid: '₹ 2500', status: 'Check In' },
@@ -72,8 +73,12 @@ const BookingTable = () => {
             {bookings.map((booking, index) => (
               <tr key={index} className="border-t border-indigo-50">
                 <td className="px-4 py-4 whitespace-nowrap">{booking.id}</td>
-                <td className="px-4 py-4">{booking.name}</td>
-                <td className="px-4 py-4">{booking.roomType}</td>
+                <td className="py-4 pl-4">{booking.name}</td>
+                <td className="px-4 py-4">
+                  <Link to={`/admin/booking/details/${booking.id}`} className="text-indigo-600 hover:underline">
+                    {booking.roomType}
+                  </Link>
+                </td>
                 <td className="px-4 py-4">{booking.totalAmount}</td>
                 <td className="px-4 py-4">{booking.amountPaid}</td>
                 <td className="px-4 py-4">

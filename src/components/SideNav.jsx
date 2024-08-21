@@ -20,10 +20,10 @@ const SideNav = () => {
   }, []);
 
   const menuItems = [
-    { icon: 'home', label: 'Dashboard', location: 'blogs'},
-    { icon: 'bar-chart', label: 'Booking', location: 'blogs'},
-    { icon: 'users', label: 'Room', location: 'blogs'},
-    { icon: 'folder', label: 'Blogs', location: 'blogs'},
+    { icon: 'home', label: 'Dashboard', location: '/admin/dashboard'},
+    { icon: 'booking', label: 'Booking', location: '/admin/booking'},
+    { icon: 'room', label: 'Room', location: '/admin/room'},
+    { icon: 'folder', label: 'Blogs', location: '/admin/blogs'},
     // { icon: 'calendar', label: 'Settings' },
     { icon: 'settings', label: 'Settings', location: 'blogs'},
   ];
@@ -40,10 +40,10 @@ const SideNav = () => {
         animate={(isLargeScreen || isOpen) ? 'open' : 'closed'}
         variants={variants}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="fixed top-0 left-0 z-50 w-64 h-full p-6 text-gray-800 bg-gray-100 shadow-lg"
+        className="fixed top-0 left-0 z-50 w-64 h-full p-6 text-gray-800 bg-white shadow-lg"
       >
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800">Company Name</h2>
+          <h2 className="text-2xl font-semibold text-gray-800">Tantra Worlds</h2>
           {!isLargeScreen && (
             <button
               onClick={() => setIsOpen(false)}

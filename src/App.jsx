@@ -6,13 +6,18 @@ import ContactPage from './pages/ContactPage';
 import BlogPage from './pages/BlogPage';
 import BookingPage from './pages/BookingPage';
 import LoginPage from './pages/LoginPage';
-import AdminPanel from './pages/AdminPanel';
+import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './ProtectedRoute';
 import RoomDetailsPage from './pages/RoomDetailsPage';
 import YourBookingDetails from './pages/YourBookingDetails';
 import BookingConfirm from './pages/BookingConfirm';
 import ScrollToTop from './components/ScrollToTop';
 import BookingFormContext from './contexts/BookingFormContext';
+import AdminBooking from './pages/AdminBooking';
+import YourBookingDetailsAdmin from './components/BookingDashboard/YourBookingDetailsAdmin';
+import AdminRoom from './pages/AdminRoom';
+import AdminBlog from './pages/AdminBlog';
+import AdminCreatePost from './pages/AdminCreatePost';
 
 function App() {
   return (
@@ -29,17 +34,18 @@ function App() {
           <Route path="/room/:id/bookingconfirm" element={<><ScrollToTop/><BookingConfirm/></>}/>
           <Route path="/login" element={<LoginPage />} />
           <Route
-            path="/admin"
+            path="/admin/dashboard"
             element={
               <ProtectedRoute>
-                <AdminPanel />
+                <AdminDashboard />
               </ProtectedRoute>
             }
           />
-          <Route path='/admin/booking'/>
-          <Route path="/admin/dashboard" />
-          <Route path="/admin/blogs" element={<ProtectedRoute></ProtectedRoute>}/>
-          <Route path="/admin/room" />
+          <Route path='/admin/booking' element={<ProtectedRoute><AdminBooking/></ProtectedRoute>}/>
+          <Route path="/admin/booking/details" element={<ProtectedRoute><YourBookingDetailsAdmin/></ProtectedRoute>}/>
+          <Route path="/admin/blogs" element={<ProtectedRoute><AdminBlog/></ProtectedRoute>}/>
+          <Route path="/admin/createblog" element={<ProtectedRoute><AdminCreatePost/></ProtectedRoute>}/>
+          <Route path="/admin/room" element={<ProtectedRoute><AdminRoom/></ProtectedRoute>}/>
           <Route path="/admin/settings" />
         </Routes>
       </BrowserRouter>
