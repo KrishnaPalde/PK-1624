@@ -8,7 +8,8 @@ function NewsLetter() {
   const handleSubscribe = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:4444/api/subscribe', { email });
+      // const response = await axios.post('http://localhost:4444/api/subscribe', { email });
+      const response = await axios.post('https://pk-1624.onrender.com/api/subscribe', { email });      
       // login();
       // setError(null);
       // navigate('/admin');
