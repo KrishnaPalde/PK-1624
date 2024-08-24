@@ -288,3 +288,164 @@ const BlogPage = () => {
 };
 
 export default BlogPage;
+
+// import React, { useState, useEffect, Suspense, lazy } from 'react';
+// import axios from 'axios';
+// import Header from '../components/Header';
+// import Footer from '../components/Footer';
+
+// const Newsletter = lazy(() => import('../components/NewsLetter'));
+
+// const BlogPage = () => {
+//   const [featuredPost, setFeaturedPost] = useState(null);
+//   const [blogPosts, setBlogPosts] = useState([]);
+
+//   useEffect(() => {
+//     // Fetch all published blogs from the API
+//     const fetchBlogs = async () => {
+//       try {
+//         const response = await axios.get('/blogs');
+//         console.log('API Response:', response.data); // Log the response data to inspect
+
+//         // Assuming the API response is an object with a `data` property containing the array
+//         const blogs = response.data; 
+
+//         // Check if `blogs` is an array
+//         if (!Array.isArray(blogs)) {
+//           console.error('API response is not an array:', blogs);
+//           return;
+//         }
+
+//         // Sort blogs to find featured and recent ones
+//         const sortedBlogs = blogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+//         const featured = sortedBlogs.find(blog => blog.isFeatured);
+//         const nonFeatured = sortedBlogs.filter(blog => !blog.isFeatured);
+
+//         setFeaturedPost(featured || null);
+//         setBlogPosts(nonFeatured);
+//       } catch (error) {
+//         console.error('Error fetching blogs:', error);
+//       }
+//     };
+
+//     fetchBlogs();
+//   }, []);
+
+//   return (
+//     <div className="flex flex-col pt-12 bg-white">
+//       <div className="flex flex-col self-center px-10 w-full max-w-[1323px] max-md:max-w-full">
+//         <Header />
+//         <main>
+//           <h1 className="mt-12 text-4xl font-semibold text-zinc-900 max-md:mt-10 max-md:max-w-full">
+//             Recent blog posts
+//           </h1>
+//           <div className="mt-4 max-md:max-w-full">
+//             <div className="flex gap-5 max-md:flex-col">
+//               {featuredPost && (
+//                 <div className="flex flex-col w-[61%] max-md:ml-0 max-md:w-full">
+//                   <img
+//                     loading="lazy"
+//                     src={featuredPost.image}
+//                     alt={featuredPost.title}
+//                     className="grow w-full aspect-[1.85] rounded-[40px] max-md:mt-10 max-md:max-w-full"
+//                   />
+//                 </div>
+//               )}
+//               <div className="flex flex-col ml-5 w-[39%] max-md:ml-0 max-md:w-full">
+//                 {featuredPost && (
+//                   <div className="flex flex-col justify-center p-4 mt-20 grow max-md:mt-10 max-md:max-w-full">
+//                     <div className="flex flex-col w-full p-4 bg-white border border-gray-200 border-solid shadow-lg rounded-2xl">
+//                       <div className="flex justify-between gap-5 text-base leading-6 text-zinc-500">
+//                         <img
+//                           loading="lazy"
+//                           src="https://cdn.builder.io/api/v1/image/assets/TEMP/2c49bd8541ae2e89ade10a1e674ba714e13aac0cb12abce8eba1d2ca760edb55?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
+//                           alt=""
+//                           className="shrink-0 aspect-square w-[68px]"
+//                         />
+//                         <div className="my-auto">What's on your mind?</div>
+//                       </div>
+//                       <div className="flex flex-col justify-center mt-8 border-0 border-gray-200 border-solid">
+//                         <div className="h-px bg-gray-200 shrink-0" />
+//                       </div>
+//                       <div className="flex justify-between gap-5 mt-8 text-sm font-medium leading-6 whitespace-nowrap text-zinc-600">
+//                         <button className="flex gap-2">
+//                           <img
+//                             loading="lazy"
+//                             src="https://cdn.builder.io/api/v1/image/assets/TEMP/1c677e871b3c1b3ffba3bc846b06008d9547a19c69e7dd5fd5d7628995030b74?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
+//                             alt=""
+//                             className="shrink-0 aspect-square w-[20px]"
+//                           />
+//                           Subscribe
+//                         </button>
+//                         <button className="flex gap-2">
+//                           <img
+//                             loading="lazy"
+//                             src="https://cdn.builder.io/api/v1/image/assets/TEMP/7fc45d58680d803bdc6d565eb4203d30c91a58a37a9343f49cbe9de2fa9f42b0?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
+//                             alt=""
+//                             className="shrink-0 aspect-square w-[20px]"
+//                           />
+//                           Contact us
+//                         </button>
+//                       </div>
+//                     </div>
+//                     <h2 className="text-2xl font-semibold mt-8 max-md:text-lg">
+//                       {featuredPost.title}
+//                     </h2>
+//                     <div className="flex items-center gap-5 mt-2 text-sm text-zinc-500 max-md:gap-3 max-md:mt-1">
+//                       <span>{featuredPost.date}</span>
+//                       <span>&#8226;</span>
+//                       <span>{featuredPost.author}</span>
+//                     </div>
+//                     <p className="text-lg mt-4 text-zinc-600">{featuredPost.excerpt}</p>
+//                   </div>
+//                 )}
+//               </div>
+//             </div>
+//             <div className="flex flex-col gap-10 mt-10">
+//               {blogPosts.length > 0 ? (
+//                 blogPosts.map((post, index) => (
+//                   <div
+//                     key={index}
+//                     className="flex flex-col bg-white p-4 border border-gray-200 border-solid shadow-lg rounded-2xl"
+//                   >
+//                     <img
+//                       loading="lazy"
+//                       src={post.image}
+//                       alt={post.title}
+//                       className="w-full aspect-[1.85] rounded-2xl"
+//                     />
+//                     <h3 className="text-xl font-semibold mt-4">{post.title}</h3>
+//                     <div className="flex items-center gap-5 mt-2 text-sm text-zinc-500">
+//                       <span>{post.date}</span>
+//                       <span>&#8226;</span>
+//                       <span>{post.author}</span>
+//                     </div>
+//                     <p className="text-base mt-4 text-zinc-600">{post.excerpt}</p>
+//                     <div className="flex gap-2 mt-4">
+//                       {post.tags && post.tags.map((tag, idx) => (
+//                         <span
+//                           key={idx}
+//                           className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${tag.className}`}
+//                         >
+//                           {tag.name}
+//                         </span>
+//                       ))}
+//                     </div>
+//                   </div>
+//                 ))
+//               ) : (
+//                 <p>No blog posts available.</p>
+//               )}
+//             </div>
+//           </div>
+//         </main>
+//         <Suspense fallback={<div>Loading...</div>}>
+//           <Newsletter />
+//         </Suspense>
+//         <Footer />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default BlogPage;

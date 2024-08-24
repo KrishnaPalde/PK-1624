@@ -25,7 +25,7 @@ const SideNav = () => {
     { icon: 'room', label: 'Room', location: '/admin/room'},
     { icon: 'folder', label: 'Blogs', location: '/admin/blogs'},
     // { icon: 'calendar', label: 'Settings' },
-    { icon: 'settings', label: 'Settings', location: 'blogs'},
+    // { icon: 'settings', label: 'Settings', location: 'blogs'},
   ];
 
   const variants = {
