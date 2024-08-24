@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import AddRoomForm from "./AddRoomForm";
 
-function RoomTable({ rooms }) {
+function RoomTable({ rooms, addRoom }) {
   const [filteredRooms, setFilteredRooms] = useState(rooms);
   const [currentPage, setCurrentPage] = useState(1);
+  const [showAddForm, setShowAddForm] = useState(false);
   const itemsPerPage = 10;
 
   const filterRooms = (status) => {
@@ -25,6 +27,12 @@ function RoomTable({ rooms }) {
     currentPage * itemsPerPage
   );
 
+  const handleAddRoom = (newRoom) => {
+    addRoom(newRoom);
+    setShowAddForm(false);
+  };
+
+  
   return (
     <div className="flex flex-col items-start">
       <div className="flex flex-col w-full max-w-full bg-white rounded-lg shadow-md">
@@ -53,7 +61,7 @@ function RoomTable({ rooms }) {
               Booked ({rooms.filter(room => room.status === 'Booked').length})
             </div>
             <div className=" md:ml-0">
-              <button className="px-6 py-2.5 text-white bg-blue-500 rounded-lg">
+              <button className="px-6 py-2.5 text-white bg-blue-500 rounded-lg" onClick={() => setShowAddForm(true)}>
                 Add room
               </button>
             </div>
@@ -190,6 +198,13 @@ function RoomTable({ rooms }) {
             </button>
           </div>
         </div>
+        {showAddForm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="w-full max-w-md p-8 bg-white rounded-lg">
+              <AddRoomForm onSubmit={handleAddRoom} onCancel={() => setShowAddForm(false)} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -207,5 +222,35 @@ const roomData = [
 ];
 
 export default function App() {
-  return <RoomTable rooms={roomData} />;
+  const [rooms, setRooms] = useState(roomData);
+
+  const addRoom = async (newRoom) => {
+    try {
+      const formData = new FormData();
+      Object.keys(newRoom).forEach(key => {
+        if (key === 'images') {
+          newRoom[key].forEach(image => formData.append('images', image));
+        } else {
+          formData.append(key, newRoom[key]);
+        }
+      });
+
+      const response = await fetch('http://localhost:4444/api/admin/addroom', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add room');
+      }
+
+      const savedRoom = await response.json();
+      setRooms(prevRooms => [...prevRooms, savedRoom]);
+    } catch (error) {
+      console.error('Error adding room:', error);
+      
+    }
+  };
+
+  return <RoomTable rooms={rooms} addRoom={addRoom} />;
 }

@@ -304,6 +304,27 @@ const getRoomDetailsForm = async (req, res) => {
   }
 };
 
+const addRoom = async (req, res) => {
+  try {
+    const { name, title, description, price } = req.body;
+    const images = req.files ? req.files.map(file => file.path) : [];
+
+    const newRoom = new Room({
+      id: Date.now().toString(), 
+      name,
+      title,
+      description,
+      price,
+      images,
+    });
+
+    const savedRoom = await newRoom.save();
+    res.status(201).json(savedRoom);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 
 
 
@@ -317,4 +338,5 @@ module.exports = {
   getBookings,
   getBookingById,
   getRoomDetailsForm,
+  addRoom,
 };

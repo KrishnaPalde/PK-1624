@@ -64,7 +64,7 @@ const AdminRoom = () => {
               ))}
             </div>
           </section>
-          <RoomTable />
+          <RoomTable/>
         </main>
       </div>
     </div>

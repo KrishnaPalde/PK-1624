@@ -10,8 +10,11 @@ const {
   getBookings,
   getBookingById,
   getRoomDetailsForm,
+  addRoom,
 } = require("../controller/bookingsController");
 const Booking = require("../models/Bookings");
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
 const router = express.Router();
 
@@ -25,5 +28,6 @@ router.get("/admin/dashboard_stats", getDashboardStats);
 router.get("/admin/bookings",getBookings);
 router.get("/admin/bookings/:bookingId",getBookingById);
 router.get("/admin/bookings/:bookingId/room",getRoomDetailsForm);
+router.post("/admin/addroom",upload.array('images', 5), addRoom);
 
 module.exports = router;
