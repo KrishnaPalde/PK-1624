@@ -42,7 +42,7 @@ function App() {
             }
           />
           <Route path='/admin/booking' element={<ProtectedRoute><AdminBooking/></ProtectedRoute>}/>
-          <Route path="/admin/booking/details" element={<ProtectedRoute><YourBookingDetailsAdmin/></ProtectedRoute>}/>
+          <Route path="/admin/booking/details/:bookingId" element={<ProtectedRoute><YourBookingDetailsAdmin/></ProtectedRoute>}/>
           <Route path="/admin/blogs" element={<ProtectedRoute><AdminBlog/></ProtectedRoute>}/>
           <Route path="/admin/createblog" element={<ProtectedRoute><AdminCreatePost/></ProtectedRoute>}/>
           <Route path="/admin/room" element={<ProtectedRoute><AdminRoom/></ProtectedRoute>}/>

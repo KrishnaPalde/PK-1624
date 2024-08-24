@@ -13,7 +13,6 @@ function BookingForm() {
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
-  // Initialize state from context
   const [checkIn, setCheckIn] = useState( bookingInfo.checkIn ||today);
   const [checkOut, setCheckOut] = useState(bookingInfo.checkOut || tomorrow);
   const [adults, setAdults] = useState(bookingInfo.adults || 2);
@@ -21,8 +20,7 @@ function BookingForm() {
   const [isGuestDropdownOpen, setIsGuestDropdownOpen] = useState(false);
 
   const [unavailableDates, setUnavailableDates] = useState([]);
-
-  // Update state when context values change
+ 
   useEffect(() => {
     setCheckIn(bookingInfo.checkIn || today);
     setCheckOut(bookingInfo.checkOut || tomorrow);
@@ -30,7 +28,6 @@ function BookingForm() {
     setChildren(bookingInfo.children || 2);
   }, [bookingInfo]);
 
-  // Fetch unavailable dates
   useEffect(() => {
     const fetchUnavailableDates = async () => {
       try {
@@ -57,7 +54,6 @@ function BookingForm() {
 
   const handleCheckOutChange = (date) => {
     if (date && date <= checkIn) {
-      // Prevent setting a check-out date before or on the same day as check-in
       alert('Check-out date must be after check-in date');
       return;
     }
@@ -93,7 +89,6 @@ function BookingForm() {
       });
 
       if (response.data.available) {
-        // Update the context with the current form values
         setBookingInfo({ checkIn, checkOut, adults, children });
         navigate("/bookings");
       } else {

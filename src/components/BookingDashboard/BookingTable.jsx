@@ -1,47 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Import the Link component
+import { useNavigate } from 'react-router-dom'; 
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const BookingTable = () => {
-  const allBookings = [
-    { id: '#5644', name: 'Alexander Mcqueen', roomType: 'Room with View', totalAmount: '₹ 4670', amountPaid: '₹ 2000', status: 'Booked' },
-    { id: '#6112', name: 'Pegasus', roomType: 'Deluxe Room', totalAmount: '₹ 6450', amountPaid: '₹ 6450', status: 'Check Out' },
-    { id: '#6141', name: 'Martin', roomType: 'Penthouse', totalAmount: '₹ 686', amountPaid: '₹ 400', status: 'Check Out' },
-    { id: '#6535', name: 'Cecil', roomType: 'Penthouse', totalAmount: '₹ 8413', amountPaid: '₹ 2500', status: 'Check In' },
-    { id: '#6541', name: 'Luke', roomType: 'Room with View', totalAmount: '₹ 8413', amountPaid: '₹ 2000', status: 'Booked' },
-    { id: '#9846', name: 'Yadrin', roomType: 'Deluxe Room', totalAmount: '₹ 6840', amountPaid: '₹ 2000', status: 'Booked' },
-    { id: '#4921', name: 'Kiand', roomType: 'Deluxe Room', totalAmount: '₹ 6840', amountPaid: '₹ 5124', status: 'Check In' },
-    { id: '#4922', name: 'Kiand', roomType: 'Penthouse', totalAmount: '₹ 9840', amountPaid: '₹ 5130', status: 'Check In' },
-    { id: '#9841', name: 'Turen', roomType: 'Room with View', totalAmount: '₹ 5425', amountPaid: '₹ 5425', status: 'Check out' },
-  ];
-
-  const headers = [
-    { title: 'Booking ID', width: 'w-[117px]' },
-    { title: 'Name', width: 'flex-1' },
-    { title: 'Room Type', width: 'w-[212px]' },
-    { title: 'Total amount', width: 'flex-1' },
-    { title: 'Amount paid', width: 'flex-1' },
-    { title: 'Status', width: 'flex-1' },
-    { title: '', width: 'w-[70px]' },
-  ];
-
   const [currentPage, setCurrentPage] = useState(1);
   const [bookings, setBookings] = useState([]);
   const itemsPerPage = 10;
-  const totalItems = allBookings.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const navigate = useNavigate(); 
 
   useEffect(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    setBookings(allBookings.slice(startIndex, endIndex));
+    const fetchBookings = async () => {
+      try {
+        // const response = await fetch('http://localhost:4444/api/admin/bookings');
+        const response = await fetch('https://pk-1624.onrender.com/api/admin/bookings');
+        const data = await response.json();
+        console.log('Received bookings data:', data);
+        setBookings(data);
+      } catch (error) {
+        console.error('Error fetching bookings:', error);
+      }
+    };
+  
+    fetchBookings();
   }, [currentPage]);
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-    }
-  };
+  const totalItems = bookings.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const getStatusStyle = (status) => {
     switch (status.toLowerCase()) {
@@ -51,10 +35,38 @@ const BookingTable = () => {
         return 'text-red-400 bg-rose-50';
       case 'check in':
         return 'text-emerald-400 bg-emerald-50';
+      case 'completed':
+        return 'text-gray-500 bg-gray-50';
       default:
         return 'text-blue-500 bg-indigo-50';
     }
   };
+
+  const determineStatus = (checkInDate, checkOutDate) => {
+    const today = new Date();
+    if (today.toDateString() === checkInDate.toDateString()) {
+      return 'Check In';
+    } else if (today.toDateString() === checkOutDate.toDateString()) {
+      return 'Check Out';
+    } else if (today > checkOutDate) {
+      return 'Completed';
+    } else {
+      return 'Booked';
+    }
+  };
+
+  const headers = [
+    { title: 'Booking ID', width: 'w-[117px]' },
+    { title: 'Name', width: 'flex-1' },
+    { title: 'Room Type', width: 'w-[212px]' },
+    { title: 'Mobile Number', width: 'flex-1' },
+    { title: 'Total Payment', width: 'flex-1' },
+    { title: 'Status', width: 'flex-1' },
+  ];
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const displayedBookings = bookings.slice(startIndex, endIndex);
 
   return (
     <section className="w-full overflow-hidden bg-white shadow-md rounded-xl">
@@ -70,30 +82,21 @@ const BookingTable = () => {
             </tr>
           </thead>
           <tbody>
-            {bookings.map((booking, index) => (
-              <tr key={index} className="border-t border-indigo-50">
-                <td className="px-4 py-4 whitespace-nowrap">{booking.id}</td>
-                <td className="py-4 pl-4">{booking.name}</td>
+            {displayedBookings.map((booking, index) => (
+              <tr 
+                key={index} 
+                className="border-t cursor-pointer border-indigo-50 hover:bg-blue-100" 
+                onClick={() => navigate(`/admin/booking/details/${booking.bookingId}`)} 
+              >
+                <td className="px-4 py-4 whitespace-nowrap">#{booking.bookingId}</td>
+                <td className="py-4 pl-4">{`${booking.firstName} ${booking.lastName}`}</td>
+                <td className="px-4 py-4">{booking.roomName || 'Unknown Room'}</td>
+                <td className="px-4 py-4">{booking.phoneNumber}</td>
+                <td className="px-4 py-4">{`₹${booking.totalPayment}`}</td>
                 <td className="px-4 py-4">
-                  <Link to={`/admin/booking/details/${booking.id}`} className="text-indigo-600 hover:underline">
-                    {booking.roomType}
-                  </Link>
-                </td>
-                <td className="px-4 py-4">{booking.totalAmount}</td>
-                <td className="px-4 py-4">{booking.amountPaid}</td>
-                <td className="px-4 py-4">
-                  <span className={`px-2 py-1 rounded-full text-xs ${getStatusStyle(booking.status)}`}>
-                    {booking.status}
+                  <span className={`px-2 py-1 rounded-full text-xs ${getStatusStyle(determineStatus(new Date(booking.checkInDate), new Date(booking.checkOutDate)))}`}>
+                    {determineStatus(new Date(booking.checkInDate), new Date(booking.checkOutDate))}
                   </span>
-                </td>
-                <td className="px-4 py-4">
-                  <button className="p-2">
-                    <img
-                      src="https://cdn.builder.io/api/v1/image/assets/TEMP/1823ef587bd602013eadc29d35e28d27ffb57a7772e6b58df111657d87d3779c?placeholderIfAbsent=true&apiKey=e6b8c17325a24fb29c274ce450ea26a7"
-                      alt=""
-                      className="w-6 h-6"
-                    />
-                  </button>
                 </td>
               </tr>
             ))}
@@ -101,34 +104,18 @@ const BookingTable = () => {
         </table>
       </div>
       <nav className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
-        <div className="flex justify-between flex-1 sm:hidden">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
         <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
           <div>
             <p className="text-sm text-gray-700">
-              Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
-              <span className="font-medium">{Math.min(currentPage * itemsPerPage, totalItems)}</span> of{' '}
+              Showing <span className="font-medium">{startIndex + 1}</span> to{' '}
+              <span className="font-medium">{Math.min(endIndex, totalItems)}</span> of{' '}
               <span className="font-medium">{totalItems}</span> results
             </p>
           </div>
           <div>
             <nav className="inline-flex rounded-md shadow-sm" aria-label="Pagination">
               <button
-                onClick={() => handlePageChange(currentPage - 1)}
+                onClick={() => setCurrentPage(currentPage - 1)}
                 disabled={currentPage === 1}
                 className="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 disabled:opacity-50"
               >
@@ -138,7 +125,7 @@ const BookingTable = () => {
               {[...Array(totalPages).keys()].map((page) => (
                 <button
                   key={page + 1}
-                  onClick={() => handlePageChange(page + 1)}
+                  onClick={() => setCurrentPage(page + 1)}
                   className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium
                     ${page + 1 === currentPage
                       ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
@@ -149,7 +136,7 @@ const BookingTable = () => {
                 </button>
               ))}
               <button
-                onClick={() => handlePageChange(currentPage + 1)}
+                onClick={() => setCurrentPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
                 className="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 disabled:opacity-50"
               >

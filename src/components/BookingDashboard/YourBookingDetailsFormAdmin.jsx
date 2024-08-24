@@ -1,13 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 
-const YourBookingDetailsFormAdmin = () => {
+const YourBookingDetailsFormAdmin = ({userDetails}) => {
   const [formData, setFormData] = useState({
-    firstName: 'Wade',
-    lastName: 'Warren',
-    email: 'wadewarren32@gmail.com',
-    phoneNumber: '+1 (555) 000-0000',
-    address: 'New Avenue Street Corner near St Aloyius High School South Block Delhi 224151',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNumber: '',
+    address: '',
   });
+
+  useEffect(() => {
+    if (userDetails) {
+      setFormData({
+        firstName: userDetails.firstName || '',
+        lastName: userDetails.lastName || '',
+        email: userDetails.email || '',
+        phoneNumber: userDetails.phoneNumber || '',
+        address: userDetails.address || 'New Avenue Street Corner near St Aloyius High School South Block Delhi 224151',
+      });
+    }
+  }, [userDetails]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -86,12 +98,12 @@ const YourBookingDetailsFormAdmin = () => {
                   name="phoneNumber"
                   value={formData.phoneNumber}
                   onChange={handleInputChange}
-                  className="flex-1 shrink gap-2 self-start py-3 pr-4 text-gray-500 basis-3 min-w-[240px]  px-4 border border-gray-300 border-solid"
+                  className="flex-1 shrink gap-2 self-start py-3 pr-4 text-gray-900 basis-3 min-w-[240px]  px-4 border border-gray-300 border-solid"
                 />
               </div>
             </div>
           </div>
-          <div className="flex flex-col mt-6 w-full text-sm font-medium min-h-[154px]">
+          {/* <div className="flex flex-col mt-6 w-full text-sm font-medium min-h-[154px]">
             <div className="flex flex-col flex-1 w-full">
               <label className="leading-none text-slate-700">Address</label>
               <textarea
@@ -101,9 +113,9 @@ const YourBookingDetailsFormAdmin = () => {
                 className="overflow-hidden flex-1 shrink gap-2 self-stretch px-3.5 py-2.5 mt-1.5 leading-5 text-gray-900 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
               />
             </div>
-          </div>
+          </div> */}
         </div>
-        <div className="flex items-start self-start gap-10 mt-4 text-xl text-center">
+        {/* <div className="flex items-start self-start gap-10 mt-4 text-xl text-center">
           <button
             onClick={handleEdit}
             className="flex-1 shrink gap-2.5 self-stretch px-2 py-1 text-sky-400 rounded border-2 border-sky-400 border-solid min-h-[48px] w-[120px]"
@@ -116,7 +128,7 @@ const YourBookingDetailsFormAdmin = () => {
           >
             Save
           </button>
-        </div>
+        </div> */}
       </div>
     </article>
   );

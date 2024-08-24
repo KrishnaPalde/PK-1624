@@ -180,6 +180,133 @@ const getDashboardStats = async (req, res) => {
   }
 };
 
+const getBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find({});
+
+    const bookingsWithRoomNames = await Promise.all(
+      bookings.map(async (booking) => {
+        const room = await Room.findOne({ id: booking.roomId });
+        const roomName = room ? room.name : "Unknown Room";
+
+        
+        const bookingId = booking.bookingId.slice(-4); 
+
+        const bookingData = {
+          bookingId, 
+          firstName: booking.firstName,
+          lastName: booking.lastName,
+          phoneNumber: booking.phoneNumber,
+          totalPayment: booking.totalPayment,
+          checkInDate: booking.checkInDate,
+          checkOutDate: booking.checkOutDate,
+          roomName,  
+          roomId: booking.roomId  
+        };
+
+        return bookingData;
+      })
+    );
+
+    res.json(bookingsWithRoomNames);
+  } catch (error) {
+    console.error('Error fetching bookings:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+const getBookingById = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    console.log('Received bookingId:', bookingId);
+
+    // Find all bookings where the bookingId ends with the given 4 characters
+    const bookings = await Booking.find({
+      bookingId: { $regex: bookingId + '$' }
+    });
+
+    console.log('Matching bookings found:', bookings.length);
+
+    if (bookings.length === 0) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    if (bookings.length > 1) {
+      console.warn('Multiple bookings found with the same last 4 characters');
+    }
+
+    // Use the first matching booking
+    const booking = bookings[0];
+
+    const room = await Room.findOne({ id: booking.roomId });
+    const roomName = room ? room.name : "Unknown Room";
+
+    const bookingData = {
+      bookingId: booking.bookingId,
+      firstName: booking.firstName,
+      lastName: booking.lastName,
+      email: booking.email,
+      phoneNumber: booking.phoneNumber,
+      idDocument: booking.idDocument,
+      checkInDate: booking.checkInDate,
+      checkOutDate: booking.checkOutDate,
+      paymentStatus: booking.paymentStatus,
+      totalPayment: booking.totalPayment,
+      numberOfAdults: booking.numberOfAdults,
+      numberOfChildren: booking.numberOfChildren,
+      numberOfInfants: booking.numberOfInfants,
+      roomName,
+      roomId: booking.roomId
+    };
+
+    res.json(bookingData);
+  } catch (error) {
+    console.error('Error fetching booking:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+const getRoomDetailsForm = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    console.log('Received bookingId:', bookingId);
+
+    const bookings = await Booking.find({
+      bookingId: { $regex: bookingId + '$' }
+    });
+
+    if (bookings.length === 0) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    const booking = bookings[0];
+
+    const room = await Room.findOne({ id: booking.roomId });
+
+    if (!room) {
+      return res.status(404).json({ message: 'Room not found' });
+    }
+
+    const roomData = {
+      id: room.id,
+      name: room.name,
+      title: room.title,
+      description: room.description,
+      rating: room.rating,
+      price: room.price,
+      images: room.images
+    };
+
+    res.json(roomData);
+  } catch (error) {
+    console.error('Error fetching room details for booking:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+
+
+
 module.exports = {
   checkIfAvailable,
   getRoomDetails,
@@ -187,4 +314,7 @@ module.exports = {
   getUnavailableDates,
   fetchBookingsAdmin,
   getDashboardStats,
+  getBookings,
+  getBookingById,
+  getRoomDetailsForm,
 };
