@@ -20,7 +20,7 @@ router.get("/check_availability_dates", checkIfAvailable);
 router.get("/unavailable_dates", getUnavailableDates);
 router.get("/rooms/:roomId", getRoomDetails);
 router.get("/rooms", getAllRooms);
-// router.get("/admin/bookings", fetchBookingsAdmin);
+// router.get("/admin/bookings", fetchBookings6Admin);
 router.get("/admin/dashboard_stats", getDashboardStats);
 router.get("/admin/bookings",getBookings);
 router.get("/admin/bookings/:bookingId",getBookingById);

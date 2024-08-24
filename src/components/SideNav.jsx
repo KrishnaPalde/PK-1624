@@ -40,7 +40,7 @@ const SideNav = () => {
         animate={(isLargeScreen || isOpen) ? 'open' : 'closed'}
         variants={variants}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="fixed top-0 left-0 z-50 w-64 h-full p-6 text-gray-800 bg-white shadow-lg"
+        className="fixed top-0 left-0 z-50 h-full p-6 text-gray-800 bg-white shadow-lg xl:w-64"
       >
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-semibold text-gray-800">Tantra Worlds</h2>

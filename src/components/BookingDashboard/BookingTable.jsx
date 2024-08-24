@@ -11,8 +11,8 @@ const BookingTable = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        // const response = await fetch('http://localhost:4444/api/admin/bookings');
-        const response = await fetch('https://pk-1624.onrender.com/api/admin/bookings');
+        const response = await fetch('http://localhost:4444/api/admin/bookings');
+        // const response = await fetch('https://pk-1624.onrender.com/api/admin/bookings');
         const data = await response.json();
         console.log('Received bookings data:', data);
         setBookings(data);

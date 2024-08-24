@@ -18,8 +18,8 @@ function HotelListing({ priceRange, selectedRating }) {  // Accept the filters a
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await axios.get("https://pk-1624.onrender.com/api/rooms");
-        // const response = await axios.get("http://localhost:4444/api/rooms");
+        // const response = await axios.get("https://pk-1624.onrender.com/api/rooms");
+        const response = await axios.get("http://localhost:4444/api/rooms");
         setHotelData(response.data);
         setFilteredData(response.data);  // Initialize filtered data with all hotels
         setLoading(false);
