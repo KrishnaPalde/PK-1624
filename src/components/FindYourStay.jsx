@@ -2,6 +2,7 @@ import React from "react";
 import RoomCard from "./RoomCard";
 import AOS from 'aos';
 import 'aos/dist/aos.css'; 
+import {Link} from "react-router-dom";
 
 const roomData = [
   { guests: 3, title: "Canvas Master Bedroom-1", image: "https://cdn.builder.io/api/v1/image/assets/TEMP/6a34769e91a68863091be7617f052d5821ca33a7ce168b444c000d98699ea839?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc" },
@@ -24,19 +25,26 @@ function FindYourStay() {
       <div className="w-full mt-12 bg-white max-md:mt-10 max-md:max-w-full md:pr-0">
         <div className="flex gap-5 max-md:flex-col">
           <div className="flex flex-col w-[29%] max-md:ml-0 max-md:w-full" data-aos="fade-right">
+            <Link to="/room/room001">
             {roomData.slice(0, 2).map((room, index) => (
               <RoomCard key={index} {...room} />
             ))}
+            </Link>
           </div>
           <div className="flex flex-col ml-5 w-[71%] max-md:ml-0 max-md:w-full">
             <div className="grow max-md:mt-10 max-md:max-w-full">
               <div className="flex gap-5 max-md:flex-col">
                 <div className="flex flex-col w-[57%] max-md:ml-0 max-md:w-full" data-aos="fade-down">
+                <Link to="/room/room001">
                   <RoomCard {...roomData[2]} isLarge={true} />
+                  </Link>
                 </div>
                 <div className="flex flex-col ml-5 w-[43%] max-md:ml-0 max-md:w-full" data-aos="fade-left">
                   {roomData.slice(3).map((room, index) => (
-                    <RoomCard key={index} {...room} />
+                    <Link to="/room/room001">
+                      <RoomCard key={index} {...room} />
+          
+                    </Link>
                   ))}
                 </div>
               </div>

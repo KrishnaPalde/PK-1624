@@ -16,16 +16,16 @@ const YourBookingDetailsAdmin = () => {
   useEffect(() => {
     const fetchBookingDetails = async () => {
       try {
-        // const bookingResponse = await fetch(`http://localhost:4444/api/admin/bookings/${lastFourChars}`);
-        const bookingResponse = await fetch(`https://pk-1624.onrender.com/api/admin/bookings/${lastFourChars}`);
+        const bookingResponse = await fetch(`http://localhost:4444/api/admin/bookings/${lastFourChars}`);
+        // const bookingResponse = await fetch(`https://pk-1624.onrender.com/api/admin/bookings/${lastFourChars}`);
         if (!bookingResponse.ok) {
           throw new Error(`HTTP error! status: ${bookingResponse.status}`);
         }
         const bookingData = await bookingResponse.json();
         setBookingDetails(bookingData);
 
-        // const roomResponse = await fetch(`http://localhost:4444/api/admin/bookings/${lastFourChars}/room`);
-        const roomResponse = await fetch(`https://pk-1624.onrender.com/api/admin/bookings/${lastFourChars}/room`);
+        const roomResponse = await fetch(`http://localhost:4444/api/admin/bookings/${lastFourChars}/room`);
+        // const roomResponse = await fetch(`https://pk-1624.onrender.com/api/admin/bookings/${lastFourChars}/room`);
         if (!roomResponse.ok) {
           throw new Error(`HTTP error! status: ${roomResponse.status}`);
         }

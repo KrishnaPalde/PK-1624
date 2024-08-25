@@ -51,8 +51,8 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // const response = await axios.post('http://localhost:4444/api/authenticateAdmin', { email, password });
-      const response = await axios.post('https://pk-1624.onrender.com/api/authenticateAdmin', { email, password });      
+      const response = await axios.post('http://localhost:4444/api/authenticateAdmin', { email, password });
+      // const response = await axios.post('https://pk-1624.onrender.com/api/authenticateAdmin', { email, password });      
       login();
       setError(null);
       navigate('/admin/dashboard');

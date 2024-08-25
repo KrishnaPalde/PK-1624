@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import BookingForm from "../components/BookingForm";
@@ -15,12 +15,19 @@ import { useBooking } from "../contexts/BookingFormContext";
 const RoomDetailsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const roomData = location.state;
+  const [roomData,setRoom] = useState(location.state);
 
   if (!roomData) {
-    React.useEffect(() => {
-      navigate("/");
-    }, [navigate]);
+    try{
+      const response = fetch("http://localhost:4444/api/room/room001");
+      setRoom(response.json());
+    }
+    catch{
+      React.useEffect(() => {
+        navigate("/");
+      }, [navigate]);    
+    }
+  
 
     return <div>No room data available. Redirecting...</div>;
   }

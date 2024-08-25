@@ -18,8 +18,8 @@ const AdminRoom = () => {
   // Function to load stat cards data
   const loadStatCardsData = async () => {
     try {
-      // const response = await axios.get('http://localhost:4444/api/admin/dashboard_stats'); 
-      const response = await axios.get('https://pk-1624.onrender.com/api/admin/dashboard_stats'); 
+      const response = await axios.get('http://localhost:4444/api/admin/dashboard_stats'); 
+      // const response = await axios.get('https://pk-1624.onrender.com/api/admin/dashboard_stats'); 
       
       // Update the state with the response data
       setStats({

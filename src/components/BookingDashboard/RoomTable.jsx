@@ -41,10 +41,10 @@ function RoomTable({ addRoom }) {
 
   const fetchRooms = async () => {
     try {
-      // await fetch('http://localhost:4444/api/admin/getroomstatus');
-      await fetch('https://pk-1624.onrender.com/admin/getroomstatus');
-      // const response = await fetch('http://localhost:4444/api/admin/rooms');
-      const response = await fetch('https://pk-1624.onrender.com/api/admin/rooms');
+      await fetch('http://localhost:4444/api/admin/getroomstatus');
+      // await fetch('https://pk-1624.onrender.com/admin/getroomstatus');
+      const response = await fetch('http://localhost:4444/api/admin/rooms');
+      // const response = await fetch('https://pk-1624.onrender.com/api/admin/rooms');
       if (!response.ok) {
         throw new Error('Failed to fetch rooms');
       }
