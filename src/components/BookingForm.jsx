@@ -263,7 +263,17 @@ function BookingForm() {
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
-  const [checkIn, setCheckIn] = useState(bookingInfo.checkIn || today);
+   const [checkIn, setCheckIn] = useState(() => {
+    const today = new Date();
+    const storedDate = bookingInfo.checkIn ? new Date(bookingInfo.checkIn) : null;
+    
+    if (storedDate && storedDate > today) {
+      console.log("");
+      return today;
+    }
+    
+    return storedDate || today;
+  });
   const [checkOut, setCheckOut] = useState(bookingInfo.checkOut || tomorrow);
   const [adults, setAdults] = useState(bookingInfo.adults || 2);
   const [children, setChildren] = useState(bookingInfo.children || 2);
