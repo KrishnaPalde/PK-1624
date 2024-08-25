@@ -11,6 +11,7 @@ const {
   getBookingById,
   getRoomDetailsForm,
   addRoom,
+  updateRoomStatuses,
 } = require("../controller/bookingsController");
 const Booking = require("../models/Bookings");
 const multer = require('multer');
@@ -22,12 +23,13 @@ router.post("/authenticateAdmin", login);
 router.get("/check_availability_dates", checkIfAvailable);
 router.get("/unavailable_dates", getUnavailableDates);
 router.get("/rooms/:roomId", getRoomDetails);
-router.get("/rooms", getAllRooms);
+router.get("/admin/rooms", getAllRooms);
 // router.get("/admin/bookings", fetchBookings6Admin);
 router.get("/admin/dashboard_stats", getDashboardStats);
 router.get("/admin/bookings",getBookings);
 router.get("/admin/bookings/:bookingId",getBookingById);
 router.get("/admin/bookings/:bookingId/room",getRoomDetailsForm);
 router.post("/admin/addroom",upload.array('images', 5), addRoom);
+router.get("/admin/getroomstatus",updateRoomStatuses);
 
 module.exports = router;

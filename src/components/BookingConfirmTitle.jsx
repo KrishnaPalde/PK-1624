@@ -5,7 +5,7 @@ const BookingConfirmTitle = () => {
     <section className="flex flex-col self-stretch my-auto min-w-[240px] text-neutral-900 w-[326px]">
       <header className="flex gap-4 items-center max-w-full text-2xl font-bold w-[326px]">
         <h2 className="self-stretch px-0.5 my-auto min-w-[240px] w-[326px]">
-          Tantra Worlds
+        Tranquil Trails
         </h2>
       </header>
       <address

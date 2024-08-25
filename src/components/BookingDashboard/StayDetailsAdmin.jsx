@@ -27,7 +27,7 @@ function StayDetailsAdmin({ bookingDetails, roomDetails }) {
         <div className="flex flex-col justify-center min-w-[240px] w-[304px]">
           <div className="flex flex-col w-full">
             <div className="text-base font-medium opacity-75">
-              Tantra Worlds
+              Tranquil Trails
             </div>
             <div className="mt-1 text-xl font-semibold">
               {/* Superior room - 1 double bed or 2 twin beds */}

@@ -43,7 +43,7 @@ const SideNav = () => {
         className="fixed top-0 left-0 z-50 h-full p-6 text-gray-800 bg-white shadow-lg xl:w-64"
       >
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800">Tantra Worlds</h2>
+          <h2 className="text-2xl font-semibold text-gray-800">Tranquil Trails</h2>
           {!isLargeScreen && (
             <button
               onClick={() => setIsOpen(false)}

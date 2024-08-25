@@ -67,7 +67,7 @@ const Footer = () => {
                 alt=""
                 className="shrink-0 aspect-square rounded-[30px] w-[38px]"
               />
-              <div className="flex-auto my-auto">Tantra Worlds</div>
+              <div className="flex-auto my-auto">Tranquil Trails</div>
             </div>
             <address className="mt-10 text-sm not-italic leading-6 text-stone-300">
               A108 Adam Street New York, NY 535022 United States
@@ -118,7 +118,7 @@ const Footer = () => {
         />
       </div>
       <div className="w-full px-5 py-10 mt-2 text-sm leading-6 text-center text-white bg-stone-900">
-        © Copyright Tantra Worlds. All Rights Reserved
+        © Copyright Tranquil Trails. All Rights Reserved
       </div>
     </footer>
   );

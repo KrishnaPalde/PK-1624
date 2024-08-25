@@ -339,7 +339,7 @@ function YourBookingDetailsForm() {
 
           <p className="mt-4 text-base font-medium text-neutral-900">
           Your booking is protected by{" "}
-          <span className="font-bold">Tantra Worlds</span>
+          <span className="font-bold">Tranquil Trails</span>
         </p>
         <hr className="w-full mt-4 bg-neutral-900 bg-opacity-30" />
         <div className="flex flex-col w-full mt-4 text-base text-neutral-900 max-md:max-w-full">

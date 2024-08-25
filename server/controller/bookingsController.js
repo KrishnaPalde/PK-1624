@@ -220,7 +220,6 @@ const getBookingById = async (req, res) => {
     const { bookingId } = req.params;
     console.log('Received bookingId:', bookingId);
 
-    // Find all bookings where the bookingId ends with the given 4 characters
     const bookings = await Booking.find({
       bookingId: { $regex: bookingId + '$' }
     });
@@ -235,11 +234,11 @@ const getBookingById = async (req, res) => {
       console.warn('Multiple bookings found with the same last 4 characters');
     }
 
-    // Use the first matching booking
     const booking = bookings[0];
 
     const room = await Room.findOne({ id: booking.roomId });
     const roomName = room ? room.name : "Unknown Room";
+    const transactionId = booking.transactions.length > 0 ? booking.transactions[0].transactionId : "No Transaction ID";
 
     const bookingData = {
       bookingId: booking.bookingId,
@@ -256,7 +255,8 @@ const getBookingById = async (req, res) => {
       numberOfChildren: booking.numberOfChildren,
       numberOfInfants: booking.numberOfInfants,
       roomName,
-      roomId: booking.roomId
+      roomId: booking.roomId,
+      transactionId,
     };
 
     res.json(bookingData);
@@ -307,14 +307,18 @@ const getRoomDetailsForm = async (req, res) => {
 const addRoom = async (req, res) => {
   try {
     const { name, title, description, price } = req.body;
+    const amenities = req.body.amenities ? JSON.parse(req.body.amenities) : [];
+    const freebies = req.body.freebies ? JSON.parse(req.body.freebies) : [];
     const images = req.files ? req.files.map(file => file.path) : [];
 
     const newRoom = new Room({
-      id: Date.now().toString(), 
+      id: Date.now().toString(),
       name,
       title,
       description,
       price,
+      amenities,
+      freebies,
       images,
     });
 
@@ -322,6 +326,28 @@ const addRoom = async (req, res) => {
     res.status(201).json(savedRoom);
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+};
+
+const updateRoomStatuses = async (req, res) => {
+  try {
+    const rooms = await Room.find({});
+    const currentDate = new Date();
+
+    for (let room of rooms) {
+      const activeBooking = await Booking.findOne({
+        roomId: room.id,
+        checkInDate: { $lte: currentDate },
+        checkOutDate: { $gt: currentDate }
+      });
+
+      room.status = activeBooking ? 'Booked' : 'Available';
+      await room.save();
+    }
+
+    res.status(200).json({ message: 'Room statuses updated successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating room statuses', error: error.message });
   }
 };
 
@@ -339,4 +365,6 @@ module.exports = {
   getBookingById,
   getRoomDetailsForm,
   addRoom,
+  getAllRooms,
+  updateRoomStatuses,
 };

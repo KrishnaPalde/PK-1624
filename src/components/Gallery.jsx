@@ -15,7 +15,7 @@ function Gallery() {
         Gallery of the best apartment rooms
       </h2>
       <h3 className="mt-5 text-4xl font-bold text-center text-zinc-800 max-md:max-w-full">
-        Apartment Gallery in Tantra Worlds
+        Apartment Gallery in Tranquil Trails
       </h3>
       <div className="px-px mt-9 w-full max-w-[1241px] max-md:max-w-full">
         <div className="flex gap-5 max-md:flex-col">

@@ -24,7 +24,7 @@ function Header() {
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-4 text-xl font-extrabold text-black">
           <div className="shrink-0 bg-black rounded-full h-[35px] w-[35px]" />
-          <div>Tantra Worlds</div>
+          <div>Tranquil Trails</div>
         </div>
         <div className="md:hidden">
           <button onClick={toggleMenu} className="text-2xl focus:outline-none">

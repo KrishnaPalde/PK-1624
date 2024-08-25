@@ -19,7 +19,7 @@ function StayInfo({title,rating,price,images}) {
         <div className="flex flex-col justify-center min-w-[240px] w-[304px]">
           <div className="flex flex-col w-full">
             <div className="text-base font-medium opacity-75">
-              Tantra Worlds
+            Tranquil Trails
             </div>
             <div className="mt-1 text-xl font-semibold">
               {title}

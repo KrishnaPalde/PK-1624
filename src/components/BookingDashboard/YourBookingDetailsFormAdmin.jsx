@@ -7,6 +7,8 @@ const YourBookingDetailsFormAdmin = ({userDetails}) => {
     email: '',
     phoneNumber: '',
     address: '',
+    transactionId: '',
+    totalPayment: '',
   });
 
   useEffect(() => {
@@ -17,6 +19,8 @@ const YourBookingDetailsFormAdmin = ({userDetails}) => {
         email: userDetails.email || '',
         phoneNumber: userDetails.phoneNumber || '',
         address: userDetails.address || 'New Avenue Street Corner near St Aloyius High School South Block Delhi 224151',
+        transactionId: userDetails.transactionId || '',
+        totalPayment: userDetails.totalPayment || '',
       });
     }
   }, [userDetails]);
@@ -36,7 +40,7 @@ const YourBookingDetailsFormAdmin = ({userDetails}) => {
   };
 
   return (
-    <article className="flex overflow-hidden flex-col p-6 bg-white rounded-3xl max-w-[500px] max-md:px-5">
+    <article className="flex overflow-hidden flex-col p-6 bg-white rounded-3xl max-w-[530px] max-md:px-5">
       <div className="flex flex-col max-w-[480px]">
         <div className="flex flex-col w-full">
           <div className="flex items-start w-full gap-8">
@@ -52,6 +56,7 @@ const YourBookingDetailsFormAdmin = ({userDetails}) => {
                     value={formData.firstName}
                     onChange={handleInputChange}
                     className="flex overflow-hidden gap-2 items-center px-4 py-3 mt-1.5 w-full text-base text-gray-900 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
+                    readOnly                  
                   />
                 </div>
               </div>
@@ -68,37 +73,40 @@ const YourBookingDetailsFormAdmin = ({userDetails}) => {
                     value={formData.lastName}
                     onChange={handleInputChange}
                     className="flex overflow-hidden gap-2 items-center px-4 py-3 mt-1.5 w-full text-base text-gray-900 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
+                    readOnly
                   />
                 </div>
               </div>
             </div>
           </div>
-          <div className="flex flex-col w-full mt-6">
-            <div className="flex flex-col w-full">
-              <label className="text-sm font-medium leading-none text-slate-700">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="flex overflow-hidden gap-2 items-center px-4 py-3 mt-1.5 w-full text-base text-gray-900 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
-              />
-            </div>
-          </div>
-          <div className="flex flex-col w-full mt-6">
-            <div className="flex flex-col w-full">
-              <label className="text-sm font-medium leading-none text-slate-700">
-                Phone number
-              </label>
-              <div className="flex overflow-hidden mt-1.5 w-full text-base bg-white rounded-lg border border-gray-300 border-solid shadow-sm">
+          <div className="flex items-start w-full gap-8 mt-6">
+            <div className="flex flex-col flex-1 shrink basis-0">
+              <div className="flex flex-col w-full">
+                <label className="text-sm font-medium leading-none text-slate-700">
+                  Phone number
+                </label>
                 <input
                   type="text"
                   name="phoneNumber"
                   value={formData.phoneNumber}
                   onChange={handleInputChange}
-                  className="flex-1 shrink gap-2 self-start py-3 pr-4 text-gray-900 basis-3 min-w-[240px]  px-4 border border-gray-300 border-solid"
+                  className="flex overflow-hidden gap-2 items-center px-4 py-3 mt-1.5 w-full text-base text-gray-900 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
+                  readOnly
+                />
+              </div>
+            </div>
+            <div className="flex flex-col flex-1 shrink basis-0">
+              <div className="flex flex-col w-full">
+                <label className="text-sm font-medium leading-none text-slate-700">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="flex overflow-hidden gap-2 items-center px-4 py-3 mt-1.5 w-full text-base text-gray-900 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
+                  readOnly
                 />
               </div>
             </div>
@@ -129,6 +137,39 @@ const YourBookingDetailsFormAdmin = ({userDetails}) => {
             Save
           </button>
         </div> */}
+         <div className="flex items-start w-full gap-8 mt-6">
+         <div className="flex flex-col flex-1 shrink basis-0">
+         <div className="flex flex-col w-full">
+          <label className="text-sm font-medium leading-none text-slate-700">
+                  Amount Paid
+                </label>
+                <input
+                  type="text"
+                  name="amount"
+                  value={formData.totalPayment}
+                  onChange={handleInputChange}
+                  className="flex overflow-hidden gap-2 items-center px-4 py-3 mt-1.5 w-full text-base text-gray-900 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
+                  readOnly
+                />
+              
+                </div>
+            </div>
+            <div className="flex flex-col flex-1 shrink basis-0">
+              <div className="flex flex-col w-full">
+                <label className="text-sm font-medium leading-none text-slate-700">
+                Transaction ID
+              </label>
+              <input
+                type="text"
+                name="transactionId"
+                value={formData.transactionId}
+                onChange={handleInputChange}
+                className="flex overflow-hidden gap-2 items-center px-4 py-3 mt-1.5 w-full text-base text-gray-900 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
+                readOnly
+                />
+              </div>
+            </div>
+          </div>
       </div>
     </article>
   );

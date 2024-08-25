@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import AddRoomForm from "./AddRoomForm";
 
-function RoomTable({ rooms, addRoom }) {
+function RoomTable({ addRoom }) {
+  const [rooms, setRooms] = useState([]);
   const [filteredRooms, setFilteredRooms] = useState(rooms);
   const [currentPage, setCurrentPage] = useState(1);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [currentFilter, setCurrentFilter] = useState("All");
   const itemsPerPage = 10;
 
   const filterRooms = (status) => {
+    setCurrentFilter(status);
     if (status === "All") {
       setFilteredRooms(rooms);
     } else {
@@ -32,57 +35,95 @@ function RoomTable({ rooms, addRoom }) {
     setShowAddForm(false);
   };
 
+  useEffect(() => {
+    fetchRooms();
+  }, []);
+
+  const fetchRooms = async () => {
+    try {
+      // await fetch('http://localhost:4444/api/admin/getroomstatus');
+      await fetch('https://pk-1624.onrender.com/admin/getroomstatus');
+      // const response = await fetch('http://localhost:4444/api/admin/rooms');
+      const response = await fetch('https://pk-1624.onrender.com/api/admin/rooms');
+      if (!response.ok) {
+        throw new Error('Failed to fetch rooms');
+      }
+      const data = await response.json();
+      setRooms(data);
+      setFilteredRooms(data);  
+    } catch (error) {
+      console.error('Error fetching rooms:', error);
+    }
+  };
+
   
   return (
     <div className="flex flex-col items-start">
       <div className="flex flex-col w-full max-w-full bg-white rounded-lg shadow-md">
         
 
-<div className="flex flex-col w-full text-sm font-medium border-b border-gray-200 md:flex-row">
-          <div className="flex gap-4 p-4 md:gap-2">
-            <div
-              className="flex items-center gap-2 px-4 py-2 text-blue-600 border border-blue-600 rounded-full cursor-pointer bg-indigo-50"
-              onClick={() => filterRooms("All")}
-            >
-              All rooms ({rooms.length})
-            </div>
-            <div
-              className="flex items-center gap-2 px-4 py-2 border border-gray-400 rounded-full cursor-pointer"
-              onClick={() => filterRooms("Available")}
-            >
-              Available ({rooms.filter(room => room.status === 'Available').length})
-            </div>
-          </div>
-          <div className="flex gap-4 p-4 md:gap-2">
-            <div
-              className="flex items-center gap-2 px-4 py-2 border border-gray-400 rounded-full cursor-pointer"
-              onClick={() => filterRooms("Booked")}
-            >
-              Booked ({rooms.filter(room => room.status === 'Booked').length})
-            </div>
-            <div className=" md:ml-0">
-              <button className="px-6 py-2.5 text-white bg-blue-500 rounded-lg" onClick={() => setShowAddForm(true)}>
-                Add room
-              </button>
-            </div>
-          </div>
-        </div>
-
+      <div className="flex flex-col w-full text-sm font-medium border-b border-gray-200 md:flex-row">
+  <div className="flex gap-4 p-4 md:gap-2">
+    <div
+      className={`flex items-center gap-2 px-4 py-2 border rounded-full cursor-pointer ${
+        currentFilter === "All"
+          ? "bg-blue-600 text-white border-blue-600"
+          : "text-blue-600 border-gray-400 hover:bg-blue-50"
+      }`}
+      onClick={() => filterRooms("All")}
+    >
+      All rooms ({rooms.length})
+    </div>
+    <div
+      className={`flex items-center gap-2 px-4 py-2 border rounded-full cursor-pointer ${
+        currentFilter === "Available"
+          ? "bg-blue-600 text-white border-blue-600"
+          : "text-gray-600 border-gray-400 hover:bg-blue-50"
+      }`}
+      onClick={() => filterRooms("Available")}
+    >
+      Available ({rooms.filter(room => room.status === 'Available').length})
+    </div>
+  </div>
+  <div className="flex gap-4 p-4 md:gap-2">
+    <div
+      className={`flex items-center gap-2 px-4 py-2 border rounded-full cursor-pointer ${
+        currentFilter === "Booked"
+          ? "bg-blue-600 text-white border-blue-600"
+          : "text-gray-600 border-gray-400 hover:bg-blue-50"
+      }`}
+      onClick={() => filterRooms("Booked")}
+    >
+      Booked ({rooms.filter(room => room.status === 'Booked').length})
+    </div>
+    <div className="md:ml-0">
+      <button className="px-6 py-2.5 text-white bg-blue-500 rounded-lg" onClick={() => setShowAddForm(true)}>
+        Add room
+      </button>
+    </div>
+  </div>
+</div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                  Room number
+                  Room ID
                 </th>
                 <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                  Bed type
+                  Title
                 </th>
                 <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                  Room floor
+                  Description
                 </th>
                 <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                  Room facility
+                  Amenities
+                </th>
+                <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                  Freebies
+                </th>
+                <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                  Price
                 </th>
                 <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                   Status
@@ -95,28 +136,32 @@ function RoomTable({ rooms, addRoom }) {
             <tbody className="bg-white divide-y divide-gray-200">
               {displayedRooms.map((room, index) => (
                 <tr key={index}>
-                  <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{room.number}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{room.bedType}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{room.floor}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{room.id}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{room.name}</td>
+                  <td className="max-w-xs px-6 py-4 text-sm text-gray-500">
+  <div className="break-words whitespace-normal">{room.description}</div>
+</td>
                   <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                    {room.facility.join(', ')}
+                    {room.amenities.join(', ')}
                   </td>
+                  <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                    {room.freebies.join(', ')}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap"> ₹{room.price}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`inline-flex px-2 text-xs leading-5 font-semibold rounded-full ${
-                        room.status === 'Available'
-                          ? 'text-blue-800 bg-blue-100'
-                          : room.status === 'Booked'
-                          ? 'text-red-800 bg-red-100'
-                          : room.status === 'Reserved'
-                          ? 'text-green-800 bg-green-100'
-                          : room.status === 'Waitlist'
-                          ? 'text-yellow-800 bg-yellow-100'
-                          : room.status === 'Blocked'
-                          ? 'text-gray-800 bg-gray-100'
-                          : ''
-                      }`}
-                    >
+                    <span className={`inline-flex px-2 text-xs leading-5 font-semibold rounded-full ${
+                      room.status === 'Available'
+                        ? 'text-blue-800 bg-blue-100'
+                        : room.status === 'Booked'
+                        ? 'text-red-800 bg-red-100'
+                        : room.status === 'Reserved'
+                        ? 'text-green-800 bg-green-100'
+                        : room.status === 'Waitlist'
+                        ? 'text-yellow-800 bg-yellow-100'
+                        : room.status === 'Blocked'
+                        ? 'text-gray-800 bg-gray-100'
+                        : ''
+                    }`}>
                       {room.status}
                     </span>
                   </td>
@@ -230,25 +275,29 @@ export default function App() {
       Object.keys(newRoom).forEach(key => {
         if (key === 'images') {
           newRoom[key].forEach(image => formData.append('images', image));
-        } else {
+        } else if (key === 'amenities') {
+          formData.append('amenities', JSON.stringify(newRoom[key]));
+        } else if(key == 'freebies'){
+          formData.append('freebies', JSON.stringify(newRoom[key]));
+        } 
+        else {
           formData.append(key, newRoom[key]);
         }
       });
-
+  
       const response = await fetch('http://localhost:4444/api/admin/addroom', {
         method: 'POST',
         body: formData,
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to add room');
       }
-
+  
       const savedRoom = await response.json();
       setRooms(prevRooms => [...prevRooms, savedRoom]);
     } catch (error) {
       console.error('Error adding room:', error);
-      
     }
   };
 
