@@ -3,38 +3,47 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const BookingFormContext = createContext();
 
 const BookingProvider = ({ children }) => {
-  const today = new Date();
-  today.setDate(today.getDate()-1);
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
-  const getStoredBookingInfo = () => {
+  const getInitialBookingInfo = () => {
     const storedBooking = localStorage.getItem('bookingInfo');
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
     if (storedBooking) {
       const parsedBooking = JSON.parse(storedBooking);
       return {
-        ...parsedBooking,
-        checkIn: new Date(parsedBooking.checkIn), 
-        checkOut: new Date(parsedBooking.checkOut), 
+        checkIn: new Date(parsedBooking.checkIn) < today ? today : new Date(parsedBooking.checkIn),
+        checkOut: new Date(parsedBooking.checkOut) <= today ? tomorrow : new Date(parsedBooking.checkOut),
+        adults: parsedBooking.adults || 2,
+        children: parsedBooking.children || 2,
       };
     }
+
     return {
-      checkIn: null,
-      checkOut: null,
+      checkIn: today,
+      checkOut: tomorrow,
       adults: 2,
       children: 2,
     };
   };
-  
 
-  const [bookingInfo, setBookingInfo] = useState(getStoredBookingInfo);
+  const [bookingInfo, setBookingInfo] = useState(getInitialBookingInfo);
 
   useEffect(() => {
     localStorage.setItem('bookingInfo', JSON.stringify(bookingInfo));
   }, [bookingInfo]);
 
+  const updateBookingInfo = (newInfo) => {
+    setBookingInfo(prevInfo => ({
+      ...prevInfo,
+      ...newInfo,
+      checkIn: new Date(newInfo.checkIn),
+      checkOut: new Date(newInfo.checkOut),
+    }));
+  };
+
   return (
-    <BookingFormContext.Provider value={{ bookingInfo, setBookingInfo }}>
+    <BookingFormContext.Provider value={{ bookingInfo, updateBookingInfo }}>
       {children}
     </BookingFormContext.Provider>
   );
