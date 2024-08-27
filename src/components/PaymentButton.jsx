@@ -1,5 +1,6 @@
 // src/components/PaymentButton.jsx
 import React from 'react';
+import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useBooking } from '../contexts/BookingFormContext';
 
@@ -68,7 +69,9 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, onClick }
             // alert('Payment successful!');
             const idn = result.id;
             // navigate(`/room/${roomData.id}/bookingconfirm`,  { state: {roomData, formData} })
-            navigate(`/room/${roomData.id}/bookingconfirm/${idn}`,  { state: {roomData, formData} })            
+            await axios.get(`http://localhost:4444/api/booking-confirmation/${idn}`);
+            navigate(`/room/${roomData.id}/bookingconfirm`,  { state: {roomData, formData} });
+            
           } else {
             alert('Payment verification failed!');
           }

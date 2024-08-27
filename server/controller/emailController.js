@@ -1,9 +1,9 @@
 const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
-const pdf = require('html-pdf');
-const Booking = require('../models/Bookings');
-const Room = require('../models/Room');
+const pdf = require("html-pdf");
+const Booking = require("../models/Bookings");
+const Room = require("../models/Room");
 
 // Configure the transporter for nodemailer
 const transporter = nodemailer.createTransport({
@@ -46,6 +46,7 @@ const sendBookingConfirmation = (
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.error("Error sending booking confirmation email:", error);
+      return;
     } else {
       console.log("Booking confirmation email sent:", info.response);
       // Clean up by deleting the PDF file after sending the email
@@ -125,96 +126,107 @@ function getDayAbbreviation(dayNumber) {
   return dayAbbreviations[dayNumber];
 }
 
-
-
-
-
-
-
 const generatePDF = async (bid) => {
-    console.log(bid);
-    
-    const booking = await Booking.findOne({ bookingId: bid });
-    const room = await Room.findOne({ id: booking.roomId });
-    const roomName = room ? room.name : "Unknown Room";
+  console.log(bid);
 
-    const bookingDetails = {
-        bookingId: "#" + booking.bookingId.slice(booking.bookingId.length - 5),
-        checkInDate: getDayAbbreviation(booking.checkInDate.getDay()) + ", " +
-            booking.checkInDate.getDate() + " " +
-            getMonthAbbreviation(booking.checkInDate.getMonth() + 1) + " " +
-            booking.checkInDate.getFullYear(),
-        checkOutDate: getDayAbbreviation(booking.checkOutDate.getDay()) + ", " +
-            booking.checkOutDate.getDate() + " " +
-            getMonthAbbreviation(booking.checkOutDate.getMonth() + 1) + " " +
-            booking.checkOutDate.getFullYear(),
-        roomType: roomName,
-        guestName: booking.firstName + " " + booking.lastName,
-        email: booking.email,
-        contactNumber: booking.phoneNumber,
-        subTotal: booking.totalPayment - 50,
-        taxes: 50,
-        totalAmount: booking.totalPayment,
-    };
+  const booking = await Booking.findOne({ bookingId: bid });
+  const room = await Room.findOne({ id: booking.roomId });
+  const roomName = room ? room.name : "Unknown Room";
 
-    const htmlPath = path.join(__dirname, 'booking_confirmation.html');
-    let htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+  const bookingDetails = {
+    bookingId: "#" + booking.bookingId.slice(booking.bookingId.length - 5),
+    checkInDate:
+      getDayAbbreviation(booking.checkInDate.getDay()) +
+      ", " +
+      booking.checkInDate.getDate() +
+      " " +
+      getMonthAbbreviation(booking.checkInDate.getMonth() + 1) +
+      " " +
+      booking.checkInDate.getFullYear(),
+    checkOutDate:
+      getDayAbbreviation(booking.checkOutDate.getDay()) +
+      ", " +
+      booking.checkOutDate.getDate() +
+      " " +
+      getMonthAbbreviation(booking.checkOutDate.getMonth() + 1) +
+      " " +
+      booking.checkOutDate.getFullYear(),
+    roomType: roomName,
+    guestName: booking.firstName + " " + booking.lastName,
+    email: booking.email,
+    contactNumber: booking.phoneNumber,
+    subTotal: booking.totalPayment - 50,
+    taxes: 50,
+    totalAmount: booking.totalPayment,
+  };
 
-    // Update HTML content with booking details using string interpolation
-    htmlContent = htmlContent
-        .replace("bookingID", bookingDetails.bookingId)
-        .replace("checkInDate", bookingDetails.checkInDate)
-        .replace("checkOutDate", bookingDetails.checkOutDate)
-        .replace("roomType", bookingDetails.roomType)
-        .replace("guestName", bookingDetails.guestName)
-        .replace("guestEmail", bookingDetails.email)
-        .replace("guestContactNumber", bookingDetails.contactNumber)
-        .replace("subTotal", `₹${bookingDetails.subTotal}`)
-        .replace("taxesAndFees", `₹${bookingDetails.taxes}`)
-        .replace("totalAmount", `₹${bookingDetails.totalAmount}`);
+  const htmlPath = path.join(__dirname, "booking_confirmation.html");
+  let htmlContent = fs.readFileSync(htmlPath, "utf-8");
 
-        const options = {
-          format: 'A4',
-          orientation: 'portrait', // 'portrait' or 'landscape'
-          border: {
-            top: '0.5in', // Default is 0, adjust as needed
-            right: '0.5in',
-            bottom: '0.5in',
-            left: '0.5in',
-          },
-          // Adjust the following property if content still looks zoomed out
-          zoomFactor: '1.2', // Adjust zoom factor to scale content, default is '1.0'
-        };
+  // Update HTML content with booking details using string interpolation
+  htmlContent = htmlContent
+    .replace("bookingID", bookingDetails.bookingId)
+    .replace("checkInDate", bookingDetails.checkInDate)
+    .replace("checkOutDate", bookingDetails.checkOutDate)
+    .replace("roomType", bookingDetails.roomType)
+    .replace("guestName", bookingDetails.guestName)
+    .replace("guestEmail", bookingDetails.email)
+    .replace("guestContactNumber", bookingDetails.contactNumber)
+    .replace("subTotal", `₹${bookingDetails.subTotal}`)
+    .replace("taxesAndFees", `₹${bookingDetails.taxes}`)
+    .replace("totalAmount", `₹${bookingDetails.totalAmount}`);
 
-    // Generate PDF from HTML content
-    await pdf.create(htmlContent, options).toFile(`booking-confirmation-${bid.slice(0,5)}.pdf`, (err, res) => {
+  const options = {
+    format: "A4",
+    orientation: "portrait", // 'portrait' or 'landscape'
+    border: {
+      top: "0.5in", // Default is 0, adjust as needed
+      right: "0.5in",
+      bottom: "0.5in",
+      left: "0.5in",
+    },
+    // Adjust the following property if content still looks zoomed out
+    zoomFactor: "1.2", // Adjust zoom factor to scale content, default is '1.0'
+  };
+
+  // Generate PDF from HTML content
+  await new Promise((resolve, reject) => {
+    pdf
+      .create(htmlContent, options)
+      .toFile(`booking-confirmation-${bid.slice(0, 5)}.pdf`, (err, res) => {
         if (err) {
-            return console.log(err);
+          console.log(err);
+          reject(err); // Reject the promise if there's an error
+        } else {
+          console.log(
+            "PDF generated successfully! File saved at:",
+            res.filename
+          );
+          resolve(res.filename); // Resolve the promise with the filename
         }
-        else{
-          console.log("PDF generated successfully! File saved at:", res.filename); 
-        } 
-        
-    });
-    return bookingDetails.email;
+      });
+  });
+  return bookingDetails.email;
 };
 
-
-
-const BookingConfirmationEmail = async (req,res) => {
-    try{
-      
-      const id = req.params.id;
-      const custemail = await generatePDF(id);
-      console.log(custemail);
-      sendBookingConfirmation(custemail,"help.tantratech@gmail.com",id,`../booking-confirmation-${bid.slice(0,5)}.pdf`);
-    }
-    catch(error){
-
-      return res.status(500).send(error);
-    }
-}
+const BookingConfirmationEmail = async (req, res) => {
+  try {
+    console.log(123);
+    const id = req.params.id;
+    const custemail = await generatePDF(id);
+    console.log(custemail);
+    sendBookingConfirmation(
+      custemail,
+      "help.tantratech@gmail.com",
+      id,
+      `booking-confirmation-${id.slice(0, 5)}.pdf`
+    );
+    return res.status(200).send("successful");
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
 
 module.exports = {
   BookingConfirmationEmail,
-}
+};

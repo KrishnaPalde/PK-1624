@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import BookingConfirmTitle from "../components/BookingConfirmTitle";
 import BookingConfirmationCard from "../components/BookingConfirmationCard";
 import TermsAndConditions from "../components/TermsAndConditions";
@@ -12,17 +12,18 @@ const BookingConfirm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const roomData = location.state;
-  const id = useParams();
+  // const id = useParams();
+  // const {isCalled, setCalled} = useState(false);
 
-  const bookingConfirmationEmail = async () => {
-    try{
-      console.log(id.bid);
-      const response = await axios.get(`http://localhost:4444/api/booking-confirmation/${id.bid}`);
-    }
-    catch{
-      console.log("error");
-    }
-  }
+  // const bookingConfirmationEmail = async () => {
+  //   try{
+  //     console.log(id.bid);
+  //     const response = await axios.get(`http://localhost:4444/api/booking-confirmation/${id.bid}`);
+  //   }
+  //   catch{
+  //     console.log("error");
+  //   }
+  // }
 
   
   if (!roomData) {
@@ -32,11 +33,11 @@ const BookingConfirm = () => {
 
     return <div>No room data available. Redirecting...</div>;
   }
-  else{
-    React.useEffect(() => {
-      bookingConfirmationEmail();
-    })
-  }
+
+  // if(!isCalled){
+  //   bookingConfirmationEmail();
+  //   setCalled(true);
+  // }
   
   return (
     <div className="flex flex-col pt-12 bg-white">
