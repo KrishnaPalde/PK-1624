@@ -100,7 +100,7 @@ router.post("/verify-payment", async (req, res) => {
       await booking.save();
       res
         .status(200)
-        .json({ status: "success", message: "Booking created successfully" });
+        .json({ status: "success", message: "Booking created successfully" , id:bookingId,});
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

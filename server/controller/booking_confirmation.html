@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Confirmation - Tranquil Trails</title>
+    <style>
+      /* General styles */
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        background-color: #f7f7f7;
+      }
+
+      .container {
+        width: 100%; /* Set width to 100% to occupy the full width */
+        max-width: full;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box; /* Include padding and border in the element's width and height */
+      }
+
+      .header {
+        text-align: center;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #1e90ff;
+        margin-bottom: 20px;
+      }
+
+      .header h1 {
+        color: #1e90ff;
+        margin: 0;
+      }
+
+      .header p {
+        font-size: 18px;
+        color: #555;
+        margin: 10px 0 0;
+      }
+
+      .logo {
+        display: block;
+        margin: 0 auto 10px;
+        width: 80px;
+        height: auto;
+      }
+
+      .section {
+        margin: 20px 0;
+      }
+
+      .section-title {
+        font-size: 22px;
+        color: #1e90ff;
+        margin-bottom: 10px;
+        border-left: 4px solid #1e90ff;
+        padding-left: 10px;
+      }
+
+      .details-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+
+      .details-table th,
+      .details-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .details-table th {
+        background-color: #f0f8ff;
+        color: #333;
+        font-weight: normal;
+      }
+
+      .terms {
+        font-size: 14px;
+        color: #555;
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 5px;
+      }
+
+      .terms p {
+        margin: 5px 0;
+      }
+
+      .footer {
+        text-align: center;
+        font-size: 14px;
+        color: #777;
+        margin-top: 20px;
+        padding-top: 10px;
+        page-break-inside: avoid;
+        break-inside: avoid;
+        border-top: 1px solid #ddd;
+      }
+
+      .price-details {
+        display: flex;
+        justify-content: space-between;
+        font-size: 18px;
+        margin-top: 10px;
+      }
+
+      .price-details .total {
+        font-weight: bold;
+        color: #1e90ff;
+      }
+
+      .highlight {
+        background-color: #1e90ff;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 5px;
+      }
+
+      .btn {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #1e90ff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- Header Section -->
+      <div class="header">
+        <!-- Sample Logo -->
+        <!-- <img src="file://0862.jpg" class="logo" /> -->
+        <h1>Tranquil Trails</h1>
+        <p>Thank you for your booking! Below are your booking details:</p>
+      </div>
+
+      <!-- Booking Details Section -->
+      <div class="section">
+        <div class="section-title">Booking Details</div>
+        <table class="details-table">
+          <tr>
+            <th>Booking ID</th>
+            <td>bookingID</td>
+          </tr>
+          <tr>
+            <th>Check-in Date</th>
+            <td>checkInDate</td>
+          </tr>
+          <tr>
+            <th>Check-out Date</th>
+            <td>checkOutDate</td>
+          </tr>
+          <tr>
+            <th>Room Type</th>
+            <td>roomType</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Guest Details Section -->
+      <div class="section">
+        <div class="section-title">Guest Details</div>
+        <table class="details-table">
+          <tr>
+            <th>Guest Name</th>
+            <td>guestName</td>
+          </tr>
+          <tr>
+            <th>Email Address</th>
+            <td>guestEmail</td>
+          </tr>
+          <tr>
+            <th>Contact Number</th>
+            <td>guestContactNumber</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Price Details Section -->
+      <div class="section">
+        <div class="section-title">Price Details</div>
+        <div class="price-details">
+          <span>Sub Total:</span>
+          <span>subTotal</span>
+        </div>
+        <div class="price-details">
+          <span>Taxes & Fees:</span>
+          <span>taxesAndFees</span>
+        </div>
+        <div class="price-details total">
+          <span>Total Amount:</span>
+          <span>totalAmount</span>
+        </div>
+      </div>
+
+      <!-- Terms and Conditions Section -->
+      <div class="section">
+        <div class="section-title">Terms and Conditions</div>
+        <div class="terms">
+          <p>1. Check-in time is 12:00 PM and check-out time is 11:00 AM.</p>
+          <p>
+            2. Cancellations must be made 48 hours before the check-in date.
+          </p>
+          <p>3. Smoking is prohibited inside the hotel premises.</p>
+          <p>3. Smoking is prohibited inside the hotel premises.</p>
+        </div>
+      </div>
+
+      <!-- Footer Section -->
+      <div class="footer">
+        <p>
+          If you have any questions or need further assistance, please contact
+          our support team at
+          <a href="mailto:support@tranquiltrails.com"
+            >support@tranquiltrails.com</a
+          >
+          or call us at <span>+1 234 567 890</span>.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

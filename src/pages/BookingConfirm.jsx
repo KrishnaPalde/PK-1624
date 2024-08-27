@@ -5,19 +5,37 @@ import TermsAndConditions from "../components/TermsAndConditions";
 import NewsLetter from "../components/NewsLetter";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation,useParams } from "react-router-dom";
+import axios from "axios";
 
 const BookingConfirm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const roomData = location.state;
+  const id = useParams();
 
+  const bookingConfirmationEmail = async () => {
+    try{
+      console.log(id.bid);
+      const response = await axios.get(`http://localhost:4444/api/booking-confirmation/${id.bid}`);
+    }
+    catch{
+      console.log("error");
+    }
+  }
+
+  
   if (!roomData) {
     React.useEffect(() => {
       navigate("/");
     }, [navigate]);
 
     return <div>No room data available. Redirecting...</div>;
+  }
+  else{
+    React.useEffect(() => {
+      bookingConfirmationEmail();
+    })
   }
   
   return (

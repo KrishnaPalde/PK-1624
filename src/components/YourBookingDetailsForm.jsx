@@ -119,6 +119,10 @@ function YourBookingDetailsForm() {
 
   const handleSave = () => {
     // Update bookingInfo with form data
+    // setBookingInfo((prevInfo) => ({
+    //   ...prevInfo,
+    //   ...formData,
+    // }));
     setBookingInfo((prevInfo) => ({
       ...prevInfo,
       ...formData,
@@ -366,7 +370,7 @@ function YourBookingDetailsForm() {
             amount={roomData.price}
             adults={adults}
             children={children}
-            onClick={handleSave}
+            // onClick={handleSave}
           />
         
         </button>

@@ -1,5 +1,9 @@
 const Booking = require("../models/Bookings");
 const Room = require("../models/Room");
+const fs = require("fs");
+const path = require("path");
+const pdf = require('html-pdf'); // Import html-pdf
+
 
 // Helper function to get dates between two dates
 // const getDatesBetween = (startDate, endDate) => {
@@ -350,6 +354,8 @@ const updateRoomStatuses = async (req, res) => {
     res.status(500).json({ message: 'Error updating room statuses', error: error.message });
   }
 };
+
+
 
 
 
