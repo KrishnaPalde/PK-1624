@@ -1,17 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import BookingConfirmTitle from "../components/BookingConfirmTitle";
 import BookingConfirmationCard from "../components/BookingConfirmationCard";
 import TermsAndConditions from "../components/TermsAndConditions";
 import NewsLetter from "../components/NewsLetter";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation,useParams } from "react-router-dom";
+import axios from "axios";
 
 const BookingConfirm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const roomData = location.state;
+  // const id = useParams();
+  // const {isCalled, setCalled} = useState(false);
 
+  // const bookingConfirmationEmail = async () => {
+  //   try{
+  //     console.log(id.bid);
+  //     const response = await axios.get(`http://localhost:4444/api/booking-confirmation/${id.bid}`);
+  //   }
+  //   catch{
+  //     console.log("error");
+  //   }
+  // }
+
+  
   if (!roomData) {
     React.useEffect(() => {
       navigate("/");
@@ -19,6 +33,11 @@ const BookingConfirm = () => {
 
     return <div>No room data available. Redirecting...</div>;
   }
+
+  // if(!isCalled){
+  //   bookingConfirmationEmail();
+  //   setCalled(true);
+  // }
   
   return (
     <div className="flex flex-col pt-12 bg-white">
