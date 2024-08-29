@@ -17,6 +17,45 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+function getMonthAbbreviation(monthNumber) {
+  // Define an array with month abbreviations
+  const monthAbbreviations = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  // Check if the input month number is valid (1 to 12)
+  if (monthNumber < 1 || monthNumber > 12) {
+    return "Invalid month number"; // Return an error message for invalid input
+  }
+
+  // Return the abbreviation corresponding to the month number (1-based index)
+  return monthAbbreviations[monthNumber - 1];
+}
+
+function getDayAbbreviation(dayNumber) {
+  // Define an array with day abbreviations
+  const dayAbbreviations = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  // Check if the input day number is valid (0 to 6)
+  if (dayNumber < 0 || dayNumber > 6) {
+    return "Invalid day number"; // Return an error message for invalid input
+  }
+
+  // Return the abbreviation corresponding to the day number
+  return dayAbbreviations[dayNumber];
+}
+
 // Function to send booking confirmation email with PDF attachment
 const sendBookingConfirmation = (
   customerEmail,
@@ -59,10 +98,10 @@ const sendBookingConfirmation = (
 };
 
 // Function to send enquiry form entry to admin
-const sendAdminEnquiryFormEntry = (adminEmail, enquiryDetails) => {
+const sendAdminEnquiryFormEntry = (enquiryDetails) => {
   const mailOptions = {
-    from: '"Tranquil Trails" <your-email@example.com>', // Sender address
-    to: adminEmail, // Admin recipient address
+    from: '"Tranquil Trails" <help.tranquiltrails@gmail.com>', // Sender address
+    to: "help.tantratech@gmail.com", // Admin recipient address
     subject: "New Enquiry Form Submission", // Subject line
     html: `
       <h1>New Enquiry Form Submission</h1>
@@ -86,45 +125,6 @@ const sendAdminEnquiryFormEntry = (adminEmail, enquiryDetails) => {
     }
   });
 };
-
-function getMonthAbbreviation(monthNumber) {
-  // Define an array with month abbreviations
-  const monthAbbreviations = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
-  // Check if the input month number is valid (1 to 12)
-  if (monthNumber < 1 || monthNumber > 12) {
-    return "Invalid month number"; // Return an error message for invalid input
-  }
-
-  // Return the abbreviation corresponding to the month number (1-based index)
-  return monthAbbreviations[monthNumber - 1];
-}
-
-function getDayAbbreviation(dayNumber) {
-  // Define an array with day abbreviations
-  const dayAbbreviations = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-  // Check if the input day number is valid (0 to 6)
-  if (dayNumber < 0 || dayNumber > 6) {
-    return "Invalid day number"; // Return an error message for invalid input
-  }
-
-  // Return the abbreviation corresponding to the day number
-  return dayAbbreviations[dayNumber];
-}
 
 const generatePDF = async (bid) => {
   console.log(bid);
@@ -227,6 +227,17 @@ const BookingConfirmationEmail = async (req, res) => {
   }
 };
 
+const EnquiryFormEmail = async (req, res) => {
+  try {
+    const { data } = req.body;
+    console.log(data);
+    sendAdminEnquiryFormEntry(data);
+    return res.status(200).send({ message: "Successful" });
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
+};
 module.exports = {
   BookingConfirmationEmail,
+  EnquiryFormEmail,
 };

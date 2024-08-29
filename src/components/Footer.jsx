@@ -70,13 +70,13 @@ const Footer = () => {
               <div className="flex-auto my-auto">Tranquil Trails</div>
             </div>
             <address className="mt-10 text-sm not-italic leading-6 text-stone-300">
-              A108 Adam Street New York, NY 535022 United States
+            Pacific Hills, Diversion, Mussoorie Road, Dehradun, Uttarakhand, India. Pin Code-248009
             </address>
             <p className="mt-4 text-sm leading-6 text-stone-300">
               Phone: +1 5589 55488 55
             </p>
             <p className="mt-4 text-sm leading-6 text-stone-300">
-              Email: info@example.com
+              Email: help.tranquiltrails@gmail.com
             </p>
             <div className="flex gap-5 pt-10 ">
               {socialIcons.map((icon, index) => (
