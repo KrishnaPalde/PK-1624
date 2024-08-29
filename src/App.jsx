@@ -18,6 +18,7 @@ import YourBookingDetailsAdmin from './components/BookingDashboard/YourBookingDe
 import AdminRoom from './pages/AdminRoom';
 import AdminBlog from './pages/AdminBlog';
 import AdminCreatePost from './pages/AdminCreatePost';
+import Feedback from './pages/Feedback';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="/room/:id" element={<><ScrollToTop/> <RoomDetailsPage /></>} />
           <Route path="/room/:id/details" element={<><ScrollToTop/><YourBookingDetails/></>}/>
           <Route path="/room/:id/bookingconfirm" element={<><ScrollToTop/><BookingConfirm/></>}/>
+          <Route path="/feedback" element={<Feedback/>} />
           <Route path="/login" element={<LoginPage />} />
           <Route
             path="/admin/dashboard"

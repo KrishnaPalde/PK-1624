@@ -41,10 +41,10 @@ function RoomTable({ addRoom }) {
 
   const fetchRooms = async () => {
     try {
-      // await fetch('http://localhost:4444/api/admin/getroomstatus');
-      await fetch('https://pk-1624.onrender.com/api/admin/getroomstatus');
-      // const response = await fetch('http://localhost:4444/api/admin/rooms');
-      const response = await fetch('https://pk-1624.onrender.com/api/admin/rooms');
+      await fetch('http://localhost:4444/api/admin/getroomstatus');
+      // await fetch('https://pk-1624.onrender.com/api/admin/getroomstatus');
+      const response = await fetch('http://localhost:4444/api/admin/rooms');
+      // const response = await fetch('https://pk-1624.onrender.com/api/admin/rooms');
       if (!response.ok) {
         throw new Error('Failed to fetch rooms');
       }
@@ -138,7 +138,7 @@ function RoomTable({ addRoom }) {
                 <tr key={index}>
                   <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{room.id}</td>
                   <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{room.name}</td>
-                  <td className="max-w-xs px-6 py-4 text-sm text-gray-500">
+                  <td className="max-w-xl px-6 py-4 text-sm text-gray-500 min-w-sm">
   <div className="break-words whitespace-normal">{room.description}</div>
 </td>
                   <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
@@ -245,7 +245,7 @@ function RoomTable({ addRoom }) {
         </div>
         {showAddForm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="w-full max-w-md p-8 bg-white rounded-lg">
+            <div className="w-full max-w-4xl p-8 bg-white rounded-lg">
               <AddRoomForm onSubmit={handleAddRoom} onCancel={() => setShowAddForm(false)} />
             </div>
           </div>

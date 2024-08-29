@@ -18,8 +18,8 @@ const AdminRoom = () => {
   // Function to load stat cards data
   const loadStatCardsData = async () => {
     try {
-      // const response = await axios.get('http://localhost:4444/api/admin/dashboard_stats'); 
-      const response = await axios.get('https://pk-1624.onrender.com/api/admin/dashboard_stats'); 
+      const response = await axios.get('http://localhost:4444/api/admin/dashboard_stats'); 
+      // const response = await axios.get('https://pk-1624.onrender.com/api/admin/dashboard_stats'); 
       
       // Update the state with the response data
       setStats({
@@ -51,11 +51,11 @@ const AdminRoom = () => {
     
   return (
     <div className="flex w-full h-screen bg-[#f5f7fa]">
-      <div className="md:w-2/12">
+      <div className="lg:block lg:w-64">
         <SideNav />
       </div>
       <div></div>
-      <div className="overflow-auto md:w-11/12">
+      <div className="flex-1 overflow-auto">
         <AdminNav />
         <main className="flex flex-col p-6 ">
           <section className="w-full mb-6">

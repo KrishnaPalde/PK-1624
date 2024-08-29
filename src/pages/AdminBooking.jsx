@@ -7,13 +7,12 @@ import AdminNav from "../components/BookingDashboard/AdminNav";
 const AdminBooking = () => {
   return (
     <div className="flex w-full h-screen bg-[#f5f7fa]">
-      <div className="md:w-2/12">
+      <div className="lg:block lg:w-64">
         <SideNav />
       </div>
-      <div className="overflow-auto md:w-11/12">
+      <div className="flex-1 overflow-auto">
         <AdminNav />
-        <BookingDashboard />
-        
+        <BookingDashboard /> 
       </div>
     </div>
   );
