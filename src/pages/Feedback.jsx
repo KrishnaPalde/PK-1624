@@ -75,7 +75,9 @@ const Feedback = () => {
     }
 
     try {
-      await axios.post("http://localhost:4444/api/check-out/feedback", formData);
+      // await axios.post("http://localhost:4444/api/check-out/feedback", formData);
+      await axios.post("https://pk-1624.onrender.com/api/check-out/feedback", formData);
+      
       setIsSubmitted(true);
       setFormData({
         name: "",

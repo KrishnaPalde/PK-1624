@@ -44,10 +44,10 @@ function RoomTable({ addRoom }) {
 
   const fetchRooms = async () => {
     try {
-      await fetch('http://localhost:4444/api/admin/getroomstatus');
-      // await fetch('https://pk-1624.onrender.com/api/admin/getroomstatus');
-      const response = await fetch('http://localhost:4444/api/admin/rooms');
-      // const response = await fetch('https://pk-1624.onrender.com/api/admin/rooms');
+      // await fetch('http://localhost:4444/api/admin/getroomstatus');
+      await fetch('https://pk-1624.onrender.com/api/admin/getroomstatus');
+      // const response = await fetch('http://localhost:4444/api/admin/rooms');
+      const response = await fetch('https://pk-1624.onrender.com/api/admin/rooms');
       if (!response.ok) {
         throw new Error('Failed to fetch rooms');
       }
@@ -62,9 +62,13 @@ function RoomTable({ addRoom }) {
   const handleDeleteRoom = async (roomId) => {
     try {
       console.log('Attempting to delete room with ID:', roomId); 
-      const response = await fetch(`http://localhost:4444/api/admin/deleteroom/${roomId}`, {
+      // const response = await fetch(`http://localhost:4444/api/admin/deleteroom/${roomId}`, {
+      //   method: 'DELETE',
+      // });
+      const response = await fetch(`https://pk-1624.onrender.com/api/admin/deleteroom/${roomId}`, {
         method: 'DELETE',
       });
+      
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to delete room');
@@ -330,8 +334,8 @@ export default function App() {
         }
       });
 
-      // const response = await fetch('https://pk-1624.onrender.com/api/admin/addroom', {
-      const response = await fetch('http://localhost:4444/api/admin/addroom',{
+      const response = await fetch('https://pk-1624.onrender.com/api/admin/addroom', {
+      // const response = await fetch('http://localhost:4444/api/admin/addroom',{
         method: 'POST',
         body: formData,
       });

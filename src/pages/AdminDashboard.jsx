@@ -112,8 +112,8 @@ const AdminDashboard = () => {
 
   const loadStatCardsData = async () => {
     try {
-      const response = await axios.get('http://localhost:4444/api/admin/dashboard_stats');
-      // const response = await axios.get('https://pk-1624.onrender.com/api/admin/dashboard_stats');
+      // const response = await axios.get('http://localhost:4444/api/admin/dashboard_stats');
+      const response = await axios.get('https://pk-1624.onrender.com/api/admin/dashboard_stats');
       setStats({
         total: response.data.total,
         upcoming: response.data.upcoming,

@@ -10,7 +10,8 @@ const CustomCalendar = () => {
   useEffect(() => {
     const fetchUnavailableDates = async () => {
       try {
-        const response = await axios.get('http://localhost:4444/api/unavailable_dates');
+        // const response = await axios.get('http://localhost:4444/api/unavailable_dates');
+        const response = await axios.get('https://pk-1624.onrender.com/api/unavailable_dates');
         setUnavailableDates(response.data.unavailableDates.map(date => new Date(date)));
       } catch (error) {
         console.error('Error fetching unavailable dates:', error);

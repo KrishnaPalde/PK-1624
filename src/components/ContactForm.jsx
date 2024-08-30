@@ -142,7 +142,9 @@ const ContactForm = () => {
 
     try {
       // Example POST request using axios
-      const response = await axios.post("http://localhost:4444/api/contact-us/enquiry", data);
+      // const response = await axios.post("http://localhost:4444/api/contact-us/enquiry", data);
+      const response = await axios.post("https://pk-1624.onrender.com/api/contact-us/enquiry", data);
+      
       console.log("Response:", response.data);
       
       // Clear the form (optional)

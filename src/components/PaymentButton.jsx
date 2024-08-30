@@ -13,8 +13,8 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, onClick }
     // onClick();
     try {
       // Create an order on the server
-      const response = await fetch('http://localhost:4444/api/payments/create-order', {
-      // const response = await fetch('https://pk-1624.onrender.com/api/payments/create-order', {
+      // const response = await fetch('http://localhost:4444/api/payments/create-order', {
+      const response = await fetch('https://pk-1624.onrender.com/api/payments/create-order', {
 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -50,8 +50,8 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, onClick }
         order_id: orderId,
         handler: async function (response) {
           // Verify payment on server
-          const verificationResponse = await fetch('http://localhost:4444/api/payments/verify-payment', {
-            // const verificationResponse = await fetch('https://pk-1624.onrender.com/api/payments/verify-payment', {
+          // const verificationResponse = await fetch('http://localhost:4444/api/payments/verify-payment', {
+            const verificationResponse = await fetch('https://pk-1624.onrender.com/api/payments/verify-payment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -69,7 +69,8 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, onClick }
             // alert('Payment successful!');
             const idn = result.id;
             // navigate(`/room/${roomData.id}/bookingconfirm`,  { state: {roomData, formData} })
-            await axios.get(`http://localhost:4444/api/booking-confirmation/${idn}`);
+            // await axios.get(`http://localhost:4444/api/booking-confirmation/${idn}`);
+            await axios.get(`https://pk-1624.onrender.com/api/booking-confirmation/${idn}`);
             navigate(`/room/${roomData.id}/bookingconfirm`,  { state: {roomData, formData} });
             
           } else {

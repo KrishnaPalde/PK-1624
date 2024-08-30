@@ -148,7 +148,9 @@ function HotelListing({ priceRange, selectedRating }) {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await axios.get("http://localhost:4444/api/admin/rooms");
+        // const response = await axios.get("http://localhost:4444/api/admin/rooms");
+        const response = await axios.get("https://pk-1624.onrender.com/api/admin/rooms");
+        
         setHotelData(response.data);
         setFilteredData(response.data);
         setLoading(false);
