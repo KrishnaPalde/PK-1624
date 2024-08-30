@@ -14,6 +14,7 @@ const roomSchema = new mongoose.Schema({
   description: { type: String, required: true },
   amenities: { type: [String], default: [] }, 
   freebies: {type: [String], default:[]},
+  weekend: {type: Number},
   rating: { type: Number, default: 0 },
   price: { type: Number, required: true },
   status: { 

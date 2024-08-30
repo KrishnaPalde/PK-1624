@@ -1,5 +1,7 @@
 import React, { useState,useEffect } from "react";
 import AddRoomForm from "./AddRoomForm";
+import { Trash2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 function RoomTable({ addRoom }) {
   const [rooms, setRooms] = useState([]);
@@ -7,6 +9,7 @@ function RoomTable({ addRoom }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [showAddForm, setShowAddForm] = useState(false);
   const [currentFilter, setCurrentFilter] = useState("All");
+  const [activePopup, setActivePopup] = useState(null);
   const itemsPerPage = 10;
 
   const filterRooms = (status) => {
@@ -56,6 +59,25 @@ function RoomTable({ addRoom }) {
     }
   };
 
+  const handleDeleteRoom = async (roomId) => {
+    try {
+      console.log('Attempting to delete room with ID:', roomId); 
+      const response = await fetch(`http://localhost:4444/api/admin/deleteroom/${roomId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete room');
+      }
+      const data = await response.json();
+      console.log(data.message); 
+      setRooms(prevRooms => prevRooms.filter(room => room.id !== roomId));
+      setFilteredRooms(prevRooms => prevRooms.filter(room => room.id !== roomId));
+      setActivePopup(null);
+    } catch (error) {
+      console.error('Error deleting room:', error);
+    }
+  };
   
   return (
     <div className="flex flex-col items-start">
@@ -120,10 +142,10 @@ function RoomTable({ addRoom }) {
                   Amenities
                 </th>
                 <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                  Freebies
+                  Price
                 </th>
                 <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                  Price
+                  Weekend Price
                 </th>
                 <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                   Status
@@ -145,9 +167,9 @@ function RoomTable({ addRoom }) {
                     {room.amenities.join(', ')}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                    {room.freebies.join(', ')}
+                  ₹{room.price}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap"> ₹{room.price}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap"> ₹{room.weekend}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 text-xs leading-5 font-semibold rounded-full ${
                       room.status === 'Available'
@@ -166,13 +188,39 @@ function RoomTable({ addRoom }) {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                    <a href="#" className="text-gray-600 hover:text-gray-900">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                        <circle cx="12" cy="5" r="2"></circle>
-                        <circle cx="12" cy="12" r="2"></circle>
-                        <circle cx="12" cy="19" r="2"></circle>
-                      </svg>
-                    </a>
+                  <div className="relative">
+                      <button 
+                        onClick={() => setActivePopup(activePopup === room.id ? null : room.id)}
+                        className="text-gray-600 hover:text-gray-900 focus:outline-none"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                          <circle cx="12" cy="5" r="2"></circle>
+                          <circle cx="12" cy="12" r="2"></circle>
+                          <circle cx="12" cy="19" r="2"></circle>
+                        </svg>
+                      </button>
+                      <AnimatePresence>
+                        {activePopup === room.id && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ duration: 0.1 }}
+                            className="absolute right-0 z-20 w-48 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                          >
+                            <div className="py-1">
+                              <button
+                                onClick={() => handleDeleteRoom(room.id)}
+                                className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2 text-red-500" />
+                                Delete Room
+                              </button>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -275,26 +323,23 @@ export default function App() {
       Object.keys(newRoom).forEach(key => {
         if (key === 'images') {
           newRoom[key].forEach(image => formData.append('images', image));
-        } else if (key === 'amenities') {
-          formData.append('amenities', JSON.stringify(newRoom[key]));
-        } else if(key == 'freebies'){
-          formData.append('freebies', JSON.stringify(newRoom[key]));
-        } 
-        else {
+        } else if (key === 'amenities' || key === 'freebies') {
+          formData.append(key, JSON.stringify(newRoom[key]));
+        } else {
           formData.append(key, newRoom[key]);
         }
       });
-  
-      // const response = await fetch('http://localhost:4444/api/admin/addroom', {
-        const response = await fetch('https://pk-1624.onrender.com/api/admin/addroom',{
+
+      // const response = await fetch('https://pk-1624.onrender.com/api/admin/addroom', {
+      const response = await fetch('http://localhost:4444/api/admin/addroom',{
         method: 'POST',
         body: formData,
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to add room');
       }
-  
+
       const savedRoom = await response.json();
       setRooms(prevRooms => [...prevRooms, savedRoom]);
     } catch (error) {

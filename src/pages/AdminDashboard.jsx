@@ -97,7 +97,7 @@ import AdminNav from '../components/BookingDashboard/AdminNav';
 import StatCard from "../components/BookingDashboard/StatCard";
 import RoomList from "../components/BookingDashboard/RoomList";
 import CustomerReviews from '../components/BookingDashboard/CustomerReviews';
-import DatePicker from '../components/BookingDashboard/DatePicker';
+import DatePicker from '../components/BookingDashboard/CustomCalendar';
 import NewBooking from '../components/BookingDashboard/NewBooking';
 import axios from 'axios';
 

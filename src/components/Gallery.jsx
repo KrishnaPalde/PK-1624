@@ -40,11 +40,11 @@ function Gallery() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex flex-col ml-5 w-[19%] max-md:ml-0 max-md:w-full">
+                  {/* <div className="flex flex-col ml-5 w-[19%] max-md:ml-0 max-md:w-full">
                     <button className="relative self-stretch px-8 m-auto text-4xl font-black text-white whitespace-nowrap bg-sky-400 h-[90px] rounded-[100px] w-[90px] max-md:px-5 max-md:mt-10">
                      <FontAwesomeIcon icon={faPlay} className=""/>
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

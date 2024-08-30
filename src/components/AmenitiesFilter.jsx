@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import FilterHeader from "./FilterHeader";
 
 function AmenitiesFilter() {
-  const amenities = ["24hr front desk", "Air-conditioned", "Fitness", "Pool"];
+  const amenities = ["Air Conditioning", "TV", "Private Washroom", "Pets Allowed"]; 
   const [selectedAmenities, setSelectedAmenities] = useState([]);
 
   const handleAmenityClick = (amenity) => {

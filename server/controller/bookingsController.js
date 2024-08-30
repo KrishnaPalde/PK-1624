@@ -310,7 +310,7 @@ const getRoomDetailsForm = async (req, res) => {
 
 const addRoom = async (req, res) => {
   try {
-    const { name, title, description, price } = req.body;
+    const { name, title, description, price, weekend } = req.body;
     const amenities = req.body.amenities ? JSON.parse(req.body.amenities) : [];
     const freebies = req.body.freebies ? JSON.parse(req.body.freebies) : [];
     const images = req.files ? req.files.map(file => file.path) : [];
@@ -321,6 +321,7 @@ const addRoom = async (req, res) => {
       title,
       description,
       price,
+      weekend, 
       amenities,
       freebies,
       images,
@@ -357,6 +358,29 @@ const updateRoomStatuses = async (req, res) => {
 
 
 
+const deleteRoom = async (req, res) => {
+  const roomId = req.params.id; 
+
+  if (!roomId) {
+    return res.status(400).json({ error: 'Room ID is required' });
+  }
+
+  try {
+    const result = await Room.findOneAndDelete({ id: roomId });
+    if (!result) {
+      return res.status(404).json({ message: 'Room not found' });
+    }
+    res.status(200).json({ message: 'Room deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting room:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+};
+
+
+
+
+
 
 
 
@@ -373,4 +397,5 @@ module.exports = {
   addRoom,
   getAllRooms,
   updateRoomStatuses,
+  deleteRoom,
 };

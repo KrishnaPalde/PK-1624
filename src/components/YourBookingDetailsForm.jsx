@@ -242,106 +242,7 @@ function YourBookingDetailsForm() {
               </div>
             </div>
           </div>
-          {/* Guest Details */}
-          {/* <div className="flex flex-col w-full mt-6 text-sm font-medium transition-all duration-300 ease-in-out">
-            <div className="flex items-center justify-between gap-4 leading-none text-slate-700">
-              <div className="flex items-center gap-4">
-                <div className="flex flex-col w-[100px]">
-                  <div className="w-full">Guest Details</div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => addGuest('adults')}
-                  className="text-blue-500"
-                >
-                  Add Adult
-                </button>
-                <button
-                  type="button"
-                  onClick={() => addGuest('children')}
-                  className="text-blue-500"
-                >
-                  Add Child
-                </button>
-              </div>
-            </div>
-            {guestDetails.adults.map((guest, index) => (
-              <div key={`adult-${index}`} className="flex flex-col mt-2">
-                <div className="flex gap-5 justify-between mt-2.5 max-w-full leading-loose text-black w-fit">
-                  <input
-                    type="text"
-                    value={guest.name}
-                    onChange={(e) => handleGuestChange('adults', index, 'name', e.target.value)}
-                    placeholder="Adult Name"
-                    className="w-full bg-transparent border-none"
-                  />
-                  <input
-                    type="number"
-                    value={guest.age}
-                    onChange={(e) => handleGuestChange('adults', index, 'age', e.target.value)}
-                    placeholder="Age"
-                    className="w-16 bg-transparent border-none"
-                  />
-                  <input
-                    type="text"
-                    value={guest.gender}
-                    onChange={(e) => handleGuestChange('adults', index, 'gender', e.target.value)}
-                    placeholder="Gender"
-                    className="w-24 bg-transparent border-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeGuest('adults', index)}
-                    className="text-red-500"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-            ))}
-            {guestDetails.children.map((guest, index) => (
-              <div key={`child-${index}`} className="flex flex-col mt-2">
-                <div className="flex gap-5 justify-between mt-2.5 max-w-full leading-loose text-black w-fit">
-                  <input
-                    type="text"
-                    value={guest.name}
-                    onChange={(e) => handleGuestChange('children', index, 'name', e.target.value)}
-                    placeholder="Child Name"
-                    className="w-full bg-transparent border-none"
-                  />
-                  <input
-                    type="number"
-                    value={guest.age}
-                    onChange={(e) => handleGuestChange('children', index, 'age', e.target.value)}
-                    placeholder="Age"
-                    className="w-16 bg-transparent border-none"
-                  />
-                  <input
-                    type="text"
-                    value={guest.gender}
-                    onChange={(e) => handleGuestChange('children', index, 'gender', e.target.value)}
-                    placeholder="Gender"
-                    className="w-24 bg-transparent border-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeGuest('children', index)}
-                    className="text-red-500"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div> */}
-          {/* <button
-            onClick={handleSave}
-            className="px-4 py-2 mt-6 text-white bg-blue-500 rounded hover:bg-blue-600"
-          >
-            Save Details
-          </button> */}
-
-          <p className="mt-4 text-base font-medium text-neutral-900">
+          {/* <p className="mt-4 text-base font-medium text-neutral-900">
           Your booking is protected by{" "}
           <span className="font-bold">Tranquil Trails</span>
         </p>
@@ -360,10 +261,10 @@ function YourBookingDetailsForm() {
         <div className="flex items-start justify-between w-full gap-10 mt-4 text-base text-neutral-900 max-md:max-w-full">
           <div className="font-medium">Total </div>
           <div className="font-semibold">₹2650</div>
-        </div>
+        </div> */}
         
         
-        <button className="flex-1 shrink gap-2.5 self-stretch px-2 py-2 mt-4 max-w-full text-xl text-center text-white bg-sky-400 rounded w-[150px]">
+        {/* <button className="flex-1 shrink gap-2.5 self-stretch px-2 py-2 mt-4 max-w-full text-xl text-center text-white bg-sky-400 rounded w-[150px]">
           <PaymentButton 
             roomData={roomData} 
             formData={formData}
@@ -373,7 +274,7 @@ function YourBookingDetailsForm() {
             // onClick={handleSave}
           />
         
-        </button>
+        </button> */}
        
 
 
@@ -384,3 +285,5 @@ function YourBookingDetailsForm() {
 }
 
 export default YourBookingDetailsForm;
+
+

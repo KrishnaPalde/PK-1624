@@ -4,19 +4,19 @@ import RoomFeatureCard from "./RoomFeatureCard";
 const features = [
   {
     icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/4bf0d121d5e3eb6fca66e391808aa3f8402b9c25939b6d4e61c9809a793f9cf4?apiKey=e6b8c17325a24fb29c274ce450ea26a7&&apiKey=e6b8c17325a24fb29c274ce450ea26a7",
-    text: "Near park",
+    text: "Near Shopping Mall",
   },
   {
     icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/ed62fa5034d87f538048f376fff2ed466083f9984788a6e8905181a532a3ebac?apiKey=e6b8c17325a24fb29c274ce450ea26a7&&apiKey=e6b8c17325a24fb29c274ce450ea26a7",
-    text: "Near nightlife",
+    text: "Near Nightlife",
   },
   {
     icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/bada82c5f0cd94e37ce1d0a6d584a8dae3d537411c20589111018a933bf30b3d?apiKey=e6b8c17325a24fb29c274ce450ea26a7&&apiKey=e6b8c17325a24fb29c274ce450ea26a7",
-    text: "Near theater",
+    text: "Near Mussoorie",
   },
   {
     icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/b149ddb249dd8186abd66419e9caa3a241f4da1670455c07ea9a9a9a1310e458?apiKey=e6b8c17325a24fb29c274ce450ea26a7&&apiKey=e6b8c17325a24fb29c274ce450ea26a7",
-    text: "Clean Hotel",
+    text: "Near Best Restaturants",
   },
 ];
 

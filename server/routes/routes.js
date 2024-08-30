@@ -12,6 +12,7 @@ const {
   getRoomDetailsForm,
   addRoom,
   updateRoomStatuses,
+  deleteRoom,
 } = require("../controller/bookingsController");
 const {
   createFeedback,
@@ -47,5 +48,7 @@ router.post("/check-out/feedback", createFeedback);
 router.get("/feedbacks", getAllFeedbacks);
 router.get("/admin/feedbacks/below-3-stars", getFeedbacksBelow3Stars);
 router.get("/hotel-rating", getHotelRating);
+router.delete("/admin/deleteroom/:id",deleteRoom);
+
 
 module.exports = router;

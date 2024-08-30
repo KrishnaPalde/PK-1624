@@ -5,7 +5,7 @@ import ChooseCard from "./ChooseCard";
 const featureData = [
   {
     icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/e9007340acce48ae46b674482d22b540ad221e76cd1b8a1a7e7533dc63187ddb?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
-    title: "4500+ Destination",
+    title: "Perfect Destination to relax and enjoy",
     description: "Our expert team handpicked all destinations in this site."
   },
   {

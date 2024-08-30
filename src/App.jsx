@@ -33,7 +33,7 @@ function App() {
           <Route path="/room/:id" element={<><ScrollToTop/> <RoomDetailsPage /></>} />
           <Route path="/room/:id/details" element={<><ScrollToTop/><YourBookingDetails/></>}/>
           <Route path="/room/:id/bookingconfirm" element={<><ScrollToTop/><BookingConfirm/></>}/>
-          <Route path="/feedback" element={<Feedback/>} />
+          <Route path="/feedback" element={<><ScrollToTop/><Feedback/></>} />
           <Route path="/login" element={<LoginPage />} />
           <Route
             path="/admin/dashboard"

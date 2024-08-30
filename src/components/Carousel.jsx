@@ -26,32 +26,32 @@ export const data = [
   },
   {
     cover: Wedding,
-    title: "Wedding",
+    title: "Enjoy",
   },
   {
     cover: Pool,
-    title: "Pool",
+    title: "Family Time",
   },
   {
     cover: Spa,
-    title: "Spa",
+    title: "Read",
   },
   {
     cover: Restaurant,
-    title: "Restaurant",
+    title: "Work",
   },
   {
     cover: Pool,
-    title: "Pool",
+    title: "Rest",
   },
   {
     cover: Spa,
-    title: "Spa",
+    title: "Entertainment",
   },
-  {
-    cover: Restaurant,
-    title: "Restaurant",
-  },
+  // {
+  //   cover: Restaurant,
+  //   title: "Restaurant",
+  // },
   
 ];
 
