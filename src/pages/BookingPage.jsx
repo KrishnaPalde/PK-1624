@@ -7,7 +7,7 @@ import NewsLetter from "../components/NewsLetter";
 import Footer from "../components/Footer";
 
 const BookingPage = () => {
-  const [priceRange, setPriceRange] = useState([50, 1200]);
+  const [priceRange, setPriceRange] = useState([50, 100000]);
   const [selectedRating, setSelectedRating] = useState(0);
 
   return (
