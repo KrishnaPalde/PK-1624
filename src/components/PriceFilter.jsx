@@ -22,7 +22,7 @@ function PriceFilter({ priceRange, setPriceRange }) {
           <RangeSlider
             aria-label={['min', 'max']}
             min={50}
-            max={1200}
+            max={100000}
             step={1}
             value={priceRange}
             onChange={(newValues) => setPriceRange(newValues)}

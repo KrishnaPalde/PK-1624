@@ -2,8 +2,7 @@ const Booking = require("../models/Bookings");
 const Room = require("../models/Room");
 const fs = require("fs");
 const path = require("path");
-const pdf = require('html-pdf'); // Import html-pdf
-
+const pdf = require("html-pdf"); // Import html-pdf
 
 // Helper function to get dates between two dates
 // const getDatesBetween = (startDate, endDate) => {
@@ -193,19 +192,18 @@ const getBookings = async (req, res) => {
         const room = await Room.findOne({ id: booking.roomId });
         const roomName = room ? room.name : "Unknown Room";
 
-        
-        const bookingId = booking.bookingId.slice(-4); 
+        const bookingId = booking.bookingId.slice(-4);
 
         const bookingData = {
-          bookingId, 
+          bookingId,
           firstName: booking.firstName,
           lastName: booking.lastName,
           phoneNumber: booking.phoneNumber,
           totalPayment: booking.totalPayment,
           checkInDate: booking.checkInDate,
           checkOutDate: booking.checkOutDate,
-          roomName,  
-          roomId: booking.roomId  
+          roomName,
+          roomId: booking.roomId,
         };
 
         return bookingData;
@@ -214,35 +212,38 @@ const getBookings = async (req, res) => {
 
     res.json(bookingsWithRoomNames);
   } catch (error) {
-    console.error('Error fetching bookings:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.error("Error fetching bookings:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 const getBookingById = async (req, res) => {
   try {
     const { bookingId } = req.params;
-    console.log('Received bookingId:', bookingId);
+    console.log("Received bookingId:", bookingId);
 
     const bookings = await Booking.find({
-      bookingId: { $regex: bookingId + '$' }
+      bookingId: { $regex: bookingId + "$" },
     });
 
-    console.log('Matching bookings found:', bookings.length);
+    console.log("Matching bookings found:", bookings.length);
 
     if (bookings.length === 0) {
-      return res.status(404).json({ message: 'Booking not found' });
+      return res.status(404).json({ message: "Booking not found" });
     }
 
     if (bookings.length > 1) {
-      console.warn('Multiple bookings found with the same last 4 characters');
+      console.warn("Multiple bookings found with the same last 4 characters");
     }
 
     const booking = bookings[0];
 
     const room = await Room.findOne({ id: booking.roomId });
     const roomName = room ? room.name : "Unknown Room";
-    const transactionId = booking.transactions.length > 0 ? booking.transactions[0].transactionId : "No Transaction ID";
+    const transactionId =
+      booking.transactions.length > 0
+        ? booking.transactions[0].transactionId
+        : "No Transaction ID";
 
     const bookingData = {
       bookingId: booking.bookingId,
@@ -265,22 +266,22 @@ const getBookingById = async (req, res) => {
 
     res.json(bookingData);
   } catch (error) {
-    console.error('Error fetching booking:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.error("Error fetching booking:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 const getRoomDetailsForm = async (req, res) => {
   try {
     const { bookingId } = req.params;
-    console.log('Received bookingId:', bookingId);
+    console.log("Received bookingId:", bookingId);
 
     const bookings = await Booking.find({
-      bookingId: { $regex: bookingId + '$' }
+      bookingId: { $regex: bookingId + "$" },
     });
 
     if (bookings.length === 0) {
-      return res.status(404).json({ message: 'Booking not found' });
+      return res.status(404).json({ message: "Booking not found" });
     }
 
     const booking = bookings[0];
@@ -288,7 +289,7 @@ const getRoomDetailsForm = async (req, res) => {
     const room = await Room.findOne({ id: booking.roomId });
 
     if (!room) {
-      return res.status(404).json({ message: 'Room not found' });
+      return res.status(404).json({ message: "Room not found" });
     }
 
     const roomData = {
@@ -298,13 +299,13 @@ const getRoomDetailsForm = async (req, res) => {
       description: room.description,
       rating: room.rating,
       price: room.price,
-      images: room.images
+      images: room.images,
     };
 
     res.json(roomData);
   } catch (error) {
-    console.error('Error fetching room details for booking:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.error("Error fetching room details for booking:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -313,7 +314,7 @@ const addRoom = async (req, res) => {
     const { name, title, description, price, weekend } = req.body;
     const amenities = req.body.amenities ? JSON.parse(req.body.amenities) : [];
     const freebies = req.body.freebies ? JSON.parse(req.body.freebies) : [];
-    const images = req.files ? req.files.map(file => file.path) : [];
+    const images = req.files ? req.files.map((file) => file.path) : [];
 
     const newRoom = new Room({
       id: Date.now().toString(),
@@ -321,7 +322,7 @@ const addRoom = async (req, res) => {
       title,
       description,
       price,
-      weekend, 
+      weekend,
       amenities,
       freebies,
       images,
@@ -343,46 +344,41 @@ const updateRoomStatuses = async (req, res) => {
       const activeBooking = await Booking.findOne({
         roomId: room.id,
         checkInDate: { $lte: currentDate },
-        checkOutDate: { $gt: currentDate }
+        checkOutDate: { $gt: currentDate },
       });
 
-      room.status = activeBooking ? 'Booked' : 'Available';
+      room.status = activeBooking ? "Booked" : "Available";
       await room.save();
     }
 
-    res.status(200).json({ message: 'Room statuses updated successfully' });
+    res.status(200).json({ message: "Room statuses updated successfully" });
   } catch (error) {
-    res.status(500).json({ message: 'Error updating room statuses', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error updating room statuses", error: error.message });
   }
 };
 
-
-
 const deleteRoom = async (req, res) => {
-  const roomId = req.params.id; 
+  const roomId = req.params.id;
 
   if (!roomId) {
-    return res.status(400).json({ error: 'Room ID is required' });
+    return res.status(400).json({ error: "Room ID is required" });
   }
 
   try {
     const result = await Room.findOneAndDelete({ id: roomId });
     if (!result) {
-      return res.status(404).json({ message: 'Room not found' });
+      return res.status(404).json({ message: "Room not found" });
     }
-    res.status(200).json({ message: 'Room deleted successfully' });
+    res.status(200).json({ message: "Room deleted successfully" });
   } catch (error) {
-    console.error('Error deleting room:', error);
-    res.status(500).json({ error: 'Internal server error', details: error.message });
+    console.error("Error deleting room:", error);
+    res
+      .status(500)
+      .json({ error: "Internal server error", details: error.message });
   }
 };
-
-
-
-
-
-
-
 
 module.exports = {
   checkIfAvailable,
@@ -395,7 +391,6 @@ module.exports = {
   getBookingById,
   getRoomDetailsForm,
   addRoom,
-  getAllRooms,
   updateRoomStatuses,
   deleteRoom,
 };
