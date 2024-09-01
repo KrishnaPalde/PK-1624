@@ -9,7 +9,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
-
+console.log(process.env.ORIGIN);
 app.use(
   cors({
     // origin: "https://pk-1624-livid.vercel.app",
