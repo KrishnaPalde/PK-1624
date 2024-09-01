@@ -3,6 +3,7 @@ import axios from "axios";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { FaStar } from "react-icons/fa"; // Import star icon
+const process = import.meta.env;
 
 const StarRating = ({ rating, setRating }) => {
   // State to track the hovered star
@@ -76,7 +77,7 @@ const Feedback = () => {
 
     try {
       // await axios.post("http://localhost:4444/api/check-out/feedback", formData);
-      await axios.post("https://pk-1624.onrender.com/api/check-out/feedback", formData);
+      await axios.post(`${process.VITE_HOST_URL}/api/check-out/feedback`, formData);
       
       setIsSubmitted(true);
       setFormData({

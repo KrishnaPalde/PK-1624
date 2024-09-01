@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+const process = import.meta.env;
 
 function NewsLetter() {
   const [email, setEmail] = useState('');
@@ -9,7 +10,7 @@ function NewsLetter() {
     e.preventDefault();
     try {
       // const response = await axios.post('http://localhost:4444/api/subscribe', { email });
-      const response = await axios.post('https://pk-1624.onrender.com/api/subscribe', { email });      
+      const response = await axios.post(`${process.VITE_HOST_URL}/api/subscribe`, { email });      
       // login();
       // setError(null);
       // navigate('/admin');

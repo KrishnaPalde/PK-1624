@@ -21,11 +21,11 @@ const ContactInfo = ({ className = "" }) => {
         </a>
         <div className="w-[20.3px] h-[2.3px] relative bg-black" />
         <a className="[text-decoration:none] relative font-semibold text-[inherit] inline-block min-w-[122px] whitespace-nowrap">
-          help@info.com
+          help.tranquiltrails@gmail.com
         </a>
         <div className="relative text-mini leading-[24px]">
           <p className="m-0">{`Assistance hours: `}</p>
-          <p className="m-0">Monday - Friday 6 am to 8 pm EST</p>
+          <p className="m-0">Monday - Sunday 10 am to 8 pm IST</p>
         </div>
       </div>
       <div className="w-[184.5px] flex flex-col items-start justify-start gap-[19.2px]">
@@ -34,11 +34,11 @@ const ContactInfo = ({ className = "" }) => {
         </a>
         <div className="w-[20.3px] h-[2.3px] relative bg-black" />
         <a className="[text-decoration:none] relative font-semibold text-[inherit]">
-          (808) 998-34256
+          (+91) 7673-992288
         </a>
         <div className="relative text-mini leading-[24px]">
           <p className="m-0">{`Assistance hours: `}</p>
-          <p className="m-0">Monday - Friday 6 am to 8 pm EST</p>
+          <p className="m-0">Monday - Sunday 10 am to 8 pm IST</p>
         </div>
       </div>
     </div>

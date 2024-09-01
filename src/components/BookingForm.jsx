@@ -4,6 +4,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useBooking } from '../contexts/BookingFormContext';
 import axios from 'axios';
+const process = import.meta.env;
 
 function BookingForm() {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ function BookingForm() {
     
     return storedDate || today;
   });
-  const [checkOut, setCheckOut] = useState(bookingInfo.checkOut || tomorrow);
+  const [checkOut, setCheckOut] = useState(new Date(bookingInfo.checkOut) || tomorrow);
   const [adults, setAdults] = useState(bookingInfo.adults || 2);
   const [children, setChildren] = useState(bookingInfo.children || 2);
   const [isGuestDropdownOpen, setIsGuestDropdownOpen] = useState(false);
@@ -32,6 +33,7 @@ function BookingForm() {
   const [unavailableDates, setUnavailableDates] = useState([]);
  
   useEffect(() => {
+    console.log(bookingInfo.checkOut instanceof Date && !isNaN(bookingInfo.checkOut.getTime()));
     setCheckIn(bookingInfo.checkIn || today);
     setCheckOut(bookingInfo.checkOut || tomorrow);
     setAdults(bookingInfo.adults || 2);
@@ -42,7 +44,8 @@ function BookingForm() {
     const fetchUnavailableDates = async () => {
       try {
         // const response = await axios.get("http://localhost:4444/api/unavailable_dates");
-         const response = await axios.get('https://pk-1624.onrender.com/api/unavailable_dates');
+        //  const response = await axios.get('https://pk-1624.onrender.com/api/unavailable_dates');
+        const response = await axios.get(`${process.VITE_HOST_URL}/api/unavailable_dates`);
         setUnavailableDates(response.data.unavailableDates.map(date => new Date(date)));
       } catch (error) {
         console.error('Error fetching unavailable dates:', error);
@@ -64,11 +67,18 @@ function BookingForm() {
   };
 
   const handleCheckOutChange = (date) => {
+    console.log(checkOut instanceof Date && !isNaN(checkOut.getTime()));
+    if (!date || isNaN(date.getTime())) {
+      alert('Invalid date selected');
+      return;
+    }
     if (date && date <= checkIn) {
       alert('Check-out date must be after check-in date');
       return;
     }
+    console.log(1);
     setCheckOut(date);
+    console.log(2);
     updateBookingInfo({ checkOut: date });
   };
 
@@ -98,7 +108,11 @@ function BookingForm() {
 
     try {
       // const response = await axios.get("http://localhost:4444/api/check_availability_dates", {
-      const response = await axios.get("https://pk-1624.onrender.com/api/check_availability_dates", {
+      
+      // const response = await axios.get("https://pk-1624.onrender.com/api/check_availability_dates"
+      const response = await axios.get(`${process.VITE_HOST_URL}/api/check_availability_dates`
+      , {
+        
         params: {
           checkinDate: checkIn.toISOString(),
           checkoutDate: checkOut.toISOString(),
@@ -124,11 +138,13 @@ function BookingForm() {
           <h2 className="text-2xl font-medium text-black">Book a Room</h2>
           <p className="mt-2 text-sm text-zinc-600">Discover the perfect space for you!</p>
         </div>
+        <a href='/faq'>
         <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/f52b4f26e250d854cf478ad34a6476653b6599a7c2df94d2cf950a3d97fbf92b?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
           alt=""
           className="w-[133px] h-auto"
         />
+        </a>
       </div>
       <div className="flex flex-col items-start gap-5 p-5 bg-white border border-solid md:flex-row rounded-2xl border-zinc-200">
         <div className="flex-1 space-y-2 md:w-1/4">
@@ -168,7 +184,7 @@ function BookingForm() {
             />
             <DatePicker
               id="checkOut"
-              selected={checkOut}
+              selected={checkOut instanceof Date && !isNaN(checkOut.getTime()) ? checkOut : new Date()}
               onChange={handleCheckOutChange}
               dateFormat="dd/MM/yyyy"
               className="w-full text-base font-medium bg-transparent focus:outline-none"

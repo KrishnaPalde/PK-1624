@@ -191,7 +191,7 @@ function StayDetails() {
           <DateDisplay date={formatDate(bookingInfo.checkOut)} type="Check-Out" />
         </div>
          
-        <p className="mt-4 text-base font-medium text-neutral-900">
+        {/* <p className="mt-4 text-base font-medium text-neutral-900">
           Your booking is protected by{" "}
           <span className="font-bold">Tranquil Trails</span>
         </p>
@@ -220,7 +220,7 @@ function StayDetails() {
             adults={bookingInfo.adults}
             children={bookingInfo.children}
           />
-        </div>
+        </div> */}
       </div>
     </section>
   );

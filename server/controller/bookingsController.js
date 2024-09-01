@@ -130,8 +130,12 @@ const fetchBookingsAdmin = async (req, res) => {
   try {
     const { recent, limit } = req.query;
 
-    // Fetch all bookings by default
-    let query = Booking.find();
+    // Current date at 00:00:00 to compare check-in dates
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Fetch only upcoming bookings where check-in date is today or later
+    let query = Booking.find({ checkInDate: { $gte: today } });
 
     // If 'recent' parameter is provided and true, fetch the most recently added bookings
     if (recent === "true") {

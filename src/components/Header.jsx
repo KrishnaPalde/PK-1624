@@ -96,7 +96,7 @@ const navItems = [
   { label: "Home", to: "/" },
   { label: "Blog", to: "/blogs" },
   { label: "Booking", to: "/bookings" },
-  // { label: "About us", to: "#" },
+  { label: "FAQ", to: "/faq" },
   { label: "Contact us", to: "/contactus" },
   { label: "Log In", to: "/login" },
 ];

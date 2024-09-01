@@ -12,8 +12,8 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://pk-1624-livid.vercel.app",
-    // origin: "http://localhost:5173",
+    // origin: "https://pk-1624-livid.vercel.app",
+    origin: "http://localhost:5173",
     credentials: true,
   })
 );

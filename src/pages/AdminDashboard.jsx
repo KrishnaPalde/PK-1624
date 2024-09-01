@@ -100,6 +100,7 @@ import CustomerReviews from '../components/BookingDashboard/CustomerReviews';
 import DatePicker from '../components/BookingDashboard/CustomCalendar';
 import NewBooking from '../components/BookingDashboard/NewBooking';
 import axios from 'axios';
+const process = import.meta.env;
 
 const AdminDashboard = () => {
   const [error, setError] = useState(null);
@@ -113,7 +114,7 @@ const AdminDashboard = () => {
   const loadStatCardsData = async () => {
     try {
       // const response = await axios.get('http://localhost:4444/api/admin/dashboard_stats');
-      const response = await axios.get('https://pk-1624.onrender.com/api/admin/dashboard_stats');
+      const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/dashboard_stats`);
       setStats({
         total: response.data.total,
         upcoming: response.data.upcoming,
@@ -131,7 +132,7 @@ const AdminDashboard = () => {
   }, []);
 
   const statCards = [
-    { title: 'New Booking', value: stats.total, bgColor: 'bg-orange-100' },
+    { title: 'Total Bookings', value: stats.total, bgColor: 'bg-orange-100' },
     { title: 'Schedule Room', value: stats.upcoming, bgColor: 'bg-violet-100' },
     { title: 'Check In', value: stats.checkIn, bgColor: 'bg-pink-100' },
     { title: 'Check Out', value: stats.checkOut, bgColor: 'bg-blue-100' },

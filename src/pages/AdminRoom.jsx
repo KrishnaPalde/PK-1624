@@ -4,6 +4,7 @@ import SideNav from "../components/SideNav";
 import StatCard from "../components/BookingDashboard/StatCard";
 import AdminNav from "../components/BookingDashboard/AdminNav";
 import RoomTable from "../components/BookingDashboard/RoomTable";
+const process = import.meta.env;
 
 const AdminRoom = () => {
 
@@ -19,7 +20,7 @@ const AdminRoom = () => {
   const loadStatCardsData = async () => {
     try {
       // const response = await axios.get('http://localhost:4444/api/admin/dashboard_stats'); 
-      const response = await axios.get('https://pk-1624.onrender.com/api/admin/dashboard_stats'); 
+      const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/dashboard_stats`); 
       
       // Update the state with the response data
       setStats({

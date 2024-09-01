@@ -242,7 +242,7 @@ function YourBookingDetailsForm() {
               </div>
             </div>
           </div>
-          {/* <p className="mt-4 text-base font-medium text-neutral-900">
+          <p className="mt-4 text-base font-medium text-neutral-900">
           Your booking is protected by{" "}
           <span className="font-bold">Tranquil Trails</span>
         </p>
@@ -261,10 +261,10 @@ function YourBookingDetailsForm() {
         <div className="flex items-start justify-between w-full gap-10 mt-4 text-base text-neutral-900 max-md:max-w-full">
           <div className="font-medium">Total </div>
           <div className="font-semibold">₹2650</div>
-        </div> */}
+        </div>
         
         
-        {/* <button className="flex-1 shrink gap-2.5 self-stretch px-2 py-2 mt-4 max-w-full text-xl text-center text-white bg-sky-400 rounded w-[150px]">
+        <button className="flex-1 shrink gap-2.5 self-stretch px-2 py-2 mt-4 max-w-full text-xl text-center text-white bg-sky-400 rounded w-[150px]">
           <PaymentButton 
             roomData={roomData} 
             formData={formData}
@@ -274,7 +274,7 @@ function YourBookingDetailsForm() {
             // onClick={handleSave}
           />
         
-        </button> */}
+        </button>
        
 
 

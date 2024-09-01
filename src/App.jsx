@@ -19,6 +19,7 @@ import AdminRoom from './pages/AdminRoom';
 import AdminBlog from './pages/AdminBlog';
 import AdminCreatePost from './pages/AdminCreatePost';
 import Feedback from './pages/Feedback';
+import FAQ from './pages/FAQ';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route path="/room/:id/bookingconfirm" element={<><ScrollToTop/><BookingConfirm/></>}/>
           <Route path="/feedback" element={<><ScrollToTop/><Feedback/></>} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/faq" element={<FAQ />} />
           <Route
             path="/admin/dashboard"
             element={

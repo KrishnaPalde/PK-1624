@@ -136,6 +136,7 @@ function HotelListing({ priceRange, selectedRating }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const location = useLocation();
+  const process = import.meta.env;
 
   const cardsPerPage = 3;
 
@@ -149,7 +150,7 @@ function HotelListing({ priceRange, selectedRating }) {
     const fetchRooms = async () => {
       try {
         // const response = await axios.get("http://localhost:4444/api/admin/rooms");
-        const response = await axios.get("https://pk-1624.onrender.com/api/admin/rooms");
+        const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/rooms`);
         
         setHotelData(response.data);
         setFilteredData(response.data);

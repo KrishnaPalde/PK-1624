@@ -7,6 +7,7 @@ import { Box, Container, TextField, Typography, Button, Grid, Paper, Alert } fro
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { styled } from '@mui/system';
+const process = import.meta.env;
 
 const theme = createTheme({
   palette: {
@@ -52,7 +53,7 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       // const response = await axios.post('http://localhost:4444/api/authenticateAdmin', { email, password });
-      const response = await axios.post('https://pk-1624.onrender.com/api/authenticateAdmin', { email, password });      
+      const response = await axios.post(`${process.VITE_HOST_URL}/api/authenticateAdmin`, { email, password });      
       login();
       setError(null);
       navigate('/admin/dashboard');

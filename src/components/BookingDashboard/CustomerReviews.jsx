@@ -1,5 +1,7 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import StarRating from "./StarRating";
+import axios from "axios";
+const process = import.meta.env;
 
 const reviews = [
   {
@@ -31,14 +33,29 @@ const reviews = [
   },
 ];
 
-const ReviewCard = ({ avatar, name, rating, time, review }) => {
+function formatDate(date) {
+  // Define the array of month abbreviations
+  const monthAbbr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  // Extract the day, month, and year from the Date object
+  const day = date.getDate(); // Day of the month
+  const month = monthAbbr[date.getMonth()]; // Month abbreviation
+  const year = date.getFullYear(); // Full year
+
+  // Return the formatted date string
+  return `${day} ${month} ${year}`;
+}
+
+const ReviewCard = ({ name, overallExperience, createdAt, comments }) => {
+
+  const date = formatDate(new Date(createdAt));
   return (
     <section className="mt-5">
       <div className="flex items-end gap-4">
         <div className="flex gap-2 items-start min-w-[240px] w-[303px]">
           <img
             loading="lazy"
-            src={avatar}
+            src="https://img.icons8.com/officel/80/circled-user-male-skin-type-3.png"
             alt={`${name}'s avatar`}
             className="object-contain shrink-0 rounded-full aspect-square w-[38px]"
           />
@@ -47,20 +64,37 @@ const ReviewCard = ({ avatar, name, rating, time, review }) => {
               {name}
             </h3>
             <div className="flex items-center w-full gap-1 mt-1 text-sm font-medium tracking-normal text-right text-neutral-400">
-              <StarRating rating={rating} />
-              <time className="self-stretch my-auto">{time}</time>
+              <StarRating rating={overallExperience} />
+              <time className="self-stretch my-auto">{date}</time>
             </div>
           </div>
         </div>
       </div>
       <p className="mt-2.5 text-sm tracking-normal leading-5 text-gray-500 max-md:max-w-full">
-        {review}
+        {comments}
       </p>
     </section>
   );
 };
 
 const CustomerReviews = () => {
+
+  const [reviews, setReviews] = useState([]);
+
+  const fetchReviews = async () => {
+    try{
+      const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/latest-feedbacks`);
+      setReviews(response.data);
+    } catch(error) {
+      console.log(error);
+      alert(error);
+    }
+  }
+
+  useEffect(()=>{
+    fetchReviews();
+  });
+
   return (
     <article className="flex flex-col items-start max-w-[579px]">
       <header className="flex flex-wrap self-stretch justify-between w-full gap-5 text-2xl font-semibold text-slate-700 max-md:max-w-full">

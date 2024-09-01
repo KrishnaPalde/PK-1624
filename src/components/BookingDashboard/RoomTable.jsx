@@ -2,6 +2,8 @@ import React, { useState,useEffect } from "react";
 import AddRoomForm from "./AddRoomForm";
 import { Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+const process = import.meta.env;
+
 
 function RoomTable({ addRoom }) {
   const [rooms, setRooms] = useState([]);
@@ -45,9 +47,9 @@ function RoomTable({ addRoom }) {
   const fetchRooms = async () => {
     try {
       // await fetch('http://localhost:4444/api/admin/getroomstatus');
-      await fetch('https://pk-1624.onrender.com/api/admin/getroomstatus');
+      await fetch(`${process.VITE_HOST_URL}/api/admin/getroomstatus`);
       // const response = await fetch('http://localhost:4444/api/admin/rooms');
-      const response = await fetch('https://pk-1624.onrender.com/api/admin/rooms');
+      const response = await fetch(`${process.VITE_HOST_URL}/api/admin/rooms`);
       if (!response.ok) {
         throw new Error('Failed to fetch rooms');
       }
@@ -65,7 +67,7 @@ function RoomTable({ addRoom }) {
       // const response = await fetch(`http://localhost:4444/api/admin/deleteroom/${roomId}`, {
       //   method: 'DELETE',
       // });
-      const response = await fetch(`https://pk-1624.onrender.com/api/admin/deleteroom/${roomId}`, {
+      const response = await fetch(`${process.VITE_HOST_URL}/api/admin/deleteroom/${roomId}`, {
         method: 'DELETE',
       });
       
@@ -133,9 +135,9 @@ function RoomTable({ addRoom }) {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                {/* <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                   Room ID
-                </th>
+                </th> */}
                 <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                   Title
                 </th>
@@ -162,7 +164,7 @@ function RoomTable({ addRoom }) {
             <tbody className="bg-white divide-y divide-gray-200">
               {displayedRooms.map((room, index) => (
                 <tr key={index}>
-                  <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{room.id}</td>
+                  {/* <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{room.id}</td> */}
                   <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{room.name}</td>
                   <td className="max-w-xl px-6 py-4 text-sm text-gray-500 min-w-sm">
   <div className="break-words whitespace-normal">{room.description}</div>
@@ -334,7 +336,7 @@ export default function App() {
         }
       });
 
-      const response = await fetch('https://pk-1624.onrender.com/api/admin/addroom', {
+      const response = await fetch(`${process.VITE_HOST_URL}/api/admin/addroom`, {
       // const response = await fetch('http://localhost:4444/api/admin/addroom',{
         method: 'POST',
         body: formData,

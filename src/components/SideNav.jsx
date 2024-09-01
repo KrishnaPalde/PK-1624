@@ -209,13 +209,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useAuth } from '../AuthContext';
 import { Link } from 'react-router-dom';
 
 const SideNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [screenSize, setScreenSize] = useState('large');
-  const { logout } = useAuth();
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -292,13 +290,13 @@ const SideNav = () => {
             </motion.li>
           ))}
         </ul>
-        <div className="absolute bottom-6 left-6 right-6">
+        {/* <div className="absolute bottom-6 left-6 right-6">
           <hr className="mb-4 border-gray-300" />
           <Link className="flex items-center space-x-3 text-gray-600 transition-colors duration-300 hover:text-gray-800" onClick={logout}>
             <span><i className="fas fa-sign-out-alt"></i></span>
             <span>Log out</span>
           </Link>
-        </div>
+        </div> */}
       </motion.nav>
       {screenSize !== 'large' && (
         <button

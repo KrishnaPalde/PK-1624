@@ -107,6 +107,7 @@
 
 import React, { useState } from "react";
 import axios from "axios";
+const process = import.meta.env;
 
 const ContactForm = () => {
   // State to hold form data
@@ -143,7 +144,9 @@ const ContactForm = () => {
     try {
       // Example POST request using axios
       // const response = await axios.post("http://localhost:4444/api/contact-us/enquiry", data);
-      const response = await axios.post("https://pk-1624.onrender.com/api/contact-us/enquiry", data);
+      // const response = await axios.post("https://pk-1624.onrender.com/api/contact-us/enquiry", data);
+      const response = await axios.get(`${process.env.VITE_HOST_URL}/api/contact-us/enquiry`, data);
+      
       
       console.log("Response:", response.data);
       

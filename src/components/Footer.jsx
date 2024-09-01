@@ -73,7 +73,7 @@ const Footer = () => {
             Pacific Hills, Diversion, Mussoorie Road, Dehradun, Uttarakhand, India. Pin Code-248009
             </address>
             <p className="mt-4 text-sm leading-6 text-stone-300">
-              Phone: +1 5589 55488 55
+              Phone: (+91) 7673-992288
             </p>
             <p className="mt-4 text-sm leading-6 text-stone-300">
               Email: help.tranquiltrails@gmail.com

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday } from 'date-fns';
 import axios from 'axios';
+const process = import.meta.env;
 
 const CustomCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -10,8 +11,7 @@ const CustomCalendar = () => {
   useEffect(() => {
     const fetchUnavailableDates = async () => {
       try {
-        // const response = await axios.get('http://localhost:4444/api/unavailable_dates');
-        const response = await axios.get('https://pk-1624.onrender.com/api/unavailable_dates');
+        const response = await axios.get(`${process.VITE_HOST_URL}/api/unavailable_dates`);
         setUnavailableDates(response.data.unavailableDates.map(date => new Date(date)));
       } catch (error) {
         console.error('Error fetching unavailable dates:', error);
@@ -65,10 +65,11 @@ const CustomCalendar = () => {
           key={i}
           className={`text-center p-1 ${isCurrentMonth ? '' : 'text-gray-400'} 
           ${isSelected ? 'bg-blue-500 text-white rounded' : ''}
-          ${isUnavailable ? 'bg-blue-200 text-blue-800' : ''}
+          ${isUnavailable ? 'bg-red-200 text-red-800 cursor-not-allowed' : ''}
           ${isToday(day) && !isSelected ? 'border border-blue-500' : ''}
           cursor-pointer hover:bg-gray-100`}
           onClick={() => onDateClick(day)}
+          title={isUnavailable ? 'Date is fully booked' : 'Select date'}
         >
           {formattedDate}
         </div>

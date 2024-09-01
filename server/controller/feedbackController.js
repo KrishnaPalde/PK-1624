@@ -27,6 +27,25 @@ const createFeedback = async (req, res) => {
   }
 };
 
+const fetchLatestFeedbacks = async (req, res) => {
+  try {
+    // Fetch the latest 4 feedbacks where overallExperience is greater than 3
+    const feedbacks = await Feedback.find({ overallExperience: { $gt: 3 } })
+      .sort({ createdAt: -1 }) // Sort by creation date in descending order
+      .limit(4); // Limit to the latest 4 feedbacks
+
+    res.status(200).json(feedbacks);
+  } catch (error) {
+    console.error("Error fetching feedbacks:", error);
+    res.status(500).json({
+      message: "An error occurred while fetching feedbacks. Please try again.",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { fetchLatestFeedbacks };
+
 const getAllFeedbacks = async (req, res) => {
   try {
     const feedbacks = await Feedback.find();
@@ -104,4 +123,5 @@ module.exports = {
   getAllFeedbacks,
   getFeedbacksBelow3Stars,
   getHotelRating,
+  fetchLatestFeedbacks,
 };
