@@ -67,7 +67,7 @@ function StayInfo({title,rating,price,images}) {
           className="object-contain w-4 shrink-0 aspect-square"
         />
         <div className="grow shrink my-auto w-[131px]">
-        {bookingInfo.adults} Adults, {bookingInfo.adults} Children
+        {bookingInfo.adults} Adults, {bookingInfo.children} Children
         </div>
       </div>
     </>

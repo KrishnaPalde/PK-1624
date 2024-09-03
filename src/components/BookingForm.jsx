@@ -14,18 +14,16 @@ function BookingForm() {
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
-   const [checkIn, setCheckIn] = useState(() => {
-    const today = new Date();
+  const [checkIn, setCheckIn] = useState(() => {
     const storedDate = bookingInfo.checkIn ? new Date(bookingInfo.checkIn) : null;
-    
-    if (storedDate && storedDate > today) {
-      console.log("");
-      return today;
-    }
-    
-    return storedDate || today;
+    return (storedDate && storedDate > today) ? storedDate : today;
   });
-  const [checkOut, setCheckOut] = useState(new Date(bookingInfo.checkOut) || tomorrow);
+
+  const [checkOut, setCheckOut] = useState(() => {
+    const storedDate = bookingInfo.checkOut ? new Date(bookingInfo.checkOut) : null;
+    return (storedDate && storedDate > checkIn) ? storedDate : tomorrow;
+  });
+
   const [adults, setAdults] = useState(bookingInfo.adults || 2);
   const [children, setChildren] = useState(bookingInfo.children || 2);
   const [isGuestDropdownOpen, setIsGuestDropdownOpen] = useState(false);
@@ -33,9 +31,8 @@ function BookingForm() {
   const [unavailableDates, setUnavailableDates] = useState([]);
  
   useEffect(() => {
-    console.log(bookingInfo.checkOut instanceof Date && !isNaN(bookingInfo.checkOut.getTime()));
-    setCheckIn(bookingInfo.checkIn || today);
-    setCheckOut(bookingInfo.checkOut || tomorrow);
+    setCheckIn(new Date(bookingInfo.checkIn) || today);
+    setCheckOut(new Date(bookingInfo.checkOut) || tomorrow);
     setAdults(bookingInfo.adults || 2);
     setChildren(bookingInfo.children || 2);
   }, [bookingInfo]);
@@ -43,8 +40,6 @@ function BookingForm() {
   useEffect(() => {
     const fetchUnavailableDates = async () => {
       try {
-        // const response = await axios.get("http://localhost:4444/api/unavailable_dates");
-        //  const response = await axios.get('https://pk-1624.onrender.com/api/unavailable_dates');
         const response = await axios.get(`${process.VITE_HOST_URL}/api/unavailable_dates`);
         setUnavailableDates(response.data.unavailableDates.map(date => new Date(date)));
       } catch (error) {
@@ -67,23 +62,20 @@ function BookingForm() {
   };
 
   const handleCheckOutChange = (date) => {
-    console.log(checkOut instanceof Date && !isNaN(checkOut.getTime()));
     if (!date || isNaN(date.getTime())) {
-      alert('Invalid date selected');
+      console.error('Invalid date selected');
       return;
     }
-    if (date && date <= checkIn) {
-      alert('Check-out date must be after check-in date');
+    if (date <= checkIn) {
+      console.error('Check-out date must be after check-in date');
       return;
     }
-    console.log(1);
     setCheckOut(date);
-    console.log(2);
     updateBookingInfo({ checkOut: date });
   };
 
   const handleAdultsChange = (type) => {
-    const newAdults = type === "increment" ? adults + 1 : (adults > 0 ? adults - 1 : 0);
+    const newAdults = type === "increment" ? adults + 1 : (adults > 1 ? adults - 1 : 1);
     setAdults(newAdults);
     updateBookingInfo({ adults: newAdults });
   };
@@ -107,12 +99,7 @@ function BookingForm() {
     e.preventDefault();
 
     try {
-      // const response = await axios.get("http://localhost:4444/api/check_availability_dates", {
-      
-      // const response = await axios.get("https://pk-1624.onrender.com/api/check_availability_dates"
-      const response = await axios.get(`${process.VITE_HOST_URL}/api/check_availability_dates`
-      , {
-        
+      const response = await axios.get(`${process.VITE_HOST_URL}/api/check_availability_dates`, {
         params: {
           checkinDate: checkIn.toISOString(),
           checkoutDate: checkOut.toISOString(),
