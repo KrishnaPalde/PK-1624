@@ -44,11 +44,22 @@ const fetchLatestFeedbacks = async (req, res) => {
   }
 };
 
-module.exports = { fetchLatestFeedbacks };
-
 const getAllFeedbacks = async (req, res) => {
   try {
     const feedbacks = await Feedback.find();
+    res.status(200).json(feedbacks);
+  } catch (error) {
+    console.error("Error fetching feedbacks:", error);
+    res.status(500).json({
+      message: "An error occurred while fetching feedbacks. Please try again.",
+      error: error.message,
+    });
+  }
+};
+
+const getAllApprovedFeedbacks = async (req, res) => {
+  try {
+    const feedbacks = await Feedback.find({ approve: true });
     res.status(200).json(feedbacks);
   } catch (error) {
     console.error("Error fetching feedbacks:", error);
@@ -124,4 +135,5 @@ module.exports = {
   getFeedbacksBelow3Stars,
   getHotelRating,
   fetchLatestFeedbacks,
+  getAllApprovedFeedbacks,
 };

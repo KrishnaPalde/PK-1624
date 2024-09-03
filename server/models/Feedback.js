@@ -13,6 +13,7 @@ const FeedbackSchema = new mongoose.Schema(
     comments: { type: String, default: "" },
     easeOfBooking: { type: Number, min: 0, max: 5, default: 0 },
     websiteUsability: { type: Number, min: 0, max: 5, default: 0 },
+    approve: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

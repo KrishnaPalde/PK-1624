@@ -1,40 +1,54 @@
 import React, { useRef, useState, useEffect } from "react";
 import TestimonialCard from "./TestimonialCard";
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import axios from 'axios';
+const process = import.meta.env;
 
-const testimonials = [
-  {
-    name: "Sara Mohamed",
-    location: "Jakarta",
-    imageSrc:
-      "https://cdn.builder.io/api/v1/image/assets/TEMP/3461b425982dadae9d4e76268c1684dd4aca7e7ee212b134095802f177dde055?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
-    content:
-      "I've been using the hotel booking system for several years now, and it's become my go-to platform for planning my trips. The interface is user-friendly, and I appreciate the detailed information and real-time availability of hotels.",
-    bgColor: "bg-rose-50",
-  },
-  {
-    name: "Atend John",
-    location: "California",
-    imageSrc:
-      "https://cdn.builder.io/api/v1/image/assets/TEMP/84c2a9eee7fdde809e27857753d510a778f912293ca2ca8d4eb547e77ee92460?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
-    content:
-      "I had a last-minute business trip, and the hotel booking system came to the rescue. I was able to find a high-quality hotel in no time and even got a great deal on the room. The confirmation process was straightforward, and I received all the necessary information promptly.",
-    bgColor: "bg-sky-100",
-  },
-  {
-    name: "Atend John",
-    location: "California",
-    imageSrc:
-      "https://cdn.builder.io/api/v1/image/assets/TEMP/84c2a9eee7fdde809e27857753d510a778f912293ca2ca8d4eb547e77ee92460?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
-    content:
-      "I had a last-minute business trip, and the hotel booking system came to the rescue. I was able to find a high-quality hotel in no time and even got a great deal on the room. The confirmation process was straightforward, and I received all the necessary information promptly.",
-    bgColor: "bg-sky-100",
-  },
-];
+// const testimonials = [
+//   {
+//     name: "Sara Mohamed",
+//     location: "Jakarta",
+//     imageSrc:
+//       "https://cdn.builder.io/api/v1/image/assets/TEMP/3461b425982dadae9d4e76268c1684dd4aca7e7ee212b134095802f177dde055?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
+//     content:
+//       "I've been using the hotel booking system for several years now, and it's become my go-to platform for planning my trips. The interface is user-friendly, and I appreciate the detailed information and real-time availability of hotels.",
+//     bgColor: "bg-rose-50",
+//   },
+//   {
+//     name: "Atend John",
+//     location: "California",
+//     imageSrc:
+//       "https://cdn.builder.io/api/v1/image/assets/TEMP/84c2a9eee7fdde809e27857753d510a778f912293ca2ca8d4eb547e77ee92460?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
+//     content:
+//       "I had a last-minute business trip, and the hotel booking system came to the rescue. I was able to find a high-quality hotel in no time and even got a great deal on the room. The confirmation process was straightforward, and I received all the necessary information promptly.",
+//     bgColor: "bg-sky-100",
+//   },
+//   {
+//     name: "Atend John",
+//     location: "California",
+//     imageSrc:
+//       "https://cdn.builder.io/api/v1/image/assets/TEMP/84c2a9eee7fdde809e27857753d510a778f912293ca2ca8d4eb547e77ee92460?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
+//     content:
+//       "I had a last-minute business trip, and the hotel booking system came to the rescue. I was able to find a high-quality hotel in no time and even got a great deal on the room. The confirmation process was straightforward, and I received all the necessary information promptly.",
+//     bgColor: "bg-sky-100",
+//   },
+// ];
 
 function Testimonials() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const testimonialRef = useRef(null);
+  const [testimonials, setTestimonials] = useState([])
+
+
+  const fetchTestimonials = async () => {
+    try{
+      const response = await axios.get(`${process.VITE_HOST_URL}/api/public-feedbacks`)
+      setTestimonials(response.data);
+    } catch (error) {
+      alert(error);
+    }
+  }
+
 
   const handleNext = () => {
     setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
@@ -72,6 +86,10 @@ function Testimonials() {
       });
     }
   }, [currentTestimonial]);
+
+  useEffect(() => {
+    fetchTestimonials();
+  });
 
   return (
     <section className="py-20 px-20 mt-1.5 w-full bg-white max-md:px-5 max-md:max-w-full">

@@ -18,6 +18,7 @@ const {
   createFeedback,
   getAllFeedbacks,
   fetchLatestFeedbacks,
+  getAllApprovedFeedbacks,
   getFeedbacksBelow3Stars,
   getHotelRating,
 } = require("../controller/feedbackController");
@@ -52,5 +53,6 @@ router.get("/admin/latest-feedbacks", fetchLatestFeedbacks);
 router.get("/admin/feedbacks/below-3-stars", getFeedbacksBelow3Stars);
 router.get("/hotel-rating", getHotelRating);
 router.delete("/admin/deleteroom/:id", deleteRoom);
+router.get("/public-feedbacks", getAllApprovedFeedbacks);
 
 module.exports = router;
