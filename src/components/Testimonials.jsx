@@ -1,8 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import TestimonialCard from "./TestimonialCard";
-import { faGreaterThan } from "@fortawesome/free-solid-svg-icons/faGreaterThan";
-import { faLessThan } from "@fortawesome/free-solid-svg-icons/faLessThan";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const testimonials = [
   {
@@ -120,15 +118,18 @@ function Testimonials() {
           <div className="flex justify-start gap-2 mt-5">
             <button
               onClick={handlePrevious}
-              className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full"
+              className="flex items-center justify-center w-10 h-10 transition-colors bg-blue-100 rounded-full hover:bg-blue-200"
             >
-              <FontAwesomeIcon icon={faLessThan} />
+              {/* <FontAwesomeIcon icon={faLessThan} /> */}
+              <FaChevronLeft className="w-6 h-6"/>
+              
             </button>
             <button
               onClick={handleNext}
-              className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full"
+              className="flex items-center justify-center w-10 h-10 transition-colors bg-blue-100 rounded-full hover:bg-blue-200"
             >
-              <FontAwesomeIcon icon={faGreaterThan} />
+              {/* <FontAwesomeIcon icon={faGreaterThan} /> */}
+              <FaChevronRight className="w-6 h-6"/>
             </button>
           </div>
         </div>

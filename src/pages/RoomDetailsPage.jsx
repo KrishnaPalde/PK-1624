@@ -45,7 +45,7 @@ const RoomDetailsPage = () => {
               <AmenitiesList />
             </div>
             <div className="mt-10">
-              <RoomReviewSection />
+              <RoomReviewSection rating={roomData.rating}/>
             </div>
             <div>
               <Testimonials />

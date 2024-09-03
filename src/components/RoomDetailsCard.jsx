@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
 const RoomDetailsCard = ({ 
   title, 
@@ -31,6 +32,36 @@ const RoomDetailsCard = ({
     });
   };
 
+  const renderStars = () => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      if (i <= rating) {
+        stars.push(<FaStar key={i} className="text-yellow-500" />); 
+      } else if (i === Math.ceil(rating) && !Number.isInteger(rating)) {
+        stars.push(<FaStarHalfAlt key={i} className="text-yellow-500" />); 
+      } else {
+        stars.push(<FaRegStar key={i} className="text-yellow-500" />); 
+      }
+    }
+    return stars;
+  };
+
+  const getTitle = () => {
+    switch (Math.round(rating)) {
+      case 1:
+        return "Poor";
+      case 2:
+        return "Fair";
+      case 3:
+        return "Average";
+      case 4:
+        return "Good";
+      case 5:
+        return "Excellent";
+      default:
+        return "Unknown"; 
+    }
+  };
 
   
   return (
@@ -39,12 +70,7 @@ const RoomDetailsCard = ({
         <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
           <h2 className="text-xl font-bold sm:text-2xl">{title}</h2>
           <div className="flex items-center gap-1 text-xs font-medium">
-            <img
-              loading="lazy"
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/f525434b6ac90a72ebe3005167894f466c267f2422028314e1457540b74f9caf?apiKey=e6b8c17325a24fb29c274ce450ea26a7&&apiKey=e6b8c17325a24fb29c274ce450ea26a7"
-              className="object-contain w-20 h-4"
-              alt="Star rating"
-            />
+            <div className="flex">{renderStars()}</div>
             <div>{rating} Star</div>
           </div>
         </header>
@@ -63,7 +89,7 @@ const RoomDetailsCard = ({
               {rating.toFixed(1)}
             </div>
             <div>
-              <span className="font-bold">Very Good</span> {reviews} reviews
+              <span className="font-bold">{getTitle()}</span> {reviews} reviews
             </div>
           </div>
         </div>

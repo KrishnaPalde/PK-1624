@@ -21,6 +21,24 @@ const features = [
 ];
 
 function RoomOverview({ rating }) {
+
+  const getTitle = () => {
+    switch (Math.round(rating)) {
+      case 1:
+        return "Poor";
+      case 2:
+        return "Fair";
+      case 3:
+        return "Average";
+      case 4:
+        return "Good";
+      case 5:
+        return "Excellent";
+      default:
+        return "Unknown"; 
+    }
+  };
+  
   return (
     <section className="flex flex-col w-full mt-8 max-md:max-w-full">
       <header className="flex flex-col w-full text-neutral-900 max-md:max-w-full">
@@ -45,7 +63,7 @@ function RoomOverview({ rating }) {
           <div className="flex flex-col">
             <div className="text-3xl font-bold text-white">{rating}</div>
             <div className="flex flex-col mt-8 text-white">
-              <div className="text-base font-bold">Very good</div>
+              <div className="text-base font-bold">{getTitle()}</div>
               <div className="mt-1 text-sm font-medium">371 reviews</div>
             </div>
           </div>

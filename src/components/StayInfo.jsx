@@ -7,6 +7,23 @@ function StayInfo({title,rating,price,images}) {
   if (!bookingInfo.checkIn) {
     return <div>No room data available. Please select booking details.</div>;
   }
+
+  const getTitle = () => {
+    switch (Math.round(rating)) {
+      case 1:
+        return "Poor";
+      case 2:
+        return "Fair";
+      case 3:
+        return "Average";
+      case 4:
+        return "Good";
+      case 5:
+        return "Excellent";
+      default:
+        return "Unknown"; 
+    }
+  };
   return (
     <>
       <div className="flex w-full gap-6 text-neutral-900 max-md:max-w-full">
@@ -32,7 +49,7 @@ function StayInfo({title,rating,price,images}) {
               </div>
             </div>
             <div className="self-stretch my-auto">
-              <span className="font-bold">Very Good</span> 54 reviews
+              <span className="font-bold">{getTitle()}</span> 371 reviews
             </div>
           </div>
         </div>
