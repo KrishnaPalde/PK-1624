@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday } from 'date-fns';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import axios from 'axios';
 const process = import.meta.env;
 
@@ -12,6 +13,7 @@ const CustomCalendar = () => {
     const fetchUnavailableDates = async () => {
       try {
         const response = await axios.get(`${process.VITE_HOST_URL}/api/unavailable_dates`);
+        console.log(response.data);
         setUnavailableDates(response.data.unavailableDates.map(date => new Date(date)));
       } catch (error) {
         console.error('Error fetching unavailable dates:', error);
@@ -87,14 +89,14 @@ const CustomCalendar = () => {
   };
 
   return (
-    <div className="w-64 p-4 bg-white rounded-lg shadow">
+    <div className="p-4 bg-white rounded-lg shadow w-72 md:w-80 xl:w-[38rem]">
       <h2 className="mb-2 text-lg font-semibold">Select date</h2>
       <div className="mb-4 text-2xl font-bold">{format(selectedDate, 'EEE, MMM d')}</div>
       <div className="flex items-center justify-between mb-2">
         <span className="font-semibold">{format(currentMonth, 'MMMM yyyy')}</span>
         <div>
-          <button onClick={prevMonth} className="mr-2 text-gray-600">&lt;</button>
-          <button onClick={nextMonth} className="text-gray-600">&gt;</button>
+          <button onClick={prevMonth} className="mr-2 text-gray-600 "><FaChevronLeft/></button>
+          <button onClick={nextMonth} className="text-gray-600"><FaChevronRight/></button>
         </div>
       </div>
       <div className="grid grid-cols-7 gap-1">

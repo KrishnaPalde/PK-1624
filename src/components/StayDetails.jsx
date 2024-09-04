@@ -1,23 +1,39 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import PriceDetail from "./PriceDetail";
 import DateDisplay from "./DateDisplay";
 import StayInfo from "./StayInfo";
 import { useLocation, useNavigate } from "react-router-dom";
 import PaymentButton from "./PaymentButton";
 import { useBooking } from "../contexts/BookingFormContext";
+import axios from "axios";
+const process = import.meta.env;
 
-function StayDetails({formData}) {
+function StayDetails({ formData }) {
   const location = useLocation();
   const navigate = useNavigate();
   const roomData = location.state;
 
-  if (!roomData) {
-    React.useEffect(() => {
-      navigate("/");
-    }, [navigate]);
+  const [globalSettings, setGlobalSettings] = useState({
+    tax: 0,
+    serviceCharges: 0
+  });
 
-    return <div>No room data available. Redirecting...</div>;
-  }
+  useEffect(() => {
+    if (!roomData) {
+      navigate("/");
+    } else {
+      const fetchGlobalSettings = async () => {
+        try {
+          const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/global-settings`);
+          setGlobalSettings(response.data.roomTaxesAndCharges);
+        } catch (error) {
+          console.error("Failed to fetch global settings", error);
+        }
+      };
+
+      fetchGlobalSettings();
+    }
+  }, [navigate, roomData]);
 
   const { bookingInfo } = useBooking();
 
@@ -25,19 +41,30 @@ function StayDetails({formData}) {
     return <div>No room data available. Please select booking details.</div>;
   }
 
+  const calculateNights = useMemo(() => {
+    const checkInDate = new Date(bookingInfo.checkIn);
+    const checkOutDate = new Date(bookingInfo.checkOut);
+    const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
+    return Math.ceil(timeDiff / (1000 * 3600 * 24));
+  }, [bookingInfo.checkIn, bookingInfo.checkOut]);
+
+  const countGuests = useMemo(() => {
+    const totalCountOfGuests = bookingInfo.adults + bookingInfo.children;
+    return totalCountOfGuests;
+  }, [bookingInfo.adults, bookingInfo.children]);
+
   const priceDetails = useMemo(() => {
-    const baseFare = roomData.price || 2400; // Use room price if available, otherwise default to 2400
-    const discount = 0; // You can calculate this based on your business logic
-    const taxes = Math.round(baseFare * 0.08); // Assuming 8% tax
-    const serviceFee = Math.round(baseFare * 0.02); // Assuming 2% service fee
+    const baseFare = roomData.price * calculateNights;
+    const discount = 0;
+    const taxes = Math.round(baseFare * (globalSettings.tax / 100));
+    const serviceFee = Math.round(countGuests * globalSettings.serviceCharges); 
 
     return [
-      { label: "Base Fare", amount: baseFare },
-      { label: "Discount", amount: discount },
+      { label: `Base Fare (${calculateNights} night${calculateNights === 1 ? '' : 's'})`, amount: baseFare },
       { label: "Taxes", amount: taxes },
       { label: "Service Fee", amount: serviceFee },
     ];
-  }, [roomData.price]);
+  }, [roomData.price, calculateNights, countGuests, globalSettings]);
 
   const totalPrice = useMemo(() => {
     return priceDetails.reduce((sum, detail) => sum + detail.amount, 0);
@@ -55,14 +82,13 @@ function StayDetails({formData}) {
     return `₹${amount.toLocaleString('en-IN')}`;
   };
 
-
   return (
     <section className="flex flex-col rounded-xl">
       <h1 className="self-start ml-9 text-2xl font-bold text-neutral-900 max-md:ml-2.5">
         Your Stay Details
       </h1>
       <div className="flex flex-col w-full p-6 overflow-hidden bg-white shadow-sm rounded-xl max-md:px-5 max-md:max-w-full">
-        <StayInfo {...roomData}/>
+        <StayInfo {...roomData} />
         <div className="flex items-center justify-between w-full mt-4 gap-9 max-md:max-w-full">
           <DateDisplay date={formatDate(bookingInfo.checkIn)} type="Check-In" />
           <div className="flex flex-col items-center self-stretch my-auto rotate-[-1.5707963267948966rad]">
@@ -87,7 +113,11 @@ function StayDetails({formData}) {
           </div>
           <DateDisplay date={formatDate(bookingInfo.checkOut)} type="Check-Out" />
         </div>
-         
+
+        <p className="mt-4 text-base font-medium text-neutral-900">
+          Duration of stay: <span className="font-bold">{calculateNights} night{calculateNights === 1 ? '' : 's'}</span>
+        </p>
+
         <p className="mt-4 text-base font-medium text-neutral-900">
           Your booking is protected by{" "}
           <span className="font-bold">Tranquil Trails</span>
@@ -108,11 +138,11 @@ function StayDetails({formData}) {
           <div className="font-medium">Total </div>
           <div className="font-semibold">{formatCurrency(totalPrice)}</div>
         </div>
-        
+
         <div className="flex-1 shrink gap-2.5 self-stretch px-2 py-2 mt-4 max-w-full text-xl text-center text-white bg-sky-400 rounded w-[150px]">
           <PaymentButton 
             roomData={roomData} 
-            formData={{...bookingInfo, ...formData}}
+            formData={{ ...bookingInfo, ...formData }}
             amount={totalPrice}
             adults={bookingInfo.adults}
             children={bookingInfo.children}

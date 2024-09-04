@@ -8,10 +8,10 @@ const AdminBooking = () => {
   return (
     <div className="flex w-full h-screen bg-[#f5f7fa]">
       <div className="lg:block lg:w-64">
-        <SideNav />
+        <SideNav/>
       </div>
       <div className="flex-1 overflow-auto">
-        <AdminNav />
+        <AdminNav title="Bookings"/>
         <BookingDashboard /> 
       </div>
     </div>

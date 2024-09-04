@@ -129,7 +129,7 @@ import SortingHeader from "./SortingHeader";
 import HotelCard from "./HotelCard";
 import { motion, AnimatePresence } from "framer-motion";
 
-function HotelListing({ priceRange, selectedRating }) {
+function HotelListing({ priceRange, selectedRating, testMode = false }) {
   const [hotelData, setHotelData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -140,8 +140,7 @@ function HotelListing({ priceRange, selectedRating }) {
 
   const cardsPerPage = 3;
 
-
-  const isWeekend = () => {
+    const isWeekend = () => {
     const today = new Date();
     return today.getDay() === 0 || today.getDay() === 6; 
   };
@@ -164,6 +163,33 @@ function HotelListing({ priceRange, selectedRating }) {
 
     fetchRooms();
   }, []);
+
+  // useEffect(() => {
+  //   const fetchRooms = async () => {
+  //     if (testMode) {
+  //      
+  //       setTimeout(() => {
+  //         setLoading(false);
+  //         setHotelData([/* mock data here */]);
+  //         setFilteredData([/* mock data here */]);
+  //       }, 3000);
+  //     } else {
+  //       try {
+  //         const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/rooms`);
+  //         setHotelData(response.data);
+  //         setFilteredData(response.data);
+  //         setLoading(false);
+  //       } catch (error) {
+  //         setError("Failed to fetch room data");
+  //         setLoading(false);
+  //         console.error("Error fetching rooms:", error);
+  //       }
+  //     }
+  //   };
+
+  //   fetchRooms();
+  // }, [testMode]);
+
 
   useEffect(() => {
     const applyFilters = () => {
@@ -196,11 +222,105 @@ function HotelListing({ priceRange, selectedRating }) {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center w-full h-screen bg-gray-100">
+        <motion.div
+          className="flex flex-col items-center space-y-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.div
+            className="w-24 h-24 border-t-4 border-b-4 border-blue-500 rounded-full"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+          />
+          <motion.div
+            className="text-xl font-semibold text-gray-700"
+            initial={{ y: -20 }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            Loading Hotels
+          </motion.div>
+          <motion.div
+            className="flex space-x-2"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            {[0, 1, 2].map((index) => (
+              <motion.div
+                key={index}
+                className="w-3 h-3 bg-blue-500 rounded-full"
+                animate={{
+                  y: [0, -10, 0],
+                }}
+                transition={{
+                  duration: 0.6,
+                  repeat: Infinity,
+                  delay: index * 0.2,
+                }}
+              />
+            ))}
+          </motion.div>
+        </motion.div>
+      </div>
+    );
   }
 
+  // const LoadingAnimation = () => (
+  //   <div className="flex items-center justify-center w-full h-screen ">
+  //     <motion.div
+  //       className="flex flex-col items-center space-y-4"
+  //       initial={{ opacity: 0 }}
+  //       animate={{ opacity: 1 }}
+  //       transition={{ duration: 0.5 }}
+  //     >
+  //       <motion.div
+  //         className="w-24 h-24 border-t-4 border-b-4 border-blue-500 rounded-full"
+  //         animate={{ rotate: 360 }}
+  //         transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+  //       />
+  //       <motion.div
+  //         className="text-xl font-semibold text-gray-700"
+  //         initial={{ y: -20 }}
+  //         animate={{ y: 0 }}
+  //         transition={{ duration: 0.5, delay: 0.2 }}
+  //       >
+  //         Loading Hotels
+  //       </motion.div>
+  //       <motion.div
+  //         className="flex space-x-2"
+  //         initial={{ scale: 0 }}
+  //         animate={{ scale: 1 }}
+  //         transition={{ duration: 0.5, delay: 0.4 }}
+  //       >
+  //         {[0, 1, 2].map((index) => (
+  //           <motion.div
+  //             key={index}
+  //             className="w-3 h-3 bg-blue-500 rounded-full"
+  //             animate={{
+  //               y: [0, -10, 0],
+  //             }}
+  //             transition={{
+  //               duration: 0.6,
+  //               repeat: Infinity,
+  //               delay: index * 0.2,
+  //             }}
+  //           />
+  //         ))}
+  //       </motion.div>
+  //     </motion.div>
+  //   </div>
+  // );
+
+  // if (loading) {
+  //   return <LoadingAnimation />;
+  // }
+
   if (error) {
-    return <div>{error}</div>;
+    return <div className="mt-8 text-xl text-center text-red-500">{error}</div>;
   }
 
   return (

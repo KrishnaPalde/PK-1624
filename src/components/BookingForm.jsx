@@ -34,7 +34,7 @@ function BookingForm() {
     setCheckIn(new Date(bookingInfo.checkIn) || today);
     setCheckOut(new Date(bookingInfo.checkOut) || tomorrow);
     setAdults(bookingInfo.adults || 2);
-    setChildren(bookingInfo.children || 2);
+    setChildren(bookingInfo.children || 0);
   }, [bookingInfo]);
 
   useEffect(() => {

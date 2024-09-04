@@ -102,11 +102,17 @@ const getUnavailableDates = async (req, res) => {
     // Fetch all bookings for the next 30 days
     const today = new Date();
     const thirtyDaysFromNow = new Date();
+    const tomorrow = today.getDate()+1;
     thirtyDaysFromNow.setDate(today.getDate() + 30);
 
     const bookings = await Booking.find({
       checkInDate: { $gte: today, $lte: thirtyDaysFromNow },
+      checkOutDate: {$gte: tomorrow},
     }).select("checkInDate checkOutDate");
+
+    bookings.forEach((booking)=>{
+      console.log(booking);
+    })
 
     const unavailableDates = [];
 
