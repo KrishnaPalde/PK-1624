@@ -13,7 +13,6 @@ const CustomCalendar = () => {
     const fetchUnavailableDates = async () => {
       try {
         const response = await axios.get(`${process.VITE_HOST_URL}/api/unavailable_dates`);
-        console.log(response.data);
         setUnavailableDates(response.data.unavailableDates.map(date => new Date(date)));
       } catch (error) {
         console.error('Error fetching unavailable dates:', error);

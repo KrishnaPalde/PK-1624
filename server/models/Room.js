@@ -8,7 +8,7 @@ const reviewSchema = new mongoose.Schema({
 });
 
 const roomSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true }, // Custom ID field
+  id: { type: String, required: true, unique: true }, 
   name: { type: String, required: true },
   title: { type: String, required: true },
   description: { type: String, required: true },

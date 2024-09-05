@@ -213,12 +213,11 @@ const SideNav = () => {
             );
           })}
         </ul>
-        <div className="absolute bottom-6 left-6 right-6">
+        <div className="absolute items-center bottom-6 left-6 right-6">
            <hr className="mb-4 border-gray-300" />
-           <Link className="flex items-center space-x-3 text-gray-600 transition-colors duration-300 hover:text-gray-900" onClick={Logout}>
-             <span><i className="fas fa-sign-out-alt"></i></span>
-             <span>Log out</span>
-           </Link>
+           {/* <Link className="flex items-center space-x-3 text-gray-600 transition-colors duration-300 hover:text-gray-900" onClick={Logout}> */}
+             <span>© Copyright Tantra Technologies. All Rights Reserved</span>
+           {/* </Link> */}
          </div>
       </motion.nav>
       {screenSize !== 'large' && (

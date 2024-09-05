@@ -299,7 +299,7 @@ function AddRoomForm({ onSubmit, onCancel }) {
         )}
       </div>
 
-      <div>
+      {/* <div>
          <label className="block mb-1">Amenities (comma-separated)</label>
          <input
           type="text"
@@ -320,7 +320,7 @@ function AddRoomForm({ onSubmit, onCancel }) {
           className="w-full px-3 py-2 border rounded"
           placeholder="e.g. Internet, Breakfast, Parking"
         />
-      </div>
+      </div> */}
 
       <div className="flex justify-end space-x-2">
         <button

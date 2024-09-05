@@ -97,22 +97,52 @@ const getAllRooms = async (req, res) => {
   }
 };
 
+// const getUnavailableDates = async (req, res) => {
+//   try {
+//     const today = new Date();
+//     const thirtyDaysFromNow = new Date();
+//     const tomorrow = today.getDate()+1;
+//     thirtyDaysFromNow.setDate(today.getDate() + 30);
+
+//     const bookings = await Booking.find({
+//       checkInDate: { $gte: today, $lte: thirtyDaysFromNow },
+//       checkOutDate: {$gte: tomorrow},
+//     }).select("checkInDate checkOutDate");
+
+//     bookings.forEach((booking)=>{
+//       console.log(booking);
+//     })
+
+//     const unavailableDates = [];
+
+//     bookings.forEach((booking) => {
+//       let currentDate = new Date(booking.checkInDate);
+//       while (currentDate <= new Date(booking.checkOutDate)) {
+//         unavailableDates.push(
+//           new Date(currentDate).toISOString().split("T")[0]
+//         ); // Store the date in YYYY-MM-DD format
+//         currentDate.setDate(currentDate.getDate() + 1);
+//       }
+//     });
+
+//     res.status(200).json({ unavailableDates });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
 const getUnavailableDates = async (req, res) => {
   try {
-    // Fetch all bookings for the next 30 days
     const today = new Date();
     const thirtyDaysFromNow = new Date();
-    const tomorrow = today.getDate()+1;
     thirtyDaysFromNow.setDate(today.getDate() + 30);
 
     const bookings = await Booking.find({
-      checkInDate: { $gte: today, $lte: thirtyDaysFromNow },
-      checkOutDate: {$gte: tomorrow},
+      $or: [
+        { checkInDate: { $gte: today, $lte: thirtyDaysFromNow }, checkOutDate: { $gte: today } },
+        { checkOutDate: { $gte: today, $lte: thirtyDaysFromNow } },
+      ],
     }).select("checkInDate checkOutDate");
-
-    bookings.forEach((booking)=>{
-      console.log(booking);
-    })
 
     const unavailableDates = [];
 
@@ -121,7 +151,7 @@ const getUnavailableDates = async (req, res) => {
       while (currentDate <= new Date(booking.checkOutDate)) {
         unavailableDates.push(
           new Date(currentDate).toISOString().split("T")[0]
-        ); // Store the date in YYYY-MM-DD format
+        );
         currentDate.setDate(currentDate.getDate() + 1);
       }
     });

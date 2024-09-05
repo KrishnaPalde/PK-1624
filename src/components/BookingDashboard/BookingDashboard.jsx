@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import StatCard from './StatCard';
 import BookingTable from './BookingTable';
+import { BsBookmarkCheckFill } from "react-icons/bs";
+import { RiCalendarScheduleFill } from "react-icons/ri";
+import { SlClock } from "react-icons/sl";
 const process = import.meta.env;
 
 const BookingDashboard = () => { 
@@ -41,10 +44,10 @@ const BookingDashboard = () => {
 
   // Updated stat cards with dynamic values from state
   const statCards = [
-    { title: 'New Booking', value: stats.total, bgColor: 'bg-orange-100' },
-    { title: 'Schedule Room', value: stats.upcoming, bgColor: 'bg-violet-100' },
-    { title: 'Check In', value: stats.checkIn, bgColor: 'bg-pink-100' },
-    { title: 'Check Out', value: stats.checkOut, bgColor: 'bg-blue-100' },
+    { title: 'Total Bookings', value: stats.total, bgColor: 'bg-orange-100', icon: BsBookmarkCheckFill, iconColor: 'text-orange-400' },
+    { title: 'Schedule Room', value: stats.upcoming, bgColor: 'bg-violet-100', icon: RiCalendarScheduleFill, iconColor: 'text-violet-400' },
+    { title: 'Check In', value: stats.checkIn, bgColor: 'bg-pink-100', icon: SlClock, iconColor: 'text-pink-400'},
+    { title: 'Check Out', value: stats.checkOut, bgColor: 'bg-blue-100', icon: SlClock, iconColor: 'text-blue-400'},
   ];
 
   return (

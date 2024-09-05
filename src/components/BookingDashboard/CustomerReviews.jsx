@@ -96,15 +96,9 @@ const CustomerReviews = () => {
   });
 
   return (
-    <article className="flex flex-col items-start max-w-[579px]">
+    <article className="flex flex-col items-start max-w-[579px] bg-white rounded-lg p-4">
       <header className="flex flex-wrap self-stretch justify-between w-full gap-5 text-2xl font-semibold text-slate-700 max-md:max-w-full">
         <h2>Latest Customer Review</h2>
-        <img
-          loading="lazy"
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/cf2665fc0c366d10b3afd725b67925e7cbbbc204b71ce5a8fd9fd6ed9712f247?placeholderIfAbsent=true&apiKey=e6b8c17325a24fb29c274ce450ea26a7"
-          alt="Review icon"
-          className="object-contain shrink-0 self-start w-7 aspect-[1.17]"
-        />
       </header>
       <main>
         {reviews.map((review, index) => (
