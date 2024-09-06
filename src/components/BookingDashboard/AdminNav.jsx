@@ -273,12 +273,20 @@ function AdminNav({ title }) {
             ))}
 
             {isProfilePopupVisible && (
-              <div className="absolute right-0 z-50 mt-10 bg-white border rounded-lg shadow-lg profile-popup">
-                <ul className="p-2">
+              <div className="absolute right-0 z-50 mt-10 bg-white border rounded-lg shadow-lg profile-popup w-80">
+                <ul className="p-2 divide-y divide-gray-200">
+                <li>
+                    <button
+                      // onClick={handleLogout}
+                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
+                    >
+                      Change Password
+                    </button>
+                  </li>
                   <li>
                     <button
                       onClick={handleLogout}
-                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
+                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 text-red-700 hover:bg-gray-100"
                     >
                       Logout
                     </button>
@@ -288,75 +296,103 @@ function AdminNav({ title }) {
             )}
 
             {isSettingsPopupVisible && (
-              <div className="absolute right-0 z-50 p-6 mt-10 bg-white border rounded-lg shadow-lg settings-popup w-96">
-                <h2 className="mb-4 text-xl font-semibold">Global Settings</h2>
-                <div className="mb-4">
-                  <h3 className="mb-2 font-semibold">Room Taxes and Charges</h3>
-                  <label className="block font-medium text-gray-700 text-md">Tax (%)</label>
-                  <input
-                    type="number"
-                    name="tax"
-                    value={settings.tax}
-                    onChange={handleSettingsChange}
-                    disabled={!isEditing}
-                    className="block w-full h-10 p-2 mt-1 border-gray-300 rounded-md shadow-sm text-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  />
-                  <label className="block mt-4 font-medium text-gray-700 text-md">Service Charges</label>
-                  <input
-                    type="number"
-                    name="serviceCharges"
-                    value={settings.serviceCharges}
-                    onChange={handleSettingsChange}
-                    disabled={!isEditing}
-                    className="block w-full h-10 p-2 mt-1 border-gray-300 rounded-md shadow-sm text-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  />
-                </div>
-                <div className="mb-4">
-                  <h3 className="mb-2 font-semibold">Payment Gateway</h3>
-                  <label className="block font-medium text-gray-700 text-md">Key ID</label>
-                  <input
-                    type="text"
-                    name="keyId"
-                    value={settings.keyId}
-                    onChange={handleSettingsChange}
-                    disabled={!isEditing}
-                    className="block w-full h-10 p-2 mt-1 border-gray-300 rounded-md shadow-sm text-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  />
-                  <label className="block mt-4 font-medium text-gray-700 text-md">Secret Key</label>
-                  <input
-                    type="text"
-                    name="secretKey"
-                    value={settings.secretKey}
-                    onChange={handleSettingsChange}
-                    disabled={!isEditing}
-                    className="block w-full h-10 p-2 mt-1 border-gray-300 rounded-md shadow-sm text-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  />
-                </div>
-                <div className="flex justify-end gap-4">
-                  {isEditing ? (
-                    <>
-                      <button
-                        onClick={handleCancelClick}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={handleSaveSettings}
-                        className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
-                      >
-                        Save
-                      </button>
-                    </>
-                  ) : (
+              // <div className="absolute right-0 z-50 p-6 mt-10 bg-white border rounded-lg shadow-lg settings-popup w-96">
+              //   <h2 className="mb-4 text-xl font-semibold">Global Settings</h2>
+              //   <div className="mb-4">
+              //     <h3 className="mb-2 font-semibold">Room Taxes and Charges</h3>
+              //     <label className="block font-medium text-gray-700 text-md">Tax (%)</label>
+              //     <input
+              //       type="number"
+              //       name="tax"
+              //       value={settings.tax}
+              //       onChange={handleSettingsChange}
+              //       disabled={!isEditing}
+              //       className="block w-full h-10 p-2 mt-1 border-gray-300 rounded-md shadow-sm text-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              //     />
+              //     <label className="block mt-4 font-medium text-gray-700 text-md">Service Charges</label>
+              //     <input
+              //       type="number"
+              //       name="serviceCharges"
+              //       value={settings.serviceCharges}
+              //       onChange={handleSettingsChange}
+              //       disabled={!isEditing}
+              //       className="block w-full h-10 p-2 mt-1 border-gray-300 rounded-md shadow-sm text-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              //     />
+              //   </div>
+              //   <div className="mb-4">
+              //     <h3 className="mb-2 font-semibold">Payment Gateway</h3>
+              //     <label className="block font-medium text-gray-700 text-md">Key ID</label>
+              //     <input
+              //       type="text"
+              //       name="keyId"
+              //       value={settings.keyId}
+              //       onChange={handleSettingsChange}
+              //       disabled={!isEditing}
+              //       className="block w-full h-10 p-2 mt-1 border-gray-300 rounded-md shadow-sm text-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              //     />
+              //     <label className="block mt-4 font-medium text-gray-700 text-md">Secret Key</label>
+              //     <input
+              //       type="text"
+              //       name="secretKey"
+              //       value={settings.secretKey}
+              //       onChange={handleSettingsChange}
+              //       disabled={!isEditing}
+              //       className="block w-full h-10 p-2 mt-1 border-gray-300 rounded-md shadow-sm text-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              //     />
+              //   </div>
+              //   <div className="flex justify-end gap-4">
+              //     {isEditing ? (
+              //       <>
+              //         <button
+              //           onClick={handleCancelClick}
+              //           className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+              //         >
+              //           Cancel
+              //         </button>
+              //         <button
+              //           onClick={handleSaveSettings}
+              //           className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+              //         >
+              //           Save
+              //         </button>
+              //       </>
+              //     ) : (
+              //       <button
+              //         onClick={handleEditClick}
+              //         className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+              //       >
+              //         Edit
+              //       </button>
+              //     )}
+              //   </div>
+              // </div>
+              <div className="absolute right-20 z-50 p-1 mt-10 bg-white border rounded-lg shadow-lg settings-popup w-80">
+                <ul className="p-2 divide-y divide-gray-200">
+                <li>
                     <button
-                      onClick={handleEditClick}
-                      className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+                      // onClick={handleLogout}
+                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
                     >
-                      Edit
+                      Room Taxes & Charges
                     </button>
-                  )}
-                </div>
+                  </li>
+                  <li>
+                    <button
+                      // onClick={handleLogout}
+                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
+                    >
+                      Payment Gateway
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      // onClick={handleLogout}
+                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
+                    >
+                      Create Admin
+                    </button>
+                  </li>
+                </ul>
               </div>
             )}
           </div>

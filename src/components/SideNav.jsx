@@ -213,12 +213,16 @@ const SideNav = () => {
             );
           })}
         </ul>
-        <div className="absolute items-center bottom-6 left-6 right-6">
-           <hr className="mb-4 border-gray-300" />
-           {/* <Link className="flex items-center space-x-3 text-gray-600 transition-colors duration-300 hover:text-gray-900" onClick={Logout}> */}
-             <span>© Copyright Tantra Technologies. All Rights Reserved</span>
-           {/* </Link> */}
-         </div>
+        <div className="absolute flex flex-col items-center justify-center bottom-6 left-6 right-6 text-center">
+          <hr className="mb-4 border-gray-300 w-full" />
+            <div>
+              {/* <p>© Copyright</p>
+              <p>Tranquil Trails</p>
+              <p>All Rights Reserved</p> */}
+              <p>Designed and Developer by</p>
+              <p className='font-bold'>Tantra Technologies</p>
+            </div>
+        </div>
       </motion.nav>
       {screenSize !== 'large' && (
         <button

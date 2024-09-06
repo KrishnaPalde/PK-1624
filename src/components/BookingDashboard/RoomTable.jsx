@@ -215,13 +215,27 @@ function RoomTable({ addRoom }) {
                             className="absolute right-0 z-20 w-48 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                           >
                             <div className="py-1">
-                              <button
-                                onClick={() => handleDeleteRoom(room.id)}
-                                className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                              >
-                                <Trash2 className="w-4 h-4 mr-2 text-red-500" />
-                                Delete Room
-                              </button>
+                              <ul>
+                                <li>
+                                  <button
+                                  // onClick={() => handleDeleteRoom(room.id)}
+                                  className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                  >
+                                    {/* <Trash2 className="w-4 h-4 mr-2 text-red-500" /> */}
+                                    Update Price
+                                  </button> 
+                                </li>
+                                <li>
+                                  <button
+                                  onClick={() => handleDeleteRoom(room.id)}
+                                  className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                  >
+                                    <Trash2 className="w-4 h-4 mr-2 text-red-500" />
+                                    Delete Room
+                                  </button> 
+                                </li>
+                              </ul>
+                              
                             </div>
                           </motion.div>
                         )}

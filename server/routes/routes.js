@@ -1,5 +1,10 @@
 const express = require("express");
-const { login } = require("../controller/authenticateAdmin");
+const {
+  login,
+  sendOTP,
+  resetPassword,
+  checkIfUserExists,
+} = require("../controller/authenticateAdmin");
 const {
   checkIfAvailable,
   getRoomDetails,
@@ -54,5 +59,8 @@ router.get("/admin/feedbacks/below-3-stars", getFeedbacksBelow3Stars);
 router.get("/hotel-rating", getHotelRating);
 router.delete("/admin/deleteroom/:id", deleteRoom);
 router.get("/public-feedbacks", getAllApprovedFeedbacks);
+router.post("/forgot-password/sendOTP", sendOTP);
+router.post("/forgot-password/reset-password", resetPassword);
+router.post("/forgot-password/check-user", checkIfUserExists);
 
 module.exports = router;
