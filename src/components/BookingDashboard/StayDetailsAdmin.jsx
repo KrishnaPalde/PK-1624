@@ -14,6 +14,23 @@ function StayDetailsAdmin({ bookingDetails, roomDetails }) {
   const lastFourChars = bookingDetails?.bookingId ? bookingDetails.bookingId.slice(-4) : '';
   const checkInDate = formatDate(bookingDetails.checkInDate);
   const checkOutDate = formatDate(bookingDetails.checkOutDate);
+
+  const getTitle = () => {
+    switch (Math.round(roomDetails.rating)) {
+      case 1:
+        return "Poor";
+      case 2:
+        return "Fair";
+      case 3:
+        return "Average";
+      case 4:
+        return "Good";
+      case 5:
+        return "Excellent";
+      default:
+        return "Unknown"; 
+    }
+  };
   
   return (
     <article className="flex overflow-hidden flex-col p-6 bg-white rounded-3xl max-w-[500px] max-md:px-5">
@@ -41,7 +58,7 @@ function StayDetailsAdmin({ bookingDetails, roomDetails }) {
               </div>
             </div>
             <div className="self-stretch my-auto">
-              <span className="font-bold">Very Good</span> 54 reviews
+              <span className="font-bold">{getTitle()}</span> 54 reviews
             </div>
           </div>
         </div>

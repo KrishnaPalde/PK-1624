@@ -420,6 +420,27 @@ const deleteRoom = async (req, res) => {
   }
 };
 
+const updateRoomPrice = async (req, res) => {
+  const { roomId } = req.params;
+  const { price, weekend } = req.body;
+
+  try {
+    const room = await Room.findOneAndUpdate({ id: roomId });
+    if (!room) {
+      return res.status(404).json({ message: 'Room not found' });
+    }
+
+    room.price = price;
+    room.weekend = weekend;
+
+    await room.save();
+    res.json(room);
+  } catch (error) {
+    console.error('Error updating room:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 module.exports = {
   checkIfAvailable,
   getRoomDetails,
@@ -433,4 +454,5 @@ module.exports = {
   addRoom,
   updateRoomStatuses,
   deleteRoom,
+  updateRoomPrice,
 };

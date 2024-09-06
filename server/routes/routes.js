@@ -18,6 +18,7 @@ const {
   addRoom,
   updateRoomStatuses,
   deleteRoom,
+  updateRoomPrice,
 } = require("../controller/bookingsController");
 const {
   createFeedback,
@@ -41,7 +42,7 @@ router.post("/authenticateAdmin", login);
 router.get("/check_availability_dates", checkIfAvailable);
 router.get("/unavailable_dates", getUnavailableDates);
 router.get("/rooms/:roomId", getRoomDetails);
-router.get("/admin/rooms", getAllRooms);
+router.get("/admin/rooms", getAllRooms); 
 // router.get("/admin/bookings", fetchBookings6Admin);
 router.get("/admin/dashboard_stats", getDashboardStats);
 router.get("/admin/dashboard_bookings", fetchBookingsAdmin);
@@ -53,7 +54,7 @@ router.get("/admin/getroomstatus", updateRoomStatuses);
 router.get("/booking-confirmation/:id", BookingConfirmationEmail);
 router.post("/contact-us/enquiry", EnquiryFormEmail);
 router.post("/check-out/feedback", createFeedback);
-router.get("/feedbacks", getAllFeedbacks);
+router.get("/feedbacks", getAllFeedbacks); 
 router.get("/admin/latest-feedbacks", fetchLatestFeedbacks);
 router.get("/admin/feedbacks/below-3-stars", getFeedbacksBelow3Stars);
 router.get("/hotel-rating", getHotelRating);
@@ -62,5 +63,6 @@ router.get("/public-feedbacks", getAllApprovedFeedbacks);
 router.post("/forgot-password/sendOTP", sendOTP);
 router.post("/forgot-password/reset-password", resetPassword);
 router.post("/forgot-password/check-user", checkIfUserExists);
+router.put('/admin/updateroom/:roomId',updateRoomPrice);
 
 module.exports = router;

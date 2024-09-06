@@ -114,16 +114,20 @@
 // export default AdminNav;
 
 import React, { useState, useEffect } from "react";
-import { FaSun, FaMoon, FaCog } from 'react-icons/fa';
+import { FaSun, FaMoon, FaCog, FaTimes } from 'react-icons/fa';
 import { BsSunset } from 'react-icons/bs';
 import { useAuth } from '../../AuthContext';
+import profile from '../../assets/profile.png';
 import axios from 'axios';
+
 const process = import.meta.env;
 
 function AdminNav({ title }) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isProfilePopupVisible, setProfilePopupVisible] = useState(false);
   const [isSettingsPopupVisible, setSettingsPopupVisible] = useState(false);
+  const [isTaxesPopupVisible, setTaxesPopupVisible] = useState(false);
+  const [isPaymentPopupVisible, setPaymentPopupVisible] = useState(false);
   const [settings, setSettings] = useState({
     _id: '',
     tax: '',
@@ -184,7 +188,6 @@ function AdminNav({ title }) {
     }
     setSettingsPopupVisible(!isSettingsPopupVisible);
   };
-  
 
   const handleSettingsChange = (e) => {
     const { name, value } = e.target;
@@ -194,7 +197,8 @@ function AdminNav({ title }) {
     }));
   };
 
-  const handleSaveSettings = async () => {
+  const handleSaveSettings = async (e) => {
+    e.preventDefault();
     try {
       const response = await axios.put(
         `${process.VITE_HOST_URL}/api/admin/global-settings/${settings._id}`,
@@ -202,38 +206,46 @@ function AdminNav({ title }) {
       );
       console.log("Settings saved", response.data);
       setSettingsPopupVisible(false);
+      setTaxesPopupVisible(false);
+      setPaymentPopupVisible(false);
       setIsEditing(false);
     } catch (error) {
       console.error("Failed to save settings", error);
     }
   };
 
-  const handleEditClick = () => {
+  const handleEditClick = (e) => {
+    e.preventDefault(); 
     setIsEditing(true);
   };
 
   const handleCancelClick = () => {
     setIsEditing(false);
     setSettingsPopupVisible(false);
+    setTaxesPopupVisible(false);
+    setPaymentPopupVisible(false);
   };
 
   const iconButtons = [
     { icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/41398295ae0a8114089b72721383e2723c69aaf3fb09c01943de56ea863869c3?placeholderIfAbsent=true&apiKey=e6b8c17325a24fb29c274ce450ea26a7", alt: "Settings icon", onClick: toggleSettingsPopup },
-    // { icon: <FaCog className="w-6 h-6" />, alt: "Settings icon", onClick: toggleSettingsPopup }, 
-    { icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/ccb966e89531d8852beaa85caa96ee5353971134c3a591a62efc980496d29bd0?placeholderIfAbsent=true&apiKey=e6b8c17325a24fb29c274ce450ea26a7", alt: "User profile icon", onClick: toggleProfilePopup }
+    { icon: profile, alt: "User profile icon", onClick: toggleProfilePopup }
   ];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        (isProfilePopupVisible || isSettingsPopupVisible) && 
+        (isProfilePopupVisible || isSettingsPopupVisible || isTaxesPopupVisible || isPaymentPopupVisible) && 
         !event.target.closest(".profile-popup") && 
         !event.target.closest(".profile-icon-button") &&
         !event.target.closest(".settings-popup") &&
-        !event.target.closest(".settings-icon-button")
+        !event.target.closest(".settings-icon-button") &&
+        !event.target.closest(".taxes-popup") &&
+        !event.target.closest(".payment-popup")
       ) {
         setProfilePopupVisible(false);
         setSettingsPopupVisible(false);
+        setTaxesPopupVisible(false);
+        setPaymentPopupVisible(false);
         setIsEditing(false);
       }
     };
@@ -243,7 +255,7 @@ function AdminNav({ title }) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isProfilePopupVisible, isSettingsPopupVisible]);
+  }, [isProfilePopupVisible, isSettingsPopupVisible, isTaxesPopupVisible, isPaymentPopupVisible]);
 
   return (
     <header className="flex flex-col rounded-none">
@@ -265,7 +277,7 @@ function AdminNav({ title }) {
                 onClick={item.onClick}
               >
                 {typeof item.icon === 'string' ? (
-                  <img src={item.icon} className="w-8 h-8" alt={item.alt} />
+                  <img src={item.icon} className="object-cover w-8 h-8" alt={item.alt} />
                 ) : (
                   item.icon
                 )}
@@ -273,20 +285,17 @@ function AdminNav({ title }) {
             ))}
 
             {isProfilePopupVisible && (
-              <div className="absolute right-0 z-50 mt-10 bg-white border rounded-lg shadow-lg profile-popup w-80">
+              <div className="absolute right-0 z-50 w-64 mt-10 bg-white border rounded-lg shadow-lg profile-popup">
                 <ul className="p-2 divide-y divide-gray-200">
-                <li>
-                    <button
-                      // onClick={handleLogout}
-                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
-                    >
+                  <li>
+                    <button className="block w-full px-4 py-2 text-left text-gray-700 text-md hover:bg-gray-100">
                       Change Password
                     </button>
                   </li>
                   <li>
                     <button
                       onClick={handleLogout}
-                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 text-red-700 hover:bg-gray-100"
+                      className="block w-full px-4 py-2 text-left text-red-700 text-md hover:bg-gray-100"
                     >
                       Logout
                     </button>
@@ -296,110 +305,190 @@ function AdminNav({ title }) {
             )}
 
             {isSettingsPopupVisible && (
-              // <div className="absolute right-0 z-50 p-6 mt-10 bg-white border rounded-lg shadow-lg settings-popup w-96">
-              //   <h2 className="mb-4 text-xl font-semibold">Global Settings</h2>
-              //   <div className="mb-4">
-              //     <h3 className="mb-2 font-semibold">Room Taxes and Charges</h3>
-              //     <label className="block font-medium text-gray-700 text-md">Tax (%)</label>
-              //     <input
-              //       type="number"
-              //       name="tax"
-              //       value={settings.tax}
-              //       onChange={handleSettingsChange}
-              //       disabled={!isEditing}
-              //       className="block w-full h-10 p-2 mt-1 border-gray-300 rounded-md shadow-sm text-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              //     />
-              //     <label className="block mt-4 font-medium text-gray-700 text-md">Service Charges</label>
-              //     <input
-              //       type="number"
-              //       name="serviceCharges"
-              //       value={settings.serviceCharges}
-              //       onChange={handleSettingsChange}
-              //       disabled={!isEditing}
-              //       className="block w-full h-10 p-2 mt-1 border-gray-300 rounded-md shadow-sm text-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              //     />
-              //   </div>
-              //   <div className="mb-4">
-              //     <h3 className="mb-2 font-semibold">Payment Gateway</h3>
-              //     <label className="block font-medium text-gray-700 text-md">Key ID</label>
-              //     <input
-              //       type="text"
-              //       name="keyId"
-              //       value={settings.keyId}
-              //       onChange={handleSettingsChange}
-              //       disabled={!isEditing}
-              //       className="block w-full h-10 p-2 mt-1 border-gray-300 rounded-md shadow-sm text-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              //     />
-              //     <label className="block mt-4 font-medium text-gray-700 text-md">Secret Key</label>
-              //     <input
-              //       type="text"
-              //       name="secretKey"
-              //       value={settings.secretKey}
-              //       onChange={handleSettingsChange}
-              //       disabled={!isEditing}
-              //       className="block w-full h-10 p-2 mt-1 border-gray-300 rounded-md shadow-sm text-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              //     />
-              //   </div>
-              //   <div className="flex justify-end gap-4">
-              //     {isEditing ? (
-              //       <>
-              //         <button
-              //           onClick={handleCancelClick}
-              //           className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
-              //         >
-              //           Cancel
-              //         </button>
-              //         <button
-              //           onClick={handleSaveSettings}
-              //           className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
-              //         >
-              //           Save
-              //         </button>
-              //       </>
-              //     ) : (
-              //       <button
-              //         onClick={handleEditClick}
-              //         className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
-              //       >
-              //         Edit
-              //       </button>
-              //     )}
-              //   </div>
-              // </div>
-              <div className="absolute right-20 z-50 p-1 mt-10 bg-white border rounded-lg shadow-lg settings-popup w-80">
-                <ul className="p-2 divide-y divide-gray-200">
+              <div className="absolute right-0 z-50 w-48 max-w-sm mt-10 bg-white border rounded-lg shadow-lg md:right-20 settings-popup md:w-80 md:max-w-none">
+              <ul className="p-2 divide-y divide-gray-200">
                 <li>
-                    <button
-                      // onClick={handleLogout}
-                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
-                    >
-                      Room Taxes & Charges
+                  <button
+                    onClick={() => {
+                      setTaxesPopupVisible(true);
+                      setSettingsPopupVisible(false);
+                    }}
+                    className="block w-full px-4 py-2 text-left text-gray-700 rounded-lg text-md hover:bg-gray-100"
+                  >
+                    Room Taxes & Charges
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      setPaymentPopupVisible(true);
+                      setSettingsPopupVisible(false);
+                    }}
+                    className="block w-full px-4 py-2 text-left text-gray-700 rounded-lg text-md hover:bg-gray-100"
+                  >
+                    Payment Gateway
+                  </button>
+                </li>
+                <li>
+                  <button className="block w-full px-4 py-2 text-left text-gray-700 rounded-lg text-md hover:bg-gray-100">
+                    Create Admin
+                  </button>
+                </li>
+              </ul>
+            </div>
+            
+            )}
+
+            {isTaxesPopupVisible && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-xl taxes-popup">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-2xl font-bold text-gray-800">Room Taxes & Charges</h2>
+                    <button onClick={handleCancelClick} className="text-gray-500 hover:text-gray-700">
+                      <FaTimes size={24} />
                     </button>
-                  </li>
-                  <li>
-                    <button
-                      // onClick={handleLogout}
-                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
-                    >
-                      Payment Gateway
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      // onClick={handleLogout}
-                      className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
-                    >
-                      Create Admin
-                    </button>
-                  </li>
-                </ul>
+                  </div>
+                  <form>
+                    <div className="mb-4">
+                      <label htmlFor="tax" className="block mb-2 text-sm font-medium text-gray-700">
+                        Tax (%)
+                      </label>
+                      <input
+                        type="number"
+                        id="tax"
+                        name="tax"
+                        value={settings.tax}
+                        onChange={handleSettingsChange}
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        disabled={!isEditing}
+                      />
+                    </div>
+                    <div className="mb-6">
+                      <label htmlFor="serviceCharges" className="block mb-2 text-sm font-medium text-gray-700">
+                        Service Charges (%)
+                      </label>
+                      <input
+                        type="number"
+                        id="serviceCharges"
+                        name="serviceCharges"
+                        value={settings.serviceCharges}
+                        onChange={handleSettingsChange}
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        disabled={!isEditing}
+                      />
+                    </div>
+                    <div className="flex justify-end space-x-2">
+  {!isEditing ? (
+    <button
+      type="button" 
+      onClick={handleEditClick} 
+      className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+    >
+      Edit
+    </button>
+  ) : (
+    <>
+      <button
+        type="button"
+        onClick={handleSaveSettings} 
+        className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+      >
+        Save
+      </button>
+      <button
+        type="button" 
+        onClick={handleCancelClick}
+        className="px-4 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+      >
+        Cancel
+      </button>
+    </>
+  )}
+</div>
+
+
+
+                  </form>
+                </div>
               </div>
             )}
-          </div>
+
+            {isPaymentPopupVisible && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-xl payment-popup">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-2xl font-bold text-gray-800">Payment Gateway</h2>
+                    <button onClick={handleCancelClick} className="text-gray-500 hover:text-gray-700">
+                      <FaTimes size={24} />
+                    </button>
+                  </div>
+                  <form>
+                    <div className="mb-4">
+                      <label htmlFor="keyId" className="block mb-2 text-sm font-medium text-gray-700">
+                        Key ID
+                      </label>
+                      <input
+                        type="password"
+                        id="keyId"
+                        name="keyId"
+                        value={settings.keyId}
+                        onChange={handleSettingsChange}
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        disabled={!isEditing}
+                      />
+                    </div>
+                    <div className="mb-6">
+                      <label htmlFor="secretKey" className="block mb-2 text-sm font-medium text-gray-700">
+                        Secret Key
+                      </label>
+                      <input
+                        type="password"
+                        id="secretKey"
+                        name="secretKey"
+                        value={settings.secretKey}
+                        onChange={handleSettingsChange}
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        disabled={!isEditing}
+                      />
+                    </div>
+                    <div className="flex justify-end space-x-2">
+  {!isEditing ? (
+    <button
+      type="button" 
+      onClick={handleEditClick} 
+      className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+    >
+      Edit
+    </button>
+  ) : (
+    <>
+      <button
+        type="button"
+        onClick={handleSaveSettings} 
+        className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+      >
+        Save
+      </button>
+      <button
+        type="button" 
+        onClick={handleCancelClick}
+        className="px-4 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+      >
+        Cancel
+      </button>
+    </>
+  )}
+</div>
+
+                </form>
+              </div>
+            </div>
+          )}
         </div>
-      </nav>
-    </header>
-  );
+      </div>
+    </nav>
+  </header>
+);
 }
 
 export default AdminNav;

@@ -213,13 +213,13 @@ const SideNav = () => {
             );
           })}
         </ul>
-        <div className="absolute flex flex-col items-center justify-center bottom-6 left-6 right-6 text-center">
-          <hr className="mb-4 border-gray-300 w-full" />
+        <div className="absolute flex flex-col items-center justify-center text-center bottom-6 left-6 right-6">
+          <hr className="w-full mb-4 border-gray-300" />
             <div>
               {/* <p>© Copyright</p>
               <p>Tranquil Trails</p>
               <p>All Rights Reserved</p> */}
-              <p>Designed and Developer by</p>
+              <p>Designed and Developed by</p>
               <p className='font-bold'>Tantra Technologies</p>
             </div>
         </div>

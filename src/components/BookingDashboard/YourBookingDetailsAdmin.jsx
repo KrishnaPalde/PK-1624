@@ -86,12 +86,12 @@ const YourBookingDetailsAdmin = () => {
   }
 
   return (
-    <div className="flex w-full min-h-screen bg-[#f5f7fa]">
-      <div className="md:w-2/12">
+    <div className="flex w-full h-screen bg-[#f5f7fa]">
+      <div className="lg:block lg:w-64">
         <SideNav />
       </div>
-      <div className="overflow-auto md:w-11/12">
-        <AdminNav />
+      <div className="flex-1 overflow-auto">
+        <AdminNav title="Bookings"/>
         <section className="w-full p-6 pb-0 mb-6">
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {statCards.map((card, index) => (
@@ -99,7 +99,7 @@ const YourBookingDetailsAdmin = () => {
             ))}
           </div>
         </section>
-        <div className="flex flex-col justify-center mt-10 md:flex-row">
+        <div className="flex flex-col justify-around px-10 mt-10 md:flex-row">
           <div className="md:w-6/12">
             {bookingDetails && <YourBookingDetailsFormAdmin userDetails={bookingDetails} />}
           </div>

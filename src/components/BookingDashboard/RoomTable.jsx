@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from "react";
 import AddRoomForm from "./AddRoomForm";
-import { Trash2 } from "lucide-react";
+import { Trash2, PencilLine } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 const process = import.meta.env;
 
@@ -12,6 +12,9 @@ function RoomTable({ addRoom }) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [currentFilter, setCurrentFilter] = useState("All");
   const [activePopup, setActivePopup] = useState(null);
+  const [editRoom, setEditRoom] = useState(null); 
+  const [weekdayPrice, setWeekdayPrice] = useState('');
+  const [weekendPrice, setWeekendPrice] = useState('');
   const itemsPerPage = 10;
 
   const filterRooms = (status) => {
@@ -61,6 +64,38 @@ function RoomTable({ addRoom }) {
     }
   };
 
+  const handleUpdateRoom = (room) => {
+    setEditRoom(room);
+    setWeekdayPrice(room.price || '');
+    setWeekendPrice(room.weekend || '');
+  };
+
+  const handleSavePrice = async () => {
+    try {
+      const updatedRoom = { price: weekdayPrice, weekend: weekendPrice };
+
+      const response = await fetch(`${process.VITE_HOST_URL}/api/admin/updateroom/${editRoom.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedRoom),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update room prices');
+      }
+
+      const updatedData = await response.json();
+      setRooms(prevRooms =>
+        prevRooms.map((room) => (room.id === editRoom.id ? updatedData : room))
+      );
+      setEditRoom(null);
+    } catch (error) {
+      console.error('Error updating room prices:', error);
+    }
+  };
+
   const handleDeleteRoom = async (roomId) => {
     try {
       console.log('Attempting to delete room with ID:', roomId); 
@@ -84,6 +119,29 @@ function RoomTable({ addRoom }) {
       console.error('Error deleting room:', error);
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        (activePopup) && 
+        !event.target.closest(".profile-popup") && 
+        !event.target.closest(".profile-icon-button") &&
+        !event.target.closest(".settings-popup") &&
+        !event.target.closest(".settings-icon-button") &&
+        !event.target.closest(".taxes-popup") &&
+        !event.target.closest(".payment-popup")
+      ) {
+        setActivePopup(false);
+      }
+    };
+
+    
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [activePopup]);
   
   return (
     <div className="flex flex-col items-start">
@@ -148,7 +206,7 @@ function RoomTable({ addRoom }) {
                   Amenities
                 </th>
                 <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                  Price
+                 Weekday Price
                 </th>
                 <th scope="col" className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                   Weekend Price
@@ -218,10 +276,10 @@ function RoomTable({ addRoom }) {
                               <ul>
                                 <li>
                                   <button
-                                  // onClick={() => handleDeleteRoom(room.id)}
+                                  onClick={() => handleUpdateRoom(room)}
                                   className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                                   >
-                                    {/* <Trash2 className="w-4 h-4 mr-2 text-red-500" /> */}
+                                    <PencilLine className="w-4 h-4 mr-2 text-blue-500" />
                                     Update Price
                                   </button> 
                                 </li>
@@ -246,6 +304,40 @@ function RoomTable({ addRoom }) {
               ))}
             </tbody>
           </table>
+
+          {editRoom && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <motion.div className="p-10 bg-white rounded-lg">
+            <h3 className="mb-5 text-xl font-medium">Update Prices for {editRoom.name}</h3>
+            <div className="mb-5">
+              <label className="mr-5"><b>Weekday</b> Price</label>
+              <input
+                type="number"
+                value={weekdayPrice}
+                onChange={(e) => setWeekdayPrice(e.target.value)}
+                className="p-2 border"
+              />
+            </div>
+            <div>
+              <label className="mr-5"><b>Weekend</b> Price</label>
+              <input
+                type="number"
+                value={weekendPrice}
+                onChange={(e) => setWeekendPrice(e.target.value)}
+                className="p-2 border"
+              />
+            </div>
+            <div className="flex justify-end mt-4 space-x-4">
+              <button className="px-4 py-2 bg-gray-300 rounded" onClick={() => setEditRoom(null)}>
+                Cancel
+              </button>
+              <button className="px-4 py-2 text-white bg-blue-500 rounded" onClick={handleSavePrice}>
+                Save
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
         </div>
 
         <div className="flex items-center justify-between p-4 bg-white border-t border-gray-200">
