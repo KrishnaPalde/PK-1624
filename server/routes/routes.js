@@ -19,6 +19,7 @@ const {
   updateRoomStatuses,
   deleteRoom,
   updateRoomPrice,
+  get5Rooms,
 } = require("../controller/bookingsController");
 const {
   createFeedback,
@@ -64,5 +65,6 @@ router.post("/forgot-password/sendOTP", sendOTP);
 router.post("/forgot-password/reset-password", resetPassword);
 router.post("/forgot-password/check-user", checkIfUserExists);
 router.put('/admin/updateroom/:roomId',updateRoomPrice);
+router.get('/admin/get5rooms',get5Rooms);
 
 module.exports = router;

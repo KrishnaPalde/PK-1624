@@ -1,7 +1,7 @@
 import React from "react";
 import { useBooking } from "../contexts/BookingFormContext";
 
-function StayInfo({title,rating,price,images}) {
+function StayInfo({name,title,rating,price,images}) {
   const { bookingInfo } = useBooking();
 
   if (!bookingInfo.checkIn) {
@@ -39,7 +39,7 @@ function StayInfo({title,rating,price,images}) {
             Tranquil Trails
             </div>
             <div className="mt-1 text-xl font-semibold">
-              {title}
+              {name + " - " + title}
             </div>
           </div>
           <div className="flex items-center w-full gap-2 mt-4 text-xs font-medium">

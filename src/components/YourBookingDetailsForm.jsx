@@ -365,7 +365,7 @@ function YourBookingDetailsForm({ formData, onFormDataChange }) {
                 value={formData.firstName}
                 onChange={handleInputChange}
                 placeholder="First name"
-                className="px-4 py-3 mt-1.5 w-full text-base text-gray-500 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
+                className="px-4 py-3 mt-1.5 w-full text-base text-gray-700 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
               />
             </div>
             {/* Last Name Field */}
@@ -379,7 +379,7 @@ function YourBookingDetailsForm({ formData, onFormDataChange }) {
                 value={formData.lastName}
                 onChange={handleInputChange}
                 placeholder="Last name"
-                className="px-4 py-3 mt-1.5 w-full text-base text-gray-500 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
+                className="px-4 py-3 mt-1.5 w-full text-base text-gray-700 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
               />
             </div>
           </div>
@@ -394,7 +394,7 @@ function YourBookingDetailsForm({ formData, onFormDataChange }) {
               placeholder="you@company.com"
               value={formData.email}
               onChange={handleInputChange}
-              className="px-4 py-3 mt-1.5 w-full text-base text-gray-500 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
+              className="px-4 py-3 mt-1.5 w-full text-base text-gray-700 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
             />
           </div>
           {/* Phone Number Field */}
@@ -408,7 +408,7 @@ function YourBookingDetailsForm({ formData, onFormDataChange }) {
               placeholder="+91 00000-00000"
               value={formData.phoneNumber}
               onChange={handleInputChange}
-              className="px-4 py-3 mt-1.5 w-full text-base text-gray-500 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
+              className="px-4 py-3 mt-1.5 w-full text-base text-gray-700 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
             />
           </div>
           {/* ID Number Field */}

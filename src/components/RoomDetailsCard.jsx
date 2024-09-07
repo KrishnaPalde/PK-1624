@@ -4,13 +4,17 @@ import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
 const RoomDetailsCard = ({ 
   title, 
+  name,
   id,
   description, 
   rating, 
   images,
   imageCount,
   reviews, 
-  price, 
+  price,
+  weekdayPrice,
+  weekendPrice,
+  isWeekend, 
   guestCount,
   amenities = []
 }) => {
@@ -23,14 +27,19 @@ const RoomDetailsCard = ({
         images, 
         imageCount, 
         title, 
+        name,
         description, 
         guestCount, 
         rating, 
-        price, 
+        price,
+        weekdayPrice,
+  weekendPrice,
+  isWeekend,
         reviews 
       } 
     });
   };
+  
 
   const renderStars = () => {
     const stars = [];
@@ -68,7 +77,7 @@ const RoomDetailsCard = ({
     <article className="flex flex-col items-start justify-between gap-5 p-4 mt-6 mb-6 sm:flex-row">
       <div className="flex flex-col w-full sm:w-2/3 text-neutral-900">
         <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-          <h2 className="text-xl font-bold sm:text-2xl">{title}</h2>
+          <h2 className="text-xl font-bold sm:text-2xl">{name + " - " + title}</h2>
           <div className="flex items-center gap-1 text-xs font-medium">
             <div className="flex">{renderStars()}</div>
             <div>{rating} Star</div>
@@ -97,7 +106,7 @@ const RoomDetailsCard = ({
       <div className="flex flex-col items-start w-full mt-4 sm:items-end sm:w-1/3 sm:mt-0">
         <div className="text-2xl font-bold text-blue-600">
           <span className="leading-7">₹</span>
-          <span className="text-3xl leading-10">{price}</span>
+          <span className="text-3xl leading-10">{isWeekend ? price : price}</span>
           <span className="text-sm leading-4">/night</span>
         </div>
         <p className="text-xs">excl. tax</p>

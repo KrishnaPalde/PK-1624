@@ -228,6 +228,7 @@ function AddRoomForm({ onSubmit, onCancel }) {
           name="description"
           value={room.description}
           onChange={handleChange}
+          rows={7}
           className="w-full px-3 py-2 border rounded"
           required
         ></textarea>

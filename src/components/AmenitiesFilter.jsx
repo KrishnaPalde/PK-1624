@@ -30,7 +30,7 @@ function AmenitiesFilter() {
             className="flex gap-2 mt-2 text-sm font-medium cursor-pointer text-neutral-900"
           >
             <div className="relative flex items-center justify-center w-6 h-6 border rounded-sm shrink-0 border-sky-400">
-              {selectedAmenities.includes(amenity) && (
+              {/* {selectedAmenities.includes(amenity) && ( */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="w-4 h-4 text-sky-500"
@@ -43,7 +43,7 @@ function AmenitiesFilter() {
                 >
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
-              )}
+              {/* )} */}
             </div>
             <div className="my-auto">{amenity}</div>
           </div>

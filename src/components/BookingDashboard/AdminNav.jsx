@@ -389,18 +389,18 @@ function AdminNav({ title }) {
   ) : (
     <>
       <button
-        type="button"
-        onClick={handleSaveSettings} 
-        className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-      >
-        Save
-      </button>
-      <button
         type="button" 
         onClick={handleCancelClick}
-        className="px-4 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+        className="px-4 py-2 text-gray-900 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
       >
         Cancel
+      </button>
+      <button
+        type="button"
+        onClick={handleSaveSettings} 
+        className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+      >
+        Save
       </button>
     </>
   )}
@@ -463,18 +463,18 @@ function AdminNav({ title }) {
   ) : (
     <>
       <button
-        type="button"
-        onClick={handleSaveSettings} 
-        className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-      >
-        Save
-      </button>
-      <button
         type="button" 
         onClick={handleCancelClick}
-        className="px-4 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+        className="px-4 py-2 text-gray-900 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
       >
         Cancel
+      </button>
+      <button
+        type="button"
+        onClick={handleSaveSettings} 
+        className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+      >
+        Save
       </button>
     </>
   )}

@@ -105,7 +105,7 @@ function BookingConfirmationCard() {
                   </div>
                   <div className="my-auto text-sm text-right w-[228px]">
                     {/* Superior room - 1 double bed or 2 twin beds */}
-                    {roomData.title}
+                    {roomData.name + " - " + roomData.title}
                   </div>
                 </div>
               </div>

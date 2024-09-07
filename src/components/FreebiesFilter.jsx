@@ -3,11 +3,11 @@ import FilterHeader from "./FilterHeader";
 
 function FreebiesFilter() {
   const freebies = [
-    "Free breakfast",
-    "Free parking",
-    "Free internet",
-    "Free airport shuttle",
-    "Free cancellation",
+    "Free Breakfast",
+    "Free Parking",
+    "Free Internet",
+    "Free Airport Shuttle",
+    "Free Cancellation",
   ];
 
   const [selectedFreebies, setSelectedFreebies] = useState([]);
@@ -37,7 +37,7 @@ function FreebiesFilter() {
           className="flex gap-2 mt-2 text-sm font-medium cursor-pointer text-neutral-900"
         >
           <div className="relative flex items-center justify-center w-6 h-6 border rounded-sm shrink-0 border-sky-400">
-            {selectedFreebies.includes(freebie) && (
+            {/* {selectedFreebies.includes(freebie) && ( */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-4 h-4 text-sky-500"
@@ -50,7 +50,7 @@ function FreebiesFilter() {
               >
                 <polyline points="20 6 9 17 4 12" />
               </svg>
-            )}
+            {/* )} */}
           </div>
           <div className="my-auto">{freebie}</div>
         </div>

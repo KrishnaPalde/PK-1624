@@ -67,14 +67,14 @@ const getRoomDetails = async (req, res) => {
   const { roomId } = req.params;
 
   try {
-    // Find room by custom id
+    
     const room = await Room.findOne({ id: roomId });
     if (!room) {
       return res.status(404).json({ message: "Room not found" });
     }
 
     res.json({
-      id: room.id, // Return custom ID
+      id: room.id, 
       name: room.name,
       title: room.title,
       description: room.description,
@@ -91,6 +91,18 @@ const getRoomDetails = async (req, res) => {
 const getAllRooms = async (req, res) => {
   try {
     const rooms = await Room.find({}).select("-reviews");
+    res.status(200).json(rooms);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const get5Rooms = async (req, res) => {
+  try {
+    const rooms = await Room.find({})
+      .select("-reviews")
+      .sort({ rating: -1 }) // Sort by rating in descending order
+      .limit(5); // Limit to top 5 rooms
     res.status(200).json(rooms);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -425,7 +437,7 @@ const updateRoomPrice = async (req, res) => {
   const { price, weekend } = req.body;
 
   try {
-    const room = await Room.findOneAndUpdate({ id: roomId });
+    const room = await Room.findOne({ id: roomId });
     if (!room) {
       return res.status(404).json({ message: 'Room not found' });
     }
@@ -455,4 +467,5 @@ module.exports = {
   updateRoomStatuses,
   deleteRoom,
   updateRoomPrice,
+  get5Rooms,
 };
