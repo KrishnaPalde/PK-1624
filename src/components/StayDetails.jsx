@@ -146,6 +146,7 @@ function StayDetails({ formData }) {
             amount={totalPrice}
             adults={bookingInfo.adults}
             children={bookingInfo.children}
+            priceDetails={priceDetails}
           />
         </div>
       </div>

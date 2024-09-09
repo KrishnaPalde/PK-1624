@@ -5,12 +5,16 @@ import { useBooking } from '../contexts/BookingFormContext';
 import TransactionSpinner from './TransactionSpinner'; 
 const process = import.meta.env;
 
-const PaymentButton = ({ roomData, formData, adults, children, amount, onClick }) => {
+const PaymentButton = ({ roomData, formData, adults, children, amount, priceDetails }) => {
   const navigate = useNavigate();
   const { bookingInfo } = useBooking();
   const location = useLocation();
   const [isProcessing, setIsProcessing] = useState(false);
   const [globalSettings, setGlobalSettings] = useState(null);
+
+  const baseFare = priceDetails.find(detail => detail.label.startsWith('Base Fare'))?.amount || 0;
+  const taxes = priceDetails.find(detail => detail.label === 'Taxes')?.amount || 0;
+  const serviceFee = priceDetails.find(detail => detail.label === 'Service Fee')?.amount || 0;
 
   useEffect(() => {
     const fetchGlobalSettings = async () => {
@@ -31,7 +35,7 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, onClick }
       const response = await fetch(`${process.VITE_HOST_URL}/api/payments/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount })
+        body: JSON.stringify({ amount, baseFare, taxes, serviceFee })
       });
 
       const { orderId } = await response.json();
@@ -47,7 +51,12 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, onClick }
         checkOutDate: bookingInfo.checkOut.toISOString(),
         numberOfAdults: adults,
         numberOfChildren: children,
-        numberOfInfants: 0
+        numberOfInfants: 0,
+        paymentBreakdown: [
+          { description: 'Base Fare', amount: baseFare },
+          { description: 'Taxes', amount: taxes },
+          { description: 'Service Fee', amount: serviceFee }
+        ]
       };
 
       const options = {
@@ -67,6 +76,9 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, onClick }
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
               amount,
+              baseFare,
+              taxes,
+              serviceFee,
               bookingDetails
             })
           });

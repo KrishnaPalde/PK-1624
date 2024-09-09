@@ -14,7 +14,7 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
   const location = useLocation();
   const process = import.meta.env;
 
-  const cardsPerPage = 3;
+  const cardsPerPage = 5;
 
     const isWeekend = () => {
     const today = new Date();
