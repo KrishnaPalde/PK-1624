@@ -7,19 +7,24 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
+    const admin = await Admin.findOne({ email });
 
-    if (!user) {
+    if (!admin) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    const isMatch = await user.comparePassword(password);
+    const isMatch = await admin.comparePassword(password);
 
     if (!isMatch) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    res.status(200).json({ message: "Login successful" });
+    const user = {
+      id: admin._id,
+      email: admin.email,
+    };
+
+    res.status(200).json({ user });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }
@@ -40,21 +45,26 @@ const sendOTP = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   try {
-    const { email, newPassword } = req.body;
+    const { adminId } = req.params;
+    const { currentPassword, newPassword } = req.body;
 
-    const admin = await Admin.findOne({ email });
-    if (!admin) {
-      return res.status(404).json({ error: "Admin user not found." });
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Please provide both current and new passwords." });
     }
 
-    admin.password = newPassword;
+    const admin = await Admin.findById(adminId);
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found." });
+    }
+
+
+    admin.password = await bcrypt.hash(newPassword, 10);
     await admin.save();
-    return res.status(200).json({ message: "Password reset successful." });
+
+    return res.status(200).json({ message: "Password updated successfully." });
   } catch (error) {
-    console.error("Error resetting password:", error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred during password reset." });
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error." });
   }
 };
 
@@ -74,12 +84,34 @@ const checkIfUserExists = async (req, res) => {
   }
 };
 
+const createAdmin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const emailCheck = await Admin.findOne({ email });
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Please provide email and password." });
+    }
+
+    if(!emailCheck){
+      const admin = await Admin.create({ email, password });
+    return res.status(201).json(admin);
+    } else {
+      return res.status(200).json({ message: "User Exists", status: 0 });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
 module.exports = {
   login,
   sendOTP,
   resetPassword,
   checkIfUserExists,
+  createAdmin,
 };
 
 // email : test@gmail.com
-// password : test@123
+// password : test@111

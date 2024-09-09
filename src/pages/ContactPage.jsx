@@ -37,7 +37,10 @@ const MainContent = () => {
       </div>
       <div><GoogleMap /></div>
       <br></br><br></br><br></br><br></br>
-      <ContactInfo />
+      <div className='w-full '>
+      <ContactInfo />  
+      </div>
+      
       <br></br><br></br><br></br><br></br>
       <Newsletter />
       <Footer />

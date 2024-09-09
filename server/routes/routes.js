@@ -4,6 +4,7 @@ const {
   sendOTP,
   resetPassword,
   checkIfUserExists,
+  createAdmin,
 } = require("../controller/authenticateAdmin");
 const {
   checkIfAvailable,
@@ -62,9 +63,11 @@ router.get("/hotel-rating", getHotelRating);
 router.delete("/admin/deleteroom/:id", deleteRoom);
 router.get("/public-feedbacks", getAllApprovedFeedbacks);
 router.post("/forgot-password/sendOTP", sendOTP);
-router.post("/forgot-password/reset-password", resetPassword);
+// router.post("/forgot-password/reset-password", resetPassword);
 router.post("/forgot-password/check-user", checkIfUserExists);
 router.put('/admin/updateroom/:roomId',updateRoomPrice);
 router.get('/admin/get5rooms',get5Rooms);
+router.put('/admin/:adminId/reset-password', resetPassword);
+router.post('/admin/create-admin',createAdmin);
 
 module.exports = router;

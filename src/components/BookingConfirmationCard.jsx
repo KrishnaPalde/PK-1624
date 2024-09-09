@@ -1,6 +1,8 @@
 import * as React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useBooking } from "../contexts/BookingFormContext";
+import profile from '../assets/profile.png'
+import logo from '../assets/logo.png';
 
 const CheckInOutInfo = ({ time, label }) => (
   <div className="flex items-center gap-2">
@@ -25,9 +27,8 @@ const DateInfo = ({ date, label }) => (
 );
 
 const HotelLogo = () => (
-  <div className="flex overflow-hidden gap-4 px-4 py-3.5 max-w-full bg-white w-[180px]">
-    <div className="flex shrink-0 bg-black rounded-full h-[35px] w-[35px]" />
-    <div className="my-auto">Hotel logo</div>
+  <div className="flex overflow-hidden gap-4 px-4 py-3.5 max-w-full bg-white w-[309px] min-h-[309px] p-6">
+    <img src={logo} alt="Tranquil Trails" className="object-cover"/>
   </div>
 );
 
@@ -60,7 +61,7 @@ function BookingConfirmationCard() {
   return (
     <section className="flex flex-wrap w-full max-w-[1231px] max-md:max-w-full">
       <article className="overflow-hidden flex-1 shrink bg-white rounded-2xl border border-gray-200 border-solid basis-[140px] min-w-[240px] max-md:max-w-full">
-        <div className="flex gap-5 max-md:flex-col">
+        <div className="flex max-md:flex-col">
           <aside className="flex flex-col w-[29%] max-md:ml-0 max-md:w-full">
             <div className="flex flex-col grow justify-center items-start px-6 py-9 w-full bg-sky-100 min-h-[309px] max-md:px-5">
               {checkInOutData.map((data, index) => (
@@ -88,14 +89,14 @@ function BookingConfirmationCard() {
               </div>
             </div>
           </aside>
-          <div className="flex flex-col ml-5 w-[71%] max-md:ml-0 max-md:w-full">
+          <div className="flex flex-col w-[71%] max-md:ml-0 max-md:w-full">
             <header className="flex flex-col w-full mx-auto overflow-hidden bg-white max-md:max-w-full">
               <div className="flex items-start gap-10 p-6 font-bold text-white bg-sky-300 max-md:px-5">
                 <div className="flex flex-wrap flex-1 shrink gap-10 justify-between items-center w-full basis-0 min-w-[240px] max-md:max-w-full">
                   <div className="flex items-center self-stretch gap-4 my-auto text-xl">
                     <img
                       loading="lazy"
-                      src="https://cdn.builder.io/api/v1/image/assets/TEMP/d32045c180ef538085cd4b3473c097a082242b3ba121b8d82e01adff6b37d5c2?apiKey=e6b8c17325a24fb29c274ce450ea26a7&&apiKey=e6b8c17325a24fb29c274ce450ea26a7"
+                      src={profile}
                       alt="Profile"
                       className="self-stretch object-contain w-12 my-auto rounded-full shrink-0 aspect-square"
                     />
@@ -186,7 +187,7 @@ function BookingConfirmationCard() {
           </div>
         </div>
       </article>
-      <aside className="flex overflow-hidden flex-col justify-center items-center px-16 py-32 my-auto text-xl font-extrabold text-black bg-white rounded-2xl border border-gray-200 border-solid min-w-[240px] w-[375px] max-md:px-5 max-md:py-24">
+      <aside className="flex overflow-hidden flex-col justify-center items-center text-xl font-extrabold text-black bg-white rounded-2xl border border-gray-200 border-solid min-w-[240px] w-[375px] max-md:px-5 max-md:py-24">
         <HotelLogo />
       </aside>
     </section>

@@ -4,17 +4,56 @@ const router = express.Router();
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 const Booking = require("../models/Bookings");
+const GlobalSetting = require('../models/GlobalSetting');
 const {
   validateWebhookSignature,
 } = require("razorpay/dist/utils/razorpay-utils");
 
-const razorpay = new Razorpay({
-  key_id: "rzp_test_3XPl2MOocYaXjD",
-  key_secret: "UfRM9Kdwj7sVapSQxsHEX4PS",
-});
+
+const fetchKeyId = async () => {
+  try {
+    const settings = await GlobalSetting.findOne();
+    if (!settings) {
+      console.log("critical error");
+      return;
+    }
+    
+    return settings.paymentGateway.keyId;
+  } catch (error) {
+    console.error('Error fetching global settings:', error);
+  }
+}
+
+const fetchSecretKey = async () => {
+  try {
+    const settings = await GlobalSetting.findOne();
+    if (!settings) {
+      console.log("critical error");
+      return;
+    }
+    
+    return settings.paymentGateway.secretKey;
+  } catch (error) {
+    console.error('Error fetching global settings:', error);
+  }
+}
+
+
+// const razorpay = new Razorpay({
+//   key_id: "rzp_test_3XPl2MOocYaXjD",
+//   key_secret: "UfRM9Kdwj7sVapSQxsHEX4PS",
+// });
+
+var razorpay;
 
 // Create an order
 router.post("/create-order", async (req, res) => {
+  const id = await fetchKeyId();
+  const secret_key = await fetchSecretKey();
+  razorpay = new Razorpay({
+    key_id: id,
+    key_secret: secret_key,
+  })
   const { amount } = req.body;
   const options = {
     amount: amount * 100, // Amount in paise
@@ -33,6 +72,13 @@ router.post("/create-order", async (req, res) => {
 
 // Verify payment
 router.post("/verify-payment", async (req, res) => {
+  const id = await fetchKeyId();
+  const secret_key = await fetchSecretKey();
+  razorpay = new Razorpay({
+    key_id: id,
+    key_secret: secret_key,
+  })
+
   const {
     razorpay_order_id,
     razorpay_payment_id,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useBooking } from '../contexts/BookingFormContext';
@@ -10,7 +10,21 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, onClick }
   const { bookingInfo } = useBooking();
   const location = useLocation();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [globalSettings, setGlobalSettings] = useState(null);
 
+  useEffect(() => {
+    const fetchGlobalSettings = async () => {
+      try {
+        const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/gateway-settings`);
+        setGlobalSettings(response.data);
+      } catch (error) {
+        console.error('Error fetching global settings:', error);
+      }
+    };
+
+    fetchGlobalSettings();
+  }, []);
+  
   const handlePayment = async () => {
     setIsProcessing(true);
     try {
@@ -37,7 +51,8 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, onClick }
       };
 
       const options = {
-        key: 'rzp_test_3XPl2MOocYaXjD',
+        // key: 'rzp_test_3XPl2MOocYaXjD',
+        key: globalSettings.paymentGateway.keyId,
         amount: amount * 100,
         currency: 'INR',
         name: 'Tantra Technologies',

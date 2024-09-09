@@ -45,7 +45,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  const [step, setStep] = useState('login'); // track current step
+  const [step, setStep] = useState('login'); 
   const [otp, setOtp] = useState('');
   const [generatedOTP, setGeneratedOTP] = useState(0);
   const [newPassword, setNewPassword] = useState('');
@@ -62,7 +62,7 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const response = await axios.post(`${process.VITE_HOST_URL}/api/authenticateAdmin`, { email, password });
-      login();
+      login(response.data.user);
       setError(null);
       navigate('/admin/dashboard');
     } catch (error) {

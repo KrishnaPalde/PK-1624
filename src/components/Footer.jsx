@@ -81,7 +81,7 @@ const Footer = () => {
               Phone: (+91) 7673-992288
             </p>
             <p className="mt-4 text-sm leading-6 text-stone-300">
-              Email: help.tranquiltrails@gmail.com
+              Email: care@tranquiltrails.co.in
             </p>
             <div className="flex gap-5 pt-10 ">
               {socialIcons.map((icon, index) => (
@@ -127,7 +127,7 @@ const Footer = () => {
       </div>
       <div className="w-full px-5 py-10 mt-2 text-sm leading-6 text-center text-white bg-stone-900">
         © Copyright Tranquil Trails. All Rights Reserved
-        <p className="text-xs pt-2">Designed and Developed By <a href="https://tantra-techn.web.app" target="blank">Tantra Technologies</a></p>
+        <p className="pt-2 text-xs">Designed and Developed By <a href="https://tantra-techn.web.app" target="blank">Tantra Technologies</a></p>
       </div>
     </footer>
   );

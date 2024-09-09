@@ -62,9 +62,31 @@ const editGlobalSettings = async (req, res) => {
     }
   };
 
+  const getGatewaySettings = async (req, res) => {
+    try {
+      const settings = await GlobalSetting.findOne();
+      if (!settings) {
+        return res.status(404).json({ message: 'Global settings not found' });
+      }
+      
+      const clientSettings = {
+        roomTaxesAndCharges: settings.roomTaxesAndCharges,
+        paymentGateway: {
+          keyId: settings.paymentGateway.keyId
+        }
+      };
+      
+      res.json(clientSettings);
+    } catch (error) {
+      console.error('Error fetching global settings:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+
 
 module.exports = {
     saveGlobalSettings,
     editGlobalSettings,
     getGlobalSettings,
+    getGatewaySettings,
 };

@@ -174,29 +174,83 @@ const getUnavailableDates = async (req, res) => {
   }
 };
 
+// const fetchBookingsAdmin = async (req, res) => {
+//   try {
+//     const { recent, limit } = req.query;
+
+//     const today = new Date();
+//     today.setHours(0, 0, 0, 0);
+
+//     // Fetch only upcoming bookings where check-in date is today or later
+//     let query = Booking.find({ checkInDate: { $gte: today } });
+
+//     // If 'recent' parameter is provided and true, fetch the most recently added bookings
+//     if (recent === "true") {
+//       query = query.sort({ _id: -1 }).limit(parseInt(limit) || 5); // Default limit is 5 if not specified
+//     }
+
+//     // Execute the query
+//     const bookings = await query.exec();
+
+//     // Return the fetched bookings
+//     res.status(200).json(bookings);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
 const fetchBookingsAdmin = async (req, res) => {
   try {
-    const { recent, limit } = req.query;
+    const { recent, limit, timeframe } = req.query;
 
-    // Current date at 00:00:00 to compare check-in dates
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    let query = Booking.find();
 
-    // Fetch only upcoming bookings where check-in date is today or later
-    let query = Booking.find({ checkInDate: { $gte: today } });
+    if (timeframe) {
+      const now = new Date();
+      let startDate;
 
-    // If 'recent' parameter is provided and true, fetch the most recently added bookings
-    if (recent === "true") {
-      query = query.sort({ _id: -1 }).limit(parseInt(limit) || 5); // Default limit is 5 if not specified
+      switch (timeframe) {
+        case 'day':
+          startDate = new Date(now.setDate(now.getDate() - 1));
+          break;
+        case 'week':
+          startDate = new Date(now.setDate(now.getDate() - 7));
+          break;
+        case 'month':
+          startDate = new Date(now.setMonth(now.getMonth() - 1));
+          break;
+        default:
+          startDate = new Date(0); 
+      }
+
+      query = query.where('createdAt').gte(startDate);
     }
 
-    // Execute the query
+    query = query.sort({ createdAt: -1 }); 
+
+    if (recent === "true") {
+      query = query.limit(parseInt(limit) || 5); 
+    }
+  
     const bookings = await query.exec();
 
-    // Return the fetched bookings
-    res.status(200).json(bookings);
+    const bookingsWithRoomNames = await Promise.all(
+      bookings.map(async (booking) => {
+        const room = await Room.findOne({ id: booking.roomId });
+        const roomName = room ? room.name : "Unknown Room";
+
+        return {
+          ...booking.toObject(),
+          roomName,
+          bookingId: booking.bookingId.slice(-4), 
+        };
+      })
+    );
+
+    res.status(200).json(bookingsWithRoomNames);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error fetching bookings:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -237,7 +291,7 @@ const getDashboardStats = async (req, res) => {
 
 const getBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find({});
+    const bookings = await Booking.find({}).sort({ createdAt: -1 });
 
     const bookingsWithRoomNames = await Promise.all(
       bookings.map(async (booking) => {
@@ -256,6 +310,7 @@ const getBookings = async (req, res) => {
           checkOutDate: booking.checkOutDate,
           roomName,
           roomId: booking.roomId,
+          createdAt: booking.createdAt,
         };
 
         return bookingData;
@@ -391,20 +446,69 @@ const updateRoomStatuses = async (req, res) => {
   try {
     const rooms = await Room.find({});
     const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
+    console.log(`Current date: ${currentDate.toISOString()}`);
+
+    let updatedRooms = 0;
+    let occupiedRooms = 0;
+    let reservedRooms = 0;
 
     for (let room of rooms) {
-      const activeBooking = await Booking.findOne({
+      console.log(`Checking room: ${room.id}`);
+      
+      const booking = await Booking.findOne({
         roomId: room.id,
         checkInDate: { $lte: currentDate },
-        checkOutDate: { $gt: currentDate },
-      });
+        checkOutDate: { $gt: currentDate }
+      }).sort('checkInDate');
 
-      room.status = activeBooking ? "Booked" : "Available";
-      await room.save();
+      let newStatus = "Available";
+      let statusDetails = "";
+
+      if (booking) {
+        if (booking.checkInDate.toDateString() === currentDate.toDateString()) {
+          newStatus = "Check-in Today";
+          statusDetails = `Check-in today, check-out on ${booking.checkOutDate.toISOString().split('T')[0]}`;
+        } else {
+          newStatus = "Occupied";
+          statusDetails = `Occupied until ${booking.checkOutDate.toISOString().split('T')[0]}`;
+        }
+        occupiedRooms++;
+      } else {
+        const futureBooking = await Booking.findOne({
+          roomId: room.id,
+          checkInDate: { $gt: currentDate },
+        }).sort('checkInDate');
+
+        if (futureBooking) {
+          newStatus = "Reserved";
+          statusDetails = `Reserved from ${futureBooking.checkInDate.toISOString().split('T')[0]}`;
+          reservedRooms++;
+        } else {
+          console.log(`No bookings found for room ${room.id}`);
+        }
+      }
+
+      if (room.status !== newStatus || room.statusDetails !== statusDetails) {
+        room.status = newStatus;
+        room.statusDetails = statusDetails;
+        await room.save();
+        updatedRooms++;
+        console.log(`Updated room ${room.id} status to ${newStatus} (${statusDetails})`);
+      } else {
+        console.log(`Room ${room.id} status unchanged: ${room.status} (${room.statusDetails})`);
+      }
     }
 
-    res.status(200).json({ message: "Room statuses updated successfully" });
+    res.status(200).json({ 
+      message: "Room statuses updated successfully",
+      totalRooms: rooms.length,
+      occupiedRooms: occupiedRooms,
+      reservedRooms: reservedRooms,
+      updatedRooms: updatedRooms
+    });
   } catch (error) {
+    console.error("Error in updateRoomStatuses:", error);
     res
       .status(500)
       .json({ message: "Error updating room statuses", error: error.message });

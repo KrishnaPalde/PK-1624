@@ -66,6 +66,7 @@ const BookingSchema = new Schema({
   numberOfChildren: { type: Number, required: true },
   numberOfInfants: { type: Number, required: true },
   transactions: [TransactionSchema], // Array to store transaction details
+  createdAt: { type: Date, default: Date.now },
 });
 
 const Booking = mongoose.model("Booking", BookingSchema);

@@ -1,124 +1,9 @@
-// import React, { useState, useEffect } from "react";
-// import { FaSun, FaMoon } from 'react-icons/fa';
-// import { BsSunset } from 'react-icons/bs';
-// import { useAuth } from '../../AuthContext';
-
-// function AdminNav({title}) {
-//   const [currentTime, setCurrentTime] = useState(new Date());
-//   const [isProfilePopupVisible, setProfilePopupVisible] = useState(false); // State for popup visibility
-//   const { logout } = useAuth();
-
-//   useEffect(() => {
-//     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
-//     return () => clearInterval(timer);
-//   }, []);
-
-//   const formatDate = (date) => {
-//     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-//     return date.toLocaleDateString('en-IN', options);
-//   };
-
-//   const getTimeIcon = () => {
-//     const hour = currentTime.getHours();
-//     if (hour >= 6 && hour < 17) {
-//       return <FaSun className="text-yellow-500" />;
-//     } else if (hour >= 17 && hour < 20) {
-//       return <BsSunset className="text-orange-500" />;
-//     } else {
-//       return <FaMoon className="text-blue-300" />;
-//     }
-//   };
-
-//   const handleLogout = () => {
-//     logout();
-//     console.log("Logged out");
-//   };
-
-//   const toggleProfilePopup = () => {
-//     setProfilePopupVisible(!isProfilePopupVisible);
-//   };
-
-//   const closeProfilePopup = () => {
-//     setProfilePopupVisible(false);
-//   };
-
-//   const iconButtons = [
-//     { icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/41398295ae0a8114089b72721383e2723c69aaf3fb09c01943de56ea863869c3?placeholderIfAbsent=true&apiKey=e6b8c17325a24fb29c274ce450ea26a7", alt: "Notification icon" },
-//     // { icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/907324ac824587bba2bb9cf958abd4883fb2dcd40bdc6bb78c60d09aafd98645?placeholderIfAbsent=true&apiKey=e6b8c17325a24fb29c274ce450ea26a7", alt: "Settings icon" },
-//     { icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/ccb966e89531d8852beaa85caa96ee5353971134c3a591a62efc980496d29bd0?placeholderIfAbsent=true&apiKey=e6b8c17325a24fb29c274ce450ea26a7", alt: "User profile icon", onClick: toggleProfilePopup }
-//   ];
-
-//   // Click outside listener to close the popup
-//   useEffect(() => {
-//     const handleClickOutside = (event) => {
-//       if (isProfilePopupVisible && !event.target.closest(".profile-popup") && !event.target.closest(".profile-icon-button")) {
-//         closeProfilePopup();
-//       }
-//     };
-
-//     document.addEventListener("mousedown", handleClickOutside);
-
-//     return () => {
-//       document.removeEventListener("mousedown", handleClickOutside);
-//     };
-//   }, [isProfilePopupVisible]);
-
-//   return (
-//     <header className="flex flex-col rounded-none">
-//       <nav className="flex flex-col w-full gap-5 px-5 py-5 bg-white md:flex-row md:justify-between max-md:max-w-full">
-//         <h1 className="my-auto text-3xl font-semibold text-center md:text-left text-slate-700 md:pl-12">
-//           {title}
-//         </h1>
-//         <div className="flex flex-col items-center gap-4 text-base md:flex-row md:justify-end md:gap-8 text-slate-600">
-//           <div className="flex items-center justify-center w-full md:w-auto">
-//             <span className="text-lg font-medium">{formatDate(currentTime)}</span>
-//             <span className="mx-4 text-gray-300">|</span>
-//             <div className="text-2xl">{getTimeIcon()}</div>
-//           </div>
-//           <div className="relative flex justify-center gap-4 lg:gap-8">
-//             {iconButtons.map((item, index) => (
-//               <button
-//                 key={index}
-//                 className={`p-2 transition-colors duration-200 rounded-full hover:bg-gray-100 ${item.alt.includes('User profile icon') ? 'profile-icon-button' : ''}`}
-//                 onClick={item.onClick}
-//               >
-//                 <img
-//                   src={item.icon}
-//                   className="w-8 h-8"
-//                   alt={item.alt}
-//                 />
-//               </button>
-//             ))}
-
-//             {isProfilePopupVisible && (
-//               <div className="absolute right-0 z-50 mt-10 bg-white border rounded-lg shadow-lg profile-popup">
-//                 <ul className="p-2">
-//                   <li>
-//                     <button
-//                       onClick={handleLogout}
-//                       className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
-//                     >
-//                       Logout
-//                     </button>
-//                   </li>
-//                 </ul>
-//               </div>
-//             )}
-//           </div>
-//         </div>
-//       </nav>
-//     </header>
-//   );
-// }
-
-// export default AdminNav;
-
 import React, { useState, useEffect } from "react";
-import { FaSun, FaMoon, FaCog, FaTimes } from 'react-icons/fa';
-import { BsSunset } from 'react-icons/bs';
-import { useAuth } from '../../AuthContext';
-import profile from '../../assets/profile.png';
-import axios from 'axios';
+import { FaSun, FaMoon, FaCog, FaTimes } from "react-icons/fa";
+import { BsSunset } from "react-icons/bs";
+import { useAuth } from "../../AuthContext";
+import profile from "../../assets/profile.png";
+import axios from "axios";
 
 const process = import.meta.env;
 
@@ -128,16 +13,22 @@ function AdminNav({ title }) {
   const [isSettingsPopupVisible, setSettingsPopupVisible] = useState(false);
   const [isTaxesPopupVisible, setTaxesPopupVisible] = useState(false);
   const [isPaymentPopupVisible, setPaymentPopupVisible] = useState(false);
+  const [isChangePasswordPopupVisible, setChangePasswordPopupVisible] = useState(false);
+  const [isCreateAdminPopupVisible, setCreateAdminPopupVisible] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [settings, setSettings] = useState({
-    _id: '',
-    tax: '',
-    serviceCharges: '',
-    keyId: '',
-    secretKey: ''
+    _id: "",
+    tax: "",
+    serviceCharges: "",
+    keyId: "",
+    secretKey: "",
   });
-  const [isEditing, setIsEditing] = useState(false);  
+  const [isEditing, setIsEditing] = useState(false);
 
-  const { logout } = useAuth();
+  const { user,logout } = useAuth();
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
@@ -145,8 +36,13 @@ function AdminNav({ title }) {
   }, []);
 
   const formatDate = (date) => {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString('en-IN', options);
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    return date.toLocaleDateString("en-IN", options);
   };
 
   const getTimeIcon = () => {
@@ -172,10 +68,12 @@ function AdminNav({ title }) {
   const toggleSettingsPopup = async () => {
     if (!isSettingsPopupVisible) {
       try {
-        const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/global-settings`);
+        const response = await axios.get(
+          `${process.VITE_HOST_URL}/api/admin/global-settings`
+        );
         if (response.data) {
           setSettings({
-            _id: response.data._id,  
+            _id: response.data._id,
             tax: response.data.roomTaxesAndCharges.tax,
             serviceCharges: response.data.roomTaxesAndCharges.serviceCharges,
             keyId: response.data.paymentGateway.keyId,
@@ -191,9 +89,9 @@ function AdminNav({ title }) {
 
   const handleSettingsChange = (e) => {
     const { name, value } = e.target;
-    setSettings(prevSettings => ({
+    setSettings((prevSettings) => ({
       ...prevSettings,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -214,8 +112,63 @@ function AdminNav({ title }) {
     }
   };
 
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+  
+    if (newPassword !== currentPassword) {
+      console.error("Passwords do not match");
+      return;
+    }
+  
+    try {
+      if (!user || !user.id) {
+        console.error("User information not available");
+        return;
+      }
+  
+      const response = await axios.put(
+        `${process.VITE_HOST_URL}/api/admin/${user.id}/reset-password`,
+        {
+          currentPassword,
+          newPassword,
+        }
+      );
+  
+      console.log("Server response:", response);
+  
+      if (response.data) {
+        setChangePasswordPopupVisible(false);
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        alert(response.data.message);
+      } else {
+        console.error("Server response data is undefined");
+      }
+    } catch (error) {
+      console.error("Error resetting password:", error);
+    }
+  };
+
+  const handleCreateAdmin = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const response = await axios.post(
+        `${process.VITE_HOST_URL}/api/admin/create-admin`,
+        { email, password }
+      );
+      console.log("Admin created:", response.data);
+      setCreateAdminPopupVisible(false);
+      setEmail('');
+      setPassword('');
+    } catch (error) {
+      console.error("Error creating admin:", error);
+    }
+  };
+  
   const handleEditClick = (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
     setIsEditing(true);
   };
 
@@ -227,15 +180,22 @@ function AdminNav({ title }) {
   };
 
   const iconButtons = [
-    { icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/41398295ae0a8114089b72721383e2723c69aaf3fb09c01943de56ea863869c3?placeholderIfAbsent=true&apiKey=e6b8c17325a24fb29c274ce450ea26a7", alt: "Settings icon", onClick: toggleSettingsPopup },
-    { icon: profile, alt: "User profile icon", onClick: toggleProfilePopup }
+    {
+      icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/41398295ae0a8114089b72721383e2723c69aaf3fb09c01943de56ea863869c3?placeholderIfAbsent=true&apiKey=e6b8c17325a24fb29c274ce450ea26a7",
+      alt: "Settings icon",
+      onClick: toggleSettingsPopup,
+    },
+    { icon: profile, alt: "User profile icon", onClick: toggleProfilePopup },
   ];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        (isProfilePopupVisible || isSettingsPopupVisible || isTaxesPopupVisible || isPaymentPopupVisible) && 
-        !event.target.closest(".profile-popup") && 
+        (isProfilePopupVisible ||
+          isSettingsPopupVisible ||
+          isTaxesPopupVisible ||
+          isPaymentPopupVisible) &&
+        !event.target.closest(".profile-popup") &&
         !event.target.closest(".profile-icon-button") &&
         !event.target.closest(".settings-popup") &&
         !event.target.closest(".settings-icon-button") &&
@@ -255,7 +215,17 @@ function AdminNav({ title }) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isProfilePopupVisible, isSettingsPopupVisible, isTaxesPopupVisible, isPaymentPopupVisible]);
+  }, [
+    isProfilePopupVisible,
+    isSettingsPopupVisible,
+    isTaxesPopupVisible,
+    isPaymentPopupVisible,
+  ]);
+
+  const toggleChangePasswordPopup = () => {
+    setChangePasswordPopupVisible(!isChangePasswordPopupVisible);
+    setProfilePopupVisible(false);
+  };
 
   return (
     <header className="flex flex-col rounded-none">
@@ -265,7 +235,9 @@ function AdminNav({ title }) {
         </h1>
         <div className="flex flex-col items-center gap-4 text-base md:flex-row md:justify-end md:gap-8 text-slate-600">
           <div className="flex items-center justify-center w-full md:w-auto">
-            <span className="text-lg font-medium">{formatDate(currentTime)}</span>
+            <span className="text-lg font-medium">
+              {formatDate(currentTime)}
+            </span>
             <span className="mx-4 text-gray-300">|</span>
             <div className="text-2xl">{getTimeIcon()}</div>
           </div>
@@ -273,11 +245,19 @@ function AdminNav({ title }) {
             {iconButtons.map((item, index) => (
               <button
                 key={index}
-                className={`p-2 transition-colors duration-200 rounded-full hover:bg-gray-100 ${item.alt.includes('Settings icon') ? 'settings-icon-button' : ''}`}
+                className={`p-2 transition-colors duration-200 rounded-full hover:bg-gray-100 ${
+                  item.alt.includes("Settings icon")
+                    ? "settings-icon-button"
+                    : ""
+                }`}
                 onClick={item.onClick}
               >
-                {typeof item.icon === 'string' ? (
-                  <img src={item.icon} className="object-cover w-8 h-8" alt={item.alt} />
+                {typeof item.icon === "string" ? (
+                  <img
+                    src={item.icon}
+                    className="object-cover w-8 h-8"
+                    alt={item.alt}
+                  />
                 ) : (
                   item.icon
                 )}
@@ -288,7 +268,8 @@ function AdminNav({ title }) {
               <div className="absolute right-0 z-50 w-64 mt-10 bg-white border rounded-lg shadow-lg profile-popup">
                 <ul className="p-2 divide-y divide-gray-200">
                   <li>
-                    <button className="block w-full px-4 py-2 text-left text-gray-700 text-md hover:bg-gray-100">
+                    <button onClick={toggleChangePasswordPopup} 
+                    className="block w-full px-4 py-2 text-left text-gray-700 text-md hover:bg-gray-100">
                       Change Password
                     </button>
                   </li>
@@ -306,51 +287,63 @@ function AdminNav({ title }) {
 
             {isSettingsPopupVisible && (
               <div className="absolute right-0 z-50 w-48 max-w-sm mt-10 bg-white border rounded-lg shadow-lg md:right-20 settings-popup md:w-80 md:max-w-none">
-              <ul className="p-2 divide-y divide-gray-200">
-                <li>
-                  <button
+                <ul className="p-2 divide-y divide-gray-200">
+                  <li>
+                    <button
+                      onClick={() => {
+                        setTaxesPopupVisible(true);
+                        setSettingsPopupVisible(false);
+                      }}
+                      className="block w-full px-4 py-2 text-left text-gray-700 rounded-lg text-md hover:bg-gray-100"
+                    >
+                      Room Taxes & Charges
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        setPaymentPopupVisible(true);
+                        setSettingsPopupVisible(false);
+                      }}
+                      className="block w-full px-4 py-2 text-left text-gray-700 rounded-lg text-md hover:bg-gray-100"
+                    >
+                      Payment Gateway
+                    </button>
+                  </li>
+                  <li>
+                    <button 
                     onClick={() => {
-                      setTaxesPopupVisible(true);
+                      setCreateAdminPopupVisible(true);
                       setSettingsPopupVisible(false);
                     }}
-                    className="block w-full px-4 py-2 text-left text-gray-700 rounded-lg text-md hover:bg-gray-100"
-                  >
-                    Room Taxes & Charges
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => {
-                      setPaymentPopupVisible(true);
-                      setSettingsPopupVisible(false);
-                    }}
-                    className="block w-full px-4 py-2 text-left text-gray-700 rounded-lg text-md hover:bg-gray-100"
-                  >
-                    Payment Gateway
-                  </button>
-                </li>
-                <li>
-                  <button className="block w-full px-4 py-2 text-left text-gray-700 rounded-lg text-md hover:bg-gray-100">
-                    Create Admin
-                  </button>
-                </li>
-              </ul>
-            </div>
-            
+                    className="block w-full px-4 py-2 text-left text-gray-700 rounded-lg text-md hover:bg-gray-100">
+                      Create Admin
+                    </button>
+                  </li>
+                </ul>
+              </div>
             )}
 
             {isTaxesPopupVisible && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                 <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-xl taxes-popup">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-2xl font-bold text-gray-800">Room Taxes & Charges</h2>
-                    <button onClick={handleCancelClick} className="text-gray-500 hover:text-gray-700">
+                    <h2 className="text-2xl font-bold text-gray-800">
+                      Room Taxes & Charges
+                    </h2>
+                    <button
+                      onClick={handleCancelClick}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
                       <FaTimes size={24} />
                     </button>
                   </div>
                   <form>
                     <div className="mb-4">
-                      <label htmlFor="tax" className="block mb-2 text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="tax"
+                        className="block mb-2 text-sm font-medium text-gray-700"
+                      >
                         Tax (%)
                       </label>
                       <input
@@ -364,7 +357,10 @@ function AdminNav({ title }) {
                       />
                     </div>
                     <div className="mb-6">
-                      <label htmlFor="serviceCharges" className="block mb-2 text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="serviceCharges"
+                        className="block mb-2 text-sm font-medium text-gray-700"
+                      >
                         Service Charges (%)
                       </label>
                       <input
@@ -378,36 +374,33 @@ function AdminNav({ title }) {
                       />
                     </div>
                     <div className="flex justify-end space-x-2">
-  {!isEditing ? (
-    <button
-      type="button" 
-      onClick={handleEditClick} 
-      className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-    >
-      Edit
-    </button>
-  ) : (
-    <>
-      <button
-        type="button" 
-        onClick={handleCancelClick}
-        className="px-4 py-2 text-gray-900 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
-      >
-        Cancel
-      </button>
-      <button
-        type="button"
-        onClick={handleSaveSettings} 
-        className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-      >
-        Save
-      </button>
-    </>
-  )}
-</div>
-
-
-
+                      {!isEditing ? (
+                        <button
+                          type="button"
+                          onClick={handleEditClick}
+                          className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                        >
+                          Edit
+                        </button>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            onClick={handleCancelClick}
+                            className="px-4 py-2 text-gray-900 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleSaveSettings}
+                            className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                          >
+                            Save
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </form>
                 </div>
               </div>
@@ -417,14 +410,22 @@ function AdminNav({ title }) {
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                 <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-xl payment-popup">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-2xl font-bold text-gray-800">Payment Gateway</h2>
-                    <button onClick={handleCancelClick} className="text-gray-500 hover:text-gray-700">
+                    <h2 className="text-2xl font-bold text-gray-800">
+                      Payment Gateway
+                    </h2>
+                    <button
+                      onClick={handleCancelClick}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
                       <FaTimes size={24} />
                     </button>
                   </div>
                   <form>
                     <div className="mb-4">
-                      <label htmlFor="keyId" className="block mb-2 text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="keyId"
+                        className="block mb-2 text-sm font-medium text-gray-700"
+                      >
                         Key ID
                       </label>
                       <input
@@ -438,7 +439,10 @@ function AdminNav({ title }) {
                       />
                     </div>
                     <div className="mb-6">
-                      <label htmlFor="secretKey" className="block mb-2 text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="secretKey"
+                        className="block mb-2 text-sm font-medium text-gray-700"
+                      >
                         Secret Key
                       </label>
                       <input
@@ -452,43 +456,157 @@ function AdminNav({ title }) {
                       />
                     </div>
                     <div className="flex justify-end space-x-2">
-  {!isEditing ? (
-    <button
-      type="button" 
-      onClick={handleEditClick} 
-      className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-    >
-      Edit
-    </button>
-  ) : (
-    <>
-      <button
-        type="button" 
-        onClick={handleCancelClick}
-        className="px-4 py-2 text-gray-900 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
-      >
-        Cancel
-      </button>
-      <button
-        type="button"
-        onClick={handleSaveSettings} 
-        className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-      >
-        Save
-      </button>
-    </>
-  )}
-</div>
-
-                </form>
+                      {!isEditing ? (
+                        <button
+                          type="button"
+                          onClick={handleEditClick}
+                          className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                        >
+                          Edit
+                        </button>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            onClick={handleCancelClick}
+                            className="px-4 py-2 text-gray-900 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleSaveSettings}
+                            className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+                          >
+                            Save
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </form>
+                </div>
               </div>
+            )}
+
+{isChangePasswordPopupVisible && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-xl change-password-popup">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-gray-800">Change Password</h2>
+              <button onClick={() => setChangePasswordPopupVisible(false)} className="text-gray-500 hover:text-gray-700">
+                <FaTimes size={24} />
+              </button>
             </div>
-          )}
+            <form onSubmit={handleChangePassword}>
+              <div className="mb-4">
+                <label htmlFor="newPassword" className="block mb-2 text-sm font-medium text-gray-700">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  id="newPassword"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              <div className="mb-6">
+                <label htmlFor="confirmPassword" className="block mb-2 text-sm font-medium text-gray-700">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setChangePasswordPopupVisible(false)}
+                  className="px-4 py-2 text-gray-900 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
+      )}
+
+{isCreateAdminPopupVisible && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-xl create-admin-popup">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-bold text-gray-800">Create Admin</h2>
+        <button
+          onClick={() => setCreateAdminPopupVisible(false)}
+          className="text-gray-500 hover:text-gray-700"
+        >
+          <FaTimes size={24} />
+        </button>
       </div>
-    </nav>
-  </header>
-);
+      <form onSubmit={handleCreateAdmin}>
+        <div className="mb-4">
+          <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-700">
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        <div className="mb-6">
+          <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-700">
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        <div className="flex justify-end space-x-2">
+          <button
+            type="button"
+            onClick={() => setCreateAdminPopupVisible(false)}
+            className="px-4 py-2 text-gray-900 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          >
+            Create
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+          </div>
+        </div>
+      </nav>
+    </header>
+  );
 }
 
 export default AdminNav;

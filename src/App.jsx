@@ -50,7 +50,6 @@ function App() {
           <Route path="/admin/blogs" element={<ProtectedRoute><AdminBlog/></ProtectedRoute>}/>
           <Route path="/admin/createblog" element={<ProtectedRoute><AdminCreatePost/></ProtectedRoute>}/>
           <Route path="/admin/room" element={<ProtectedRoute><AdminRoom/></ProtectedRoute>}/>
-          <Route path="/admin/settings" />
         </Routes>
       </BrowserRouter>
       </BookingFormContext>
