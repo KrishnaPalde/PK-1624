@@ -447,7 +447,7 @@ const sendFeedbackRequestEmail = async (email, customerName, checkoutDate) => {
         <p>Your feedback is invaluable to us as it helps us improve our services and ensure that every guest has a memorable stay.</p>
         <p>Please take a moment to share your thoughts by clicking on the link below:</p>
          <p>
-          <a href= ${process.env.ORIGIN} 
+          <a href= ${process.env.ORIGIN}/feedback 
              style="
                 display: inline-block;
                 padding: 10px 20px;
