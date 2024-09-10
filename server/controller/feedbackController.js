@@ -1,6 +1,8 @@
 // controllers/feedbackController.js
 
 const Feedback = require("../models/Feedback");
+const Bookings = require("../models/Bookings");
+const { sendFeedbackRequestEmail } = require("../controller/emailController");
 
 const createFeedback = async (req, res) => {
   try {
@@ -129,7 +131,38 @@ const getHotelRating = async (req, res) => {
   }
 };
 
+const sendFeedbackLink = async (req, res) => {
+  try {
+    console.log("In feedback controller");
+    const today = new Date();
+    const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+
+    const checkOutTodayBookings = await Bookings.find({
+      checkOutDate: { $gte: startOfDay, $lte: endOfDay },
+      feedbackLink: false,
+    });
+
+    checkOutTodayBookings.forEach(async (booking) => {
+      console.log(booking);
+      await sendFeedbackRequestEmail(
+        booking.email,
+        booking.firstName + " " + booking.lastName,
+        booking.checkOutDate
+      );
+      booking.feedbackLink = true;
+      await booking.save();
+    });
+
+    res.status(200).send({ message: "E-mail Sent Successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
 module.exports = {
+  sendFeedbackLink,
   createFeedback,
   getAllFeedbacks,
   getFeedbacksBelow3Stars,

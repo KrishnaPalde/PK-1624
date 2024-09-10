@@ -65,6 +65,7 @@ const BookingSchema = new Schema({
   numberOfAdults: { type: Number, required: true },
   numberOfChildren: { type: Number, required: true },
   numberOfInfants: { type: Number, required: true },
+  feedbackLink: { type: Boolean, required: true, default: false },
   transactions: [TransactionSchema], // Array to store transaction details
   createdAt: { type: Date, default: Date.now },
 });

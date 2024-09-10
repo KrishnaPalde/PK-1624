@@ -106,6 +106,7 @@ import axios from 'axios';
 const process = import.meta.env;
 
 const AdminDashboard = () => {
+  const [counter, setCounter] = useState(0);
   const [error, setError] = useState(null);
   const [stats, setStats] = useState({
     total: 0,
@@ -130,6 +131,11 @@ const AdminDashboard = () => {
     }
   };
 
+  const sendFeedbackLinks = async () => {
+    const response = await axios.get(`${process.VITE_HOST_URL}/api/feedback/send-feedback-link`);
+    setCounter(counter+1);
+  }
+
   useEffect(() => {
     loadStatCardsData();
   }, []);
@@ -141,6 +147,9 @@ const AdminDashboard = () => {
     { title: 'Check Out', value: stats.checkOut, bgColor: 'bg-blue-100', icon: SlClock, iconColor: 'text-blue-400'},
   ];
 
+  if(counter == 0){
+    sendFeedbackLinks();
+  }
   return (
     <div className="flex w-full h-screen bg-[#f5f7fa]">
       <div className="lg:block lg:w-64">

@@ -4,7 +4,6 @@ const path = require("path");
 const pdf = require("html-pdf");
 const Booking = require("../models/Bookings");
 const Room = require("../models/Room");
-const crypto = require("crypto");
 
 // Configure the transporter for nodemailer
 const transporter = nodemailer.createTransport({
@@ -159,8 +158,9 @@ const generatePDF = async (bid) => {
     guestName: booking.firstName + " " + booking.lastName,
     email: booking.email,
     contactNumber: booking.phoneNumber,
-    subTotal: booking.totalPayment - 50,
-    taxes: 50,
+    subTotal: booking.paymentBreakdown[0].amount,
+    taxes: booking.paymentBreakdown[1].amount,
+    serviceCharges: booking.paymentBreakdown[2].amount,
     totalAmount: booking.totalPayment,
   };
 
@@ -178,6 +178,7 @@ const generatePDF = async (bid) => {
     .replace("guestContactNumber", bookingDetails.contactNumber)
     .replace("subTotal", `₹${bookingDetails.subTotal}`)
     .replace("taxesAndFees", `₹${bookingDetails.taxes}`)
+    .replace("serviceCharges", `₹${bookingDetails.serviceCharges}`)
     .replace("totalAmount", `₹${bookingDetails.totalAmount}`);
 
   bookingConfirmationHTML = `
@@ -409,22 +410,10 @@ const EnquiryFormEmail = async (req, res) => {
   }
 };
 
-const sendOTPForForgotPassword = async (email) => {
+const sendOTPForForgotPassword = async (email, otp) => {
   try {
     // Generate a random 6-digit OTP
-    const otp = crypto.randomInt(100000, 999999);
-    console.log({
-      from: "help.tranquiltrails@gmail.com",
-      to: email,
-      subject: "Password Reset OTP",
-      html: `
-        <p>Hello,</p>
-        <p>You requested a password reset. Use the following OTP to reset your password:</p>
-        <h3>${otp}</h3>
-        <p>This OTP is valid for 10 minutes.</p>
-        <p>If you didn't request this, please ignore this email.</p>
-      `,
-    });
+
     // Send OTP to the user's email
     const mailOptions = {
       from: "help.tranquiltrails@gmail.com",
@@ -438,18 +427,55 @@ const sendOTPForForgotPassword = async (email) => {
         <p>If you didn't request this, please ignore this email.</p>
       `,
     };
-
     await transporter.sendMail(mailOptions);
-    console.log("email" + otp);
-    return otp;
   } catch (error) {
     console.error("Error sending OTP:", error);
     return 0;
   }
 };
 
+const sendFeedbackRequestEmail = async (email, customerName, checkoutDate) => {
+  try {
+    const mailOptions = {
+      from: "help.tranquiltrails@gmail.com",
+      to: email,
+      subject: "We Value Your Feedback!",
+      html: `
+        <p>Dear ${customerName},</p>
+        <p>We hope you enjoyed your stay with us at Tranquil Trails. We would love to hear about your experience.</p>
+        <p>Your feedback is invaluable to us as it helps us improve our services and ensure that every guest has a memorable stay.</p>
+        <p>Please take a moment to share your thoughts by clicking on the link below:</p>
+         <p>
+          <a href="http://localhost:5173/feedback" 
+             style="
+                display: inline-block;
+                padding: 10px 20px;
+                font-size: 16px;
+                color: #ffffff;
+                background-color: #4CAF50;
+                text-decoration: none;
+                border-radius: 5px;
+                margin-top: 10px;
+              "
+          >Leave Feedback</a>
+        </p>
+        <p>Thank you for choosing Tranquil Trails. We look forward to welcoming you back in the future!</p>
+        <p>Best Regards,</p>
+        <p>Tranquil Trails Team</p>
+        <p><small>Checkout Date: ${checkoutDate}</small></p>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log("Feedback request email sent to:", email);
+  } catch (error) {
+    console.error("Error sending feedback request email:", error);
+  }
+};
+
 module.exports = {
   BookingConfirmationEmail,
   EnquiryFormEmail,
+  sendFeedbackRequestEmail,
   sendOTPForForgotPassword,
 };

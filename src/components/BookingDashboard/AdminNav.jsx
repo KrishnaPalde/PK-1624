@@ -429,7 +429,7 @@ function AdminNav({ title }) {
                         Key ID
                       </label>
                       <input
-                        type="password"
+                        type= {isEditing ? "text": "password"}
                         id="keyId"
                         name="keyId"
                         value={settings.keyId}
@@ -446,7 +446,7 @@ function AdminNav({ title }) {
                         Secret Key
                       </label>
                       <input
-                        type="password"
+                        type={isEditing ? "text": "password"}
                         id="secretKey"
                         name="secretKey"
                         value={settings.secretKey}

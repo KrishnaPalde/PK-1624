@@ -67,14 +67,13 @@ const getRoomDetails = async (req, res) => {
   const { roomId } = req.params;
 
   try {
-    
     const room = await Room.findOne({ id: roomId });
     if (!room) {
       return res.status(404).json({ message: "Room not found" });
     }
 
     res.json({
-      id: room.id, 
+      id: room.id,
       name: room.name,
       title: room.title,
       description: room.description,
@@ -151,7 +150,10 @@ const getUnavailableDates = async (req, res) => {
 
     const bookings = await Booking.find({
       $or: [
-        { checkInDate: { $gte: today, $lte: thirtyDaysFromNow }, checkOutDate: { $gte: today } },
+        {
+          checkInDate: { $gte: today, $lte: thirtyDaysFromNow },
+          checkOutDate: { $gte: today },
+        },
         { checkOutDate: { $gte: today, $lte: thirtyDaysFromNow } },
       ],
     }).select("checkInDate checkOutDate");
@@ -210,28 +212,28 @@ const fetchBookingsAdmin = async (req, res) => {
       let startDate;
 
       switch (timeframe) {
-        case 'day':
+        case "day":
           startDate = new Date(now.setDate(now.getDate() - 1));
           break;
-        case 'week':
+        case "week":
           startDate = new Date(now.setDate(now.getDate() - 7));
           break;
-        case 'month':
+        case "month":
           startDate = new Date(now.setMonth(now.getMonth() - 1));
           break;
         default:
-          startDate = new Date(0); 
+          startDate = new Date(0);
       }
 
-      query = query.where('createdAt').gte(startDate);
+      query = query.where("createdAt").gte(startDate);
     }
 
-    query = query.sort({ createdAt: -1 }); 
+    query = query.sort({ createdAt: -1 });
 
     if (recent === "true") {
-      query = query.limit(parseInt(limit) || 5); 
+      query = query.limit(parseInt(limit) || 5);
     }
-  
+
     const bookings = await query.exec();
 
     const bookingsWithRoomNames = await Promise.all(
@@ -242,7 +244,7 @@ const fetchBookingsAdmin = async (req, res) => {
         return {
           ...booking.toObject(),
           roomName,
-          bookingId: booking.bookingId.slice(-4), 
+          bookingId: booking.bookingId.slice(-4),
         };
       })
     );
@@ -455,12 +457,12 @@ const updateRoomStatuses = async (req, res) => {
 
     for (let room of rooms) {
       console.log(`Checking room: ${room.id}`);
-      
+
       const booking = await Booking.findOne({
         roomId: room.id,
         checkInDate: { $lte: currentDate },
-        checkOutDate: { $gt: currentDate }
-      }).sort('checkInDate');
+        checkOutDate: { $gt: currentDate },
+      }).sort("checkInDate");
 
       let newStatus = "Available";
       let statusDetails = "";
@@ -468,21 +470,27 @@ const updateRoomStatuses = async (req, res) => {
       if (booking) {
         if (booking.checkInDate.toDateString() === currentDate.toDateString()) {
           newStatus = "Check-in Today";
-          statusDetails = `Check-in today, check-out on ${booking.checkOutDate.toISOString().split('T')[0]}`;
+          statusDetails = `Check-in today, check-out on ${
+            booking.checkOutDate.toISOString().split("T")[0]
+          }`;
         } else {
           newStatus = "Occupied";
-          statusDetails = `Occupied until ${booking.checkOutDate.toISOString().split('T')[0]}`;
+          statusDetails = `Occupied until ${
+            booking.checkOutDate.toISOString().split("T")[0]
+          }`;
         }
         occupiedRooms++;
       } else {
         const futureBooking = await Booking.findOne({
           roomId: room.id,
           checkInDate: { $gt: currentDate },
-        }).sort('checkInDate');
+        }).sort("checkInDate");
 
         if (futureBooking) {
           newStatus = "Reserved";
-          statusDetails = `Reserved from ${futureBooking.checkInDate.toISOString().split('T')[0]}`;
+          statusDetails = `Reserved from ${
+            futureBooking.checkInDate.toISOString().split("T")[0]
+          }`;
           reservedRooms++;
         } else {
           console.log(`No bookings found for room ${room.id}`);
@@ -494,18 +502,22 @@ const updateRoomStatuses = async (req, res) => {
         room.statusDetails = statusDetails;
         await room.save();
         updatedRooms++;
-        console.log(`Updated room ${room.id} status to ${newStatus} (${statusDetails})`);
+        console.log(
+          `Updated room ${room.id} status to ${newStatus} (${statusDetails})`
+        );
       } else {
-        console.log(`Room ${room.id} status unchanged: ${room.status} (${room.statusDetails})`);
+        console.log(
+          `Room ${room.id} status unchanged: ${room.status} (${room.statusDetails})`
+        );
       }
     }
 
-    res.status(200).json({ 
+    res.status(200).json({
       message: "Room statuses updated successfully",
       totalRooms: rooms.length,
       occupiedRooms: occupiedRooms,
       reservedRooms: reservedRooms,
-      updatedRooms: updatedRooms
+      updatedRooms: updatedRooms,
     });
   } catch (error) {
     console.error("Error in updateRoomStatuses:", error);
@@ -543,7 +555,7 @@ const updateRoomPrice = async (req, res) => {
   try {
     const room = await Room.findOne({ id: roomId });
     if (!room) {
-      return res.status(404).json({ message: 'Room not found' });
+      return res.status(404).json({ message: "Room not found" });
     }
 
     room.price = price;
@@ -552,8 +564,8 @@ const updateRoomPrice = async (req, res) => {
     await room.save();
     res.json(room);
   } catch (error) {
-    console.error('Error updating room:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Error updating room:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 

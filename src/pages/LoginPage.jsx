@@ -85,8 +85,6 @@ const LoginPage = () => {
       }else {
         const response2 = await axios.post(`${process.VITE_HOST_URL}/api/forgot-password/sendOTP`, { email });
       if(response2.data.message == "OTP Sent"){
- 
-        setGeneratedOTP(response2.data.otp);
         setStep('otp'); // Move to OTP verification step
       }
       }
@@ -100,8 +98,13 @@ const LoginPage = () => {
   const handleVerifyOtp = async () => {
     try {
       // Verify OTP
-      // const response = await axios.post(`${process.VITE_HOST_URL}/api/verifyOtp`, { email, otp });
-      if(otp == generatedOTP){
+      const response = await axios.post(`${process.VITE_HOST_URL}/api/forgot-password/verify-otp`, { email, otp });
+      if(response.data.status == 0 || response.data.status == -1){
+        setError(response.data.message);
+        if(response.data.status == -1){
+          setStep('email');
+        }
+      } else if(response.data.status == 1){
         setStep('resetPassword'); // Move to reset password step
       }
     } catch (error) {

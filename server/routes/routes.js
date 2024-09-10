@@ -2,7 +2,9 @@ const express = require("express");
 const {
   login,
   sendOTP,
+  verifyOTP,
   resetPassword,
+  resetPasswordAdmin,
   checkIfUserExists,
   createAdmin,
 } = require("../controller/authenticateAdmin");
@@ -29,6 +31,7 @@ const {
   getAllApprovedFeedbacks,
   getFeedbacksBelow3Stars,
   getHotelRating,
+  sendFeedbackLink,
 } = require("../controller/feedbackController");
 const {
   BookingConfirmationEmail,
@@ -44,7 +47,7 @@ router.post("/authenticateAdmin", login);
 router.get("/check_availability_dates", checkIfAvailable);
 router.get("/unavailable_dates", getUnavailableDates);
 router.get("/rooms/:roomId", getRoomDetails);
-router.get("/admin/rooms", getAllRooms); 
+router.get("/admin/rooms", getAllRooms);
 // router.get("/admin/bookings", fetchBookings6Admin);
 router.get("/admin/dashboard_stats", getDashboardStats);
 router.get("/admin/dashboard_bookings", fetchBookingsAdmin);
@@ -56,18 +59,20 @@ router.get("/admin/getroomstatus", updateRoomStatuses);
 router.get("/booking-confirmation/:id", BookingConfirmationEmail);
 router.post("/contact-us/enquiry", EnquiryFormEmail);
 router.post("/check-out/feedback", createFeedback);
-router.get("/feedbacks", getAllFeedbacks); 
+router.get("/feedback/send-feedback-link", sendFeedbackLink);
+router.get("/feedbacks", getAllFeedbacks);
 router.get("/admin/latest-feedbacks", fetchLatestFeedbacks);
 router.get("/admin/feedbacks/below-3-stars", getFeedbacksBelow3Stars);
 router.get("/hotel-rating", getHotelRating);
 router.delete("/admin/deleteroom/:id", deleteRoom);
 router.get("/public-feedbacks", getAllApprovedFeedbacks);
 router.post("/forgot-password/sendOTP", sendOTP);
-// router.post("/forgot-password/reset-password", resetPassword);
+router.post("/forgot-password/verify-otp", verifyOTP);
+router.post("/forgot-password/reset-password", resetPassword);
 router.post("/forgot-password/check-user", checkIfUserExists);
-router.put('/admin/updateroom/:roomId',updateRoomPrice);
-router.get('/admin/get5rooms',get5Rooms);
-router.put('/admin/:adminId/reset-password', resetPassword);
-router.post('/admin/create-admin',createAdmin);
+router.put("/admin/updateroom/:roomId", updateRoomPrice);
+router.get("/admin/get5rooms", get5Rooms);
+router.put("/admin/:adminId/reset-password", resetPasswordAdmin);
+router.post("/admin/create-admin", createAdmin);
 
 module.exports = router;
