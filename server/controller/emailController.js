@@ -4,6 +4,7 @@ const path = require("path");
 const pdf = require("html-pdf");
 const Booking = require("../models/Bookings");
 const Room = require("../models/Room");
+require("dotenv").config();
 
 // Configure the transporter for nodemailer
 const transporter = nodemailer.createTransport({
@@ -446,7 +447,7 @@ const sendFeedbackRequestEmail = async (email, customerName, checkoutDate) => {
         <p>Your feedback is invaluable to us as it helps us improve our services and ensure that every guest has a memorable stay.</p>
         <p>Please take a moment to share your thoughts by clicking on the link below:</p>
          <p>
-          <a href="http://localhost:5173/feedback" 
+          <a href= ${process.env.ORIGIN} 
              style="
                 display: inline-block;
                 padding: 10px 20px;
