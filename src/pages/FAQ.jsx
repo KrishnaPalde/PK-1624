@@ -36,8 +36,8 @@ function FAQ() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Render Header */}
+    <div className="flex flex-col max-w-full pt-12 bg-white">
+      <div className="flex flex-col self-center  w-full max-w-[1323px] max-md:max-w-full px-10">
       <Header />
 
       {/* FAQ Section */}
@@ -72,6 +72,7 @@ function FAQ() {
       </main>
         <br></br>
       {/* Render Footer */}
+      </div>
       <Footer />
     </div>
   );

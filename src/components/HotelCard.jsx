@@ -17,7 +17,7 @@ function HotelCard({
   weekdayPrice,
   weekendPrice,
   isWeekend,
-  reviews = 371,
+  totalReviews,
 }) {
   const navigate = useNavigate();
 
@@ -35,7 +35,7 @@ function HotelCard({
       weekdayPrice,
       weekendPrice,
       isWeekend,
-      reviews 
+      totalReviews 
     };
     navigate(`/room/${id}`, { state: navigationState });
   };
@@ -54,7 +54,7 @@ function HotelCard({
       weekdayPrice,
       weekendPrice,
       isWeekend,
-      reviews 
+      totalReviews 
     };
     navigate(`/room/${id}/details`, { state: navigationState });
   };
@@ -115,7 +115,7 @@ function HotelCard({
             <h2 className="mb-2 text-xl font-bold text-gray-800">{name} - {title}</h2>
             <div className="text-right">
               <p className="text-xs text-gray-500">starting from</p>
-              <p className="text-2xl font-bold text-blue-600">₹{price}<span className="text-sm font-normal">/night</span></p>
+              <p className="text-2xl font-bold text-[#335064]">₹{price}<span className="text-sm font-normal">/night</span></p>
               <p className="text-xs text-gray-500">excl. tax</p>
             </div>
           </div>
@@ -133,25 +133,25 @@ function HotelCard({
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-lg">
-              <span className="text-lg font-semibold text-blue-600">{rating.toFixed(1)}</span>
+            <div className="flex items-center justify-center w-10 h-10 bg-[#c0c9cf] rounded-lg">
+              <span className="text-lg font-semibold text-[#335064]">{rating.toFixed(1)}</span>
             </div>
             <div>
               <p className="font-medium text-gray-800">{getTitle()}</p>
-              <p className="text-sm text-gray-600">{reviews} reviews</p>
+              <p className="text-sm text-gray-600">{totalReviews} reviews</p>
             </div>
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-between mt-6 space-y-2 sm:space-y-0">
           <button 
             onClick={handleCardClick}
-            className="w-full px-6 py-2 text-sm font-medium text-blue-600 transition-colors duration-300 bg-blue-100 rounded-full sm:w-auto hover:bg-blue-200"
+            className="w-full px-6 py-2 text-sm font-medium text-[#335064] transition-colors duration-300 bg-blue-100 rounded-full sm:w-auto hover:bg-blue-200"
           >
             View Details
           </button>
           <button 
             onClick={handleNextClick}
-            className="w-full px-6 py-2 text-sm font-medium text-white transition-colors duration-300 bg-blue-600 rounded-full sm:w-auto hover:bg-blue-700"
+            className="w-full px-6 py-2 text-sm font-medium text-white transition-colors duration-300 rounded-full sm:w-auto bg-[#335064] hover:bg-[#243947]"
           >
             Next
           </button>

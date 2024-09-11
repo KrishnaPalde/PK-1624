@@ -1,4 +1,3 @@
-// src/App.jsx
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './AuthContext';
 import LandingPage from './pages/LandingPage';
@@ -20,6 +19,7 @@ import AdminBlog from './pages/AdminBlog';
 import AdminCreatePost from './pages/AdminCreatePost';
 import Feedback from './pages/Feedback';
 import FAQ from './pages/FAQ';
+import AdminReviewsPage from './pages/AdminReviewsPage';
 
 function App() {
   return (
@@ -50,6 +50,9 @@ function App() {
           <Route path="/admin/blogs" element={<ProtectedRoute><AdminBlog/></ProtectedRoute>}/>
           <Route path="/admin/createblog" element={<ProtectedRoute><AdminCreatePost/></ProtectedRoute>}/>
           <Route path="/admin/room" element={<ProtectedRoute><AdminRoom/></ProtectedRoute>}/>
+          <Route path="/admin/reviews" element={<ProtectedRoute><AdminReviewsPage/></ProtectedRoute>}/>
+          <Route path="/feedback" element={<Feedback/>}/>
+          <Route path="/card" element={<BookingConfirm/>}/>
         </Routes>
       </BrowserRouter>
       </BookingFormContext>

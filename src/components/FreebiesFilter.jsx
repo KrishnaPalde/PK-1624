@@ -34,13 +34,13 @@ function FreebiesFilter() {
         <div
           key={index}
           onClick={() => handleFreebieClick(freebie)}
-          className="flex gap-2 mt-2 text-sm font-medium cursor-pointer text-neutral-900"
+          className="flex gap-2 mt-2 text-sm font-medium text-neutral-900"
         >
-          <div className="relative flex items-center justify-center w-6 h-6 border rounded-sm shrink-0 border-sky-400">
+          <div className="relative flex items-center justify-center w-6 h-6 border rounded-sm shrink-0 border-[#335064]">
             {/* {selectedFreebies.includes(freebie) && ( */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4 text-sky-500"
+                className="w-4 h-4 text-[#335064]"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"

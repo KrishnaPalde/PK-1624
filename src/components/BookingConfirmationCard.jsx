@@ -1,8 +1,9 @@
 import * as React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useBooking } from "../contexts/BookingFormContext";
-import profile from '../assets/profile.png'
-import logo from '../assets/logo.png';
+import profile from '../assets/profile.png';
+import { HiMiniHomeModern } from "react-icons/hi2";
+import logo from '../assets/logofull.png';
 
 const CheckInOutInfo = ({ time, label }) => (
   <div className="flex items-center gap-2">
@@ -20,7 +21,7 @@ const CheckInOutInfo = ({ time, label }) => (
 );
 
 const DateInfo = ({ date, label }) => (
-  <div className="flex flex-col justify-center mt-4 text-neutral-900">
+  <div className="flex flex-col justify-center mt-4 text-white">
     <div className="text-3xl font-semibold">{date}</div>
     <div className="mt-1 text-xs font-medium opacity-60">{label}</div>
   </div>
@@ -59,35 +60,24 @@ function BookingConfirmationCard() {
   return (
     <section className="flex flex-wrap w-full max-w-[1231px] max-md:max-w-full">
       <article className="flex flex-1 overflow-hidden bg-white rounded-2xl border border-gray-200 border-solid basis-[140px] min-w-[240px] max-md:max-w-full">
-        <aside className="flex flex-col w-[29%] bg-sky-100 max-md:w-full">
+        <aside className="flex flex-col w-[29%] bg-[#335064] max-md:w-full text-white">
           <div className="flex flex-col items-start justify-center w-full h-full px-6 grow py-9">
             {checkInOutData.map((data, index) => (
               <DateInfo key={index} date={data.date} label={data.label} />
             ))}
             <div className="flex flex-col items-center mt-4 w-9 rounded rotate-[1.0183166411256147e-16rad]">
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/dd931a9fd4ffdb90ced3b9df9983ff46ddd1aeb55e9dffe3068464771c1feb12?apiKey=e6b8c17325a24fb29c274ce450ea26a7&&apiKey=e6b8c17325a24fb29c274ce450ea26a7"
-                alt=""
-                className="object-contain w-full aspect-[1.39] stroke-[0.5px] stroke-neutral-900"
-              />
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/b15c651e47940c6412188abdd0a4339dfafba9905bcfbaad316405d180a104bc?apiKey=e6b8c17325a24fb29c274ce450ea26a7&&apiKey=e6b8c17325a24fb29c274ce450ea26a7"
-                alt=""
-                className="object-contain w-full mt-2 aspect-square"
-              />
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/a42fb4b9f898f8c7f6d257410dd2b6004f2938e248579a6c8064f636bef3be0e?apiKey=e6b8c17325a24fb29c274ce450ea26a7&&apiKey=e6b8c17325a24fb29c274ce450ea26a7"
-                alt=""
-                className="object-contain mt-2 w-full aspect-[1.39] stroke-[0.5px] stroke-neutral-900"
-              />
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <path d="M10 10 L50 50 L90 10 M50 50 L50 90" stroke="white" stroke-width="2" fill="none"/>
+</svg>
+              <HiMiniHomeModern className="w-8 h-8 mx-4 text-white"/>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <path d="M10 90 L50 50 L90 90 M50 50 L50 10" stroke="white" stroke-width="2" fill="none"/>
+</svg>
             </div>
           </div>
         </aside>
         <div className="flex flex-col w-[71%] h-full max-md:w-full">
-          <header className="flex flex-col w-full p-6 text-white bg-sky-300 max-md:px-5">
+          <header className="flex flex-col w-full p-6 text-[#335064]  max-md:px-5">
             <div className="flex flex-wrap items-center justify-between w-full">
               <div className="flex items-center gap-4 text-xl font-bold">
                 <img
@@ -96,10 +86,13 @@ function BookingConfirmationCard() {
                   alt="Profile"
                   className="object-contain w-12 rounded-full shrink-0 aspect-square"
                 />
-                <div>{formData.firstName + " " + formData.lastName}</div>
+                <div>
+                  {formData.firstName + " " + formData.lastName}
+                   </div>
               </div>
               <div className="text-sm text-right">
                 {roomData.name + " - " + roomData.title}
+                 
               </div>
             </div>
           </header>

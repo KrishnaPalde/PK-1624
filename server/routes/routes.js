@@ -32,6 +32,10 @@ const {
   getFeedbacksBelow3Stars,
   getHotelRating,
   sendFeedbackLink,
+  approveFeedback,
+  deleteFeedback,
+  updateRoomRatingAndReviews,
+  updateAllRoomReviews,
 } = require("../controller/feedbackController");
 const {
   BookingConfirmationEmail,
@@ -61,9 +65,13 @@ router.post("/contact-us/enquiry", EnquiryFormEmail);
 router.post("/check-out/feedback", createFeedback);
 router.get("/feedback/send-feedback-link", sendFeedbackLink);
 router.get("/feedbacks", getAllFeedbacks);
+router.put('/feedbacks/:id/approve', approveFeedback);
+router.delete('/feedbacks/:id', deleteFeedback);
+router.post('/update-all-room-reviews', updateAllRoomReviews);
 router.get("/admin/latest-feedbacks", fetchLatestFeedbacks);
 router.get("/admin/feedbacks/below-3-stars", getFeedbacksBelow3Stars);
 router.get("/hotel-rating", getHotelRating);
+router.get('/update-rating',updateRoomRatingAndReviews,);
 router.delete("/admin/deleteroom/:id", deleteRoom);
 router.get("/public-feedbacks", getAllApprovedFeedbacks);
 router.post("/forgot-password/sendOTP", sendOTP);

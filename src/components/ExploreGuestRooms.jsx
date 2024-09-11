@@ -35,7 +35,7 @@ const ExploreGuestRooms = () => {
             <div className="grow max-md:mt-8 max-md:max-w-full">
               <div className="flex gap-5 max-md:flex-col">
                 <QuoteCard
-                  quote="The best apartment service in Dehradhun, really like it.."
+                  quote="The best apartment service in Dehradhun, really liked it.."
                   author="Najwa Shihab"
                 />
                 <GuestCard

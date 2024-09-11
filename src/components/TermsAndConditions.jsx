@@ -2,7 +2,7 @@ import * as React from "react";
 
 function Heading({ title }) {
   return (
-    <h1 className="gap-2 w-full text-2xl font-semibold max-md:max-w-full">
+    <h1 className="w-full gap-2 text-2xl font-semibold max-md:max-w-full">
       {title}
     </h1>
   );
@@ -10,39 +10,27 @@ function Heading({ title }) {
 
 function Section({ title, children }) {
   return (
-    <section className="flex flex-col mt-9 w-full max-md:max-w-full">
-      <h2 className="gap-2 w-full text-xl font-medium max-md:max-w-full">
+    <section className="flex flex-col w-full mt-9 max-md:max-w-full">
+      <h2 className="w-full gap-2 text-xl font-medium max-md:max-w-full">
         {title}
       </h2>
-      <div className="text-sm leading-5 mt-4 max-md:max-w-full">{children}</div>
+      <div className="mt-4 text-sm leading-5 max-md:max-w-full">{children}</div>
     </section>
   );
 }
 
 function Contact() {
   return (
-    <section className="flex flex-col mt-9 w-full max-md:max-w-full">
-      <h2 className="gap-2 w-full text-xl font-medium max-md:max-w-full">
+    <section className="flex flex-col w-full mt-9 max-md:max-w-full">
+      <h2 className="w-full gap-2 text-xl font-medium max-md:max-w-full">
         Contact Us
       </h2>
-      <address className="mt-4 text-sm leading-5 underline max-md:max-w-full not-italic">
-        <span>
-          If you have any questions about our Website or our Terms of Use,
-          please contact:
-        </span>
-        <br />
-        <span>Golobe Group Q.C.S.C</span>
-        <br />
-        <span>Golobe Tower</span>
-        <br />
-        <span>P.O. Box: 22550</span>
-        <br />
-        <span>Doha, State of Qatar</span>
-        <br />
-        <span>Further contact details can be found at </span>
-        <a href="https://golobe.com/help" className="underline">
-          golobe.com/help
-        </a>
+      <address className="mt-4 space-y-2 text-sm not-italic leading-5 underline max-md:max-w-full">
+        <p>
+        Pacific Hills, Diversion, Mussoorie Road, Dehradun, Uttarakhand, India. Pin Code-248009
+        </p>
+        <p>Phone: (+91) 7673-992288</p>
+        <p>Email: care@tranquiltrails.co.in</p>
       </address>
     </section>
   );
@@ -50,7 +38,7 @@ function Contact() {
 
 function TermsAndConditions() {
   return (
-    <main className="flex flex-col mt-16 w-full text-neutral-900 max-md:mt-10 max-md:max-w-full">
+    <main className="flex flex-col w-full mt-16 text-neutral-900 max-md:mt-10 max-md:max-w-full">
       <Heading title="Terms and Conditions" />
       <Section title="Payments">
         <p>

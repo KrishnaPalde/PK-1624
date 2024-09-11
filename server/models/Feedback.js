@@ -6,6 +6,7 @@ const FeedbackSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true },
+    room: {type: String, required: true},
     overallExperience: { type: Number, min: 0, max: 5, default: 0 },
     roomCleanliness: { type: Number, min: 0, max: 5, default: 0 },
     comfort: { type: Number, min: 0, max: 5, default: 0 },

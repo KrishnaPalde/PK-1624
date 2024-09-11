@@ -42,8 +42,8 @@ function AdminRoomCard({ title, price, iconSrc, weekend }) {
           {title}
         </h2>
         {/* Main price display */}
-        <p className="mt-1 leading-none pt-5">
-          <span className="text-blue-600">₹ {mainPrice}</span>
+        <p className="pt-5 mt-1 leading-none">
+          <span className="text-[#335064]">₹ {mainPrice}</span>
           <span className="text-base font-medium leading-6 text-gray-400"> / night</span>
         </p>
         {/* Conditional secondary price display */}

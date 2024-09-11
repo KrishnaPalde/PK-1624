@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useBooking } from '../contexts/BookingFormContext';
+import { IoPersonSharp, IoPeopleSharp } from "react-icons/io5";
+import { RiCalendarScheduleFill } from "react-icons/ri";
 import axios from 'axios';
 const process = import.meta.env;
 
@@ -125,13 +127,10 @@ function BookingForm() {
           <h2 className="text-2xl font-medium text-black">Book a Room</h2>
           <p className="mt-2 text-sm text-zinc-600">Discover the perfect space for you!</p>
         </div>
-        <a href='/faq'>
-        <img
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/f52b4f26e250d854cf478ad34a6476653b6599a7c2df94d2cf950a3d97fbf92b?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
-          alt=""
-          className="w-[133px] h-auto"
-        />
-        </a>
+        <Link to='/faq' className='flex items-center hover:underline'>
+        <IoPersonSharp className='text-[#335064] mr-2'/>
+        <span>Need some help?</span>
+        </Link>
       </div>
       <div className="flex flex-col items-start gap-5 p-5 bg-white border border-solid md:flex-row rounded-2xl border-zinc-200">
         <div className="flex-1 space-y-2 md:w-1/4">
@@ -139,11 +138,12 @@ function BookingForm() {
             Check In
           </label>
           <div className="flex items-center gap-2">
-            <img
+            {/* <img
               src="https://cdn.builder.io/api/v1/image/assets/TEMP/571d9769611fbe06cad72c7a54fd5f7eedfa19f8753c2f5633f0973bd49e173a?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
               alt=""
               className="w-4 h-4"
-            />
+            /> */}
+            <RiCalendarScheduleFill className='text-[#335064] w-4 h-4'/>
             <DatePicker
               id="checkIn"
               selected={checkIn}
@@ -164,11 +164,12 @@ function BookingForm() {
             Check Out
           </label>
           <div className="flex items-center gap-2">
-            <img
+            {/* <img
               src="https://cdn.builder.io/api/v1/image/assets/TEMP/f86afc0cd2f726681d661e344bc531a1f3c4f638c80b8f3b8d3026730e594a4b?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
               alt=""
               className="w-4 h-4"
-            />
+            /> */}
+            <RiCalendarScheduleFill className='text-[#335064] w-4 h-4'/>
             <DatePicker
               id="checkOut"
               selected={checkOut instanceof Date && !isNaN(checkOut.getTime()) ? checkOut : new Date()}
@@ -187,9 +188,10 @@ function BookingForm() {
         <div className="relative flex-1 w-full md:w-1/3">
           <label className="text-sm font-medium text-neutral-500">Guest</label>
           <div 
-            className="flex items-center justify-between p-2 rounded-md cursor-pointer"
+            className="flex items-center p-2 rounded-md cursor-pointer"
             onClick={handleGuestDropdownToggle}
           >
+            <IoPeopleSharp className='w-4 h-4 mr-2 text-[#335064]'/>
             <span className="text-base font-medium">
               {adults} Adults, {children} Children
             </span>
@@ -223,7 +225,7 @@ function BookingForm() {
               <button
                 type="button"
                 onClick={handleApplyGuests}
-                className="w-full py-2 mt-4 text-white transition-colors duration-300 bg-blue-500 rounded-md hover:bg-blue-600"
+                className="w-full py-2 mt-4 text-white transition-colors duration-300 bg-[#335064] hover:bg-[#243947] rounded-md "
               >
                 Apply
               </button>
@@ -234,7 +236,7 @@ function BookingForm() {
         <div className="flex-none mt-4 md:self-end md:mt-0">
           <button
             type="submit"
-            className="flex items-center gap-3 px-8 py-4 text-base font-medium text-white transition-colors duration-300 rounded-full bg-sky-400 hover:bg-sky-500"
+            className="flex items-center gap-3 px-8 py-4 text-base font-medium text-white transition-colors duration-300 rounded-full bg-[#335064] hover:bg-[#243947]"
           >
             <img
               src="https://cdn.builder.io/api/v1/image/assets/TEMP/aa64914cca97a3fae2c7790d2c452bfa83ddb2b2198d998ffa1b86cddf144d7f?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"

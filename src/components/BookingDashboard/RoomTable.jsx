@@ -151,8 +151,8 @@ function RoomTable({ addRoom }) {
     <div
       className={`flex items-center gap-2 px-4 py-2 border rounded-full cursor-pointer ${
         currentFilter === "All"
-          ? "bg-blue-600 text-white border-blue-600"
-          : "text-blue-600 border-gray-400 hover:bg-blue-50"
+          ? "bg-[#335064] text-white border-blue-600"
+          : "text-gray-600 border-gray-400 hover:bg-blue-50"
       }`}
       onClick={() => filterRooms("All")}
     >
@@ -161,7 +161,7 @@ function RoomTable({ addRoom }) {
     <div
       className={`flex items-center gap-2 px-4 py-2 border rounded-full cursor-pointer ${
         currentFilter === "Available"
-          ? "bg-blue-600 text-white border-blue-600"
+          ? "bg-[#335064] text-white border-blue-600"
           : "text-gray-600 border-gray-400 hover:bg-blue-50"
       }`}
       onClick={() => filterRooms("Available")}
@@ -173,7 +173,7 @@ function RoomTable({ addRoom }) {
     <div
       className={`flex items-center gap-2 px-4 py-2 border rounded-full cursor-pointer ${
         currentFilter === "Booked"
-          ? "bg-blue-600 text-white border-blue-600"
+          ? "bg-[#335064] text-white border-blue-600"
           : "text-gray-600 border-gray-400 hover:bg-blue-50"
       }`}
       onClick={() => filterRooms("Booked")}
@@ -181,7 +181,7 @@ function RoomTable({ addRoom }) {
       Booked ({rooms.filter(room => room.status === 'Booked').length})
     </div>
     <div className="md:ml-0">
-      <button className="px-6 py-2.5 text-white bg-blue-500 rounded-lg" onClick={() => setShowAddForm(true)}>
+      <button className="px-6 py-2.5 text-white bg-[#335064] hover:bg-[#243947] rounded-lg" onClick={() => setShowAddForm(true)}>
         Add room
       </button>
     </div>
@@ -326,10 +326,10 @@ function RoomTable({ addRoom }) {
               />
             </div>
             <div className="flex justify-end mt-4 space-x-4">
-              <button className="px-4 py-2 bg-gray-300 rounded" onClick={() => setEditRoom(null)}>
+              <button className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onClick={() => setEditRoom(null)}>
                 Cancel
               </button>
-              <button className="px-4 py-2 text-white bg-blue-500 rounded" onClick={handleSavePrice}>
+              <button className="px-4 py-2 text-white bg-[#335064] hover:bg-[#243947] rounded" onClick={handleSavePrice}>
                 Save
               </button>
             </div>

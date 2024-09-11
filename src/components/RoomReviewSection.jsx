@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function RoomReviewSection({rating}) {
+function RoomReviewSection({rating,reviews}) {
   const getTitle = () => {
     switch (Math.round(rating)) {
       case 1:
@@ -26,7 +26,7 @@ function RoomReviewSection({rating}) {
         </h2>
         <Link to='/feedback'>
         <button className="flex flex-col self-stretch my-auto text-sm font-semibold text-white w-[152px]">
-          <span className="gap-1 self-stretch p-4 w-full bg-sky-400 rounded min-h-[48px]">
+          <span className="gap-1 self-stretch p-4 w-full bg-[#335064] hover:bg-[#243947] rounded min-h-[48px]">
             Give your review
           </span>
         </button>
@@ -38,7 +38,7 @@ function RoomReviewSection({rating}) {
         </span>
         <div className="flex flex-col self-stretch my-auto">
           <h3 className="text-xl font-semibold">{getTitle()}</h3>
-          <p className="mt-2 text-sm">371 verified reviews</p>
+          <p className="mt-2 text-sm">{reviews} verified reviews</p>
         </div>
       </div>
     </section>

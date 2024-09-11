@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import FilterHeader from "./FilterHeader";
+import { Star } from 'lucide-react';
 
 function RatingFilter({ selectedRating, setSelectedRating }) {
   const ratings = ["0+", "1+", "2+", "3+", "4+"];
@@ -25,11 +26,20 @@ function RatingFilter({ selectedRating, setSelectedRating }) {
             >
               <input
                 type="radio"
-                className="w-4 h-4 transition duration-150 ease-in-out form-radio text-sky-400 border-sky-400"
+                className="sr-only" 
                 checked={selectedRating === index}
                 onChange={() => setSelectedRating(index)}
               />
-              {rating} Stars
+              <Star
+                className={`w-4 h-4 ${
+                  selectedRating === index 
+                    ? 'text-[#335064] fill-[#335064]' 
+                    : 'text-gray-300'
+                }`}
+              />
+              <span className={`${selectedRating === index ? 'font-bold' : ''}`}>
+                {rating} Stars
+              </span>
             </label>
           ))}
         </div>

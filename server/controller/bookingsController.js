@@ -449,14 +449,12 @@ const updateRoomStatuses = async (req, res) => {
     const rooms = await Room.find({});
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
-    console.log(`Current date: ${currentDate.toISOString()}`);
 
     let updatedRooms = 0;
     let occupiedRooms = 0;
     let reservedRooms = 0;
 
     for (let room of rooms) {
-      console.log(`Checking room: ${room.id}`);
 
       const booking = await Booking.findOne({
         roomId: room.id,

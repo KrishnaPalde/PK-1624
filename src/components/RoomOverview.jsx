@@ -20,7 +20,7 @@ const features = [
   },
 ];
 
-function RoomOverview({ rating }) {
+function RoomOverview({ rating, reviews }) {
 
   const getTitle = () => {
     switch (Math.round(rating)) {
@@ -59,12 +59,12 @@ function RoomOverview({ rating }) {
         </p>
       </header>
       <div className="grid items-start self-start grid-cols-2 gap-4 mt-8 md:flex md:flex-wrap max-md:max-w-full">
-        <div className="flex gap-2.5 items-start py-4 pr-16 pl-4 bg-sky-400 rounded-xl min-h-[145px] w-[166px] max-md:pr-5">
+        <div className="flex gap-2.5 items-start py-4 pr-16 pl-4 bg-[#335064]  rounded-xl min-h-[125px] w-[166px] max-md:pr-5">
           <div className="flex flex-col">
             <div className="text-3xl font-bold text-white">{rating}</div>
-            <div className="flex flex-col mt-8 text-white">
+            <div className="flex flex-col mt-4 text-white">
               <div className="text-base font-bold">{getTitle()}</div>
-              <div className="mt-1 text-sm font-medium">371 reviews</div>
+              <div className="mt-1 text-sm font-medium">{reviews} reviews</div>
             </div>
           </div>
         </div>

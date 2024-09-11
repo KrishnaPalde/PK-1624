@@ -60,7 +60,7 @@ const ReviewCard = ({ name, overallExperience, createdAt, comments }) => {
             className="object-contain shrink-0 rounded-full aspect-square w-[38px]"
           />
           <div className="flex flex-col flex-1 shrink basis-0 min-w-[240px]">
-            <h3 className="text-base font-semibold tracking-normal text-blue-500">
+            <h3 className="text-base font-semibold tracking-normal text-[#335064]">
               {name}
             </h3>
             <div className="flex items-center w-full gap-1 mt-1 text-sm font-medium tracking-normal text-right text-neutral-400">

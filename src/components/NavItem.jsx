@@ -3,7 +3,7 @@ import React from "react";
 function NavItem({ label }) {
   if (label == "Log In") {
     return (
-      <span className="px-4 py-2 text-white transition-colors duration-300 rounded-lg bg-[#3FA2F6] hover:bg-sky-500">
+      <span className="px-4 py-2 text-white transition-colors duration-300 rounded-lg bg-[#335064] hover:bg-[#243947]">
         {label}
       </span>
     );

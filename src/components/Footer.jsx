@@ -121,7 +121,7 @@ const Footer = () => {
           loading="lazy"
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/5d1b756784f3b8d2387d3810d98603da18dd71acbf31b06453249608231f79e1?apiKey=2bc25307ed444d758c5818aa40360cbc"
           alt="Back to top"
-          className="absolute w-24 h-16 transform -translate-x-1/2 cursor-pointer lg:h-24 left-1/2 -top-12"
+          className="absolute w-24 h-16 transform -translate-x-1/2 cursor-pointer lg:h-24 left-1/2 -top-12 text-[#335064]"
           onClick={handleClick}
         />
       </div>

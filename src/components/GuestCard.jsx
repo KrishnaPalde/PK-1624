@@ -8,7 +8,7 @@ const GuestCard = ({ src, alt }) => {
           loading="lazy"
           src={src}
           alt={alt}
-          className="w-full border-orange-100 border-solid shadow-lg aspect-[1.33] border-[10px]"
+          className="w-full shadow-lg aspect-[1.33]  rounded-lg"
         />
       </div>
     </div>

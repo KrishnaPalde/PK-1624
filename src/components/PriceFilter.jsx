@@ -28,10 +28,10 @@ function PriceFilter({ priceRange, setPriceRange }) {
             onChange={(newValues) => setPriceRange(newValues)}
           >
             <RangeSliderTrack className="h-0.5 bg-neutral-900">
-              <RangeSliderFilledTrack className="bg-sky-400" />
+              <RangeSliderFilledTrack className="bg-[#335064]" />
             </RangeSliderTrack>
-            <RangeSliderThumb index={0} className="w-6 h-6 -mt-3 rounded-full bg-sky-400" />
-            <RangeSliderThumb index={1} className="w-6 h-6 -mt-3 rounded-full bg-sky-400" />
+            <RangeSliderThumb index={0} className="w-6 h-6 -mt-3 rounded-full bg-[#335064]" />
+            <RangeSliderThumb index={1} className="w-6 h-6 -mt-3 rounded-full bg-[#335064]" />
           </RangeSlider>
         </div>
         <div className="flex justify-between gap-5 mt-2 text-xs font-medium whitespace-nowrap text-neutral-900">

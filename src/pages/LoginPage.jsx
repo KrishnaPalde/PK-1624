@@ -166,7 +166,10 @@ const LoginPage = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <Button type="submit" fullWidth variant="contained" color="primary" sx={{ marginTop: 3, marginBottom: 2 }}>
+              <Button type="submit" fullWidth variant="contained" sx={{ marginTop: 3, marginBottom: 2,backgroundColor: '#335064',
+    '&:hover': {
+      backgroundColor: '#243947',
+    } }}>
                 Login
               </Button>
               <Grid container>
@@ -177,7 +180,10 @@ const LoginPage = () => {
                 </Grid>
               </Grid>
 <center>
-              <StyledButton onClick={handleBackToMainSite}>
+              <StyledButton onClick={handleBackToMainSite} sx={{backgroundColor: '#335064',
+    '&:hover': {
+      backgroundColor: '#243947',
+    }}}>
             Back to Main Website
           </StyledButton>
           </center>
@@ -201,7 +207,10 @@ const LoginPage = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <StyledButton onClick={handleSendOtp}>Send OTP</StyledButton>
+              <StyledButton onClick={handleSendOtp} sx={{backgroundColor: '#335064',
+    '&:hover': {
+      backgroundColor: '#243947',
+    }}}>Send OTP</StyledButton>
             </Box>
           )}
 

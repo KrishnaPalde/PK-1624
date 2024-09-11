@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -36,6 +36,46 @@ const StarRating = ({ rating, setRating }) => {
   );
 };
 
+
+const RoomDropdown = ({ rooms, selectedRoom, setSelectedRoom }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        type="button" // Add this line
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full p-3 text-left bg-white border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+      >
+        {selectedRoom ? selectedRoom.name : "Select a room"}
+        <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+          <svg className="w-5 h-5 text-gray-400" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+            <path d="M7 7l3-3 3 3m0 6l-3 3-3-3" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+      </button>
+      {isOpen && (
+        <ul className="absolute z-10 w-full py-1 mt-1 overflow-auto bg-white border rounded-md shadow-lg max-h-60">
+          {rooms.map((room) => (
+            <li
+              key={room._id}
+              onClick={(e) => {
+                e.preventDefault(); // Add this line
+                setSelectedRoom(room);
+                setIsOpen(false);
+              }}
+              className="px-3 py-2 cursor-pointer hover:bg-blue-100"
+            >
+              {room.name}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+
 const Feedback = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -51,6 +91,8 @@ const Feedback = () => {
 
   const [formError, setFormError] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [rooms, setRooms] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
   const handleChange = (e) => {
     setFormData({
@@ -66,18 +108,37 @@ const Feedback = () => {
     });
   };
 
+  useEffect(() => {
+    
+    const fetchRooms = async () => {
+    
+      try {
+        const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/rooms`);
+        setRooms(response.data);
+      } catch (error) {
+        console.error("Error fetching rooms:", error);
+      }
+    };
+  
+    fetchRooms();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError("");
 
-    if (!formData.name || !formData.email || !formData.overallExperience) {
+    if (!formData.name || !formData.email || !formData.overallExperience || !selectedRoom) {
       setFormError("Please fill in all required fields.");
       return;
     }
 
     try {
-      // await axios.post("http://localhost:4444/api/check-out/feedback", formData);
-      await axios.post(`${process.VITE_HOST_URL}/api/check-out/feedback`, formData);
+      const dataToSubmit = {
+        ...formData,
+        room: selectedRoom._id,
+      };
+
+      await axios.post(`${process.VITE_HOST_URL}/api/check-out/feedback`, dataToSubmit);
       
       setIsSubmitted(true);
       setFormData({
@@ -91,6 +152,7 @@ const Feedback = () => {
         easeOfBooking: 0,
         websiteUsability: 0,
       });
+      setSelectedRoom(null);
     } catch (error) {
       console.error("Error submitting feedback:", error);
       setFormError("An error occurred while submitting your feedback. Please try again.");
@@ -98,6 +160,7 @@ const Feedback = () => {
   };
 
   return (
+    
     
     <div>
       <Header />
@@ -111,6 +174,12 @@ const Feedback = () => {
         ) : (
           <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Name and Email in the First Row */}
+            <div className="col-span-1 md:col-span-2">
+    <label htmlFor="room" className="block mb-2 font-semibold text-gray-700">
+      Select Room
+    </label>
+    <RoomDropdown rooms={rooms} selectedRoom={selectedRoom} setSelectedRoom={setSelectedRoom} />
+  </div>
             <div className="flex flex-col col-span-1 gap-6 md:col-span-2 md:flex-row">
               <div className="flex-1">
                 <label htmlFor="name" className="block mb-2 font-semibold text-gray-700">
@@ -213,7 +282,7 @@ const Feedback = () => {
             <div className="col-span-1 md:col-span-2">
               <button
                 type="submit"
-                className="w-full px-6 py-3 font-bold text-white transition duration-300 bg-blue-500 rounded-md hover:bg-blue-600"
+                className="w-full px-6 py-3 font-bold text-white transition duration-300 rounded-md bg-[#335064] hover:bg-[#243947]"
               >
                 Submit Feedback
               </button>
@@ -225,9 +294,8 @@ const Feedback = () => {
       { isSubmitted ? (<div><br></br><br></br>
       <br></br><br></br></div>) : (<br></br>)}
       </div>
-      
       <Footer />
-    </div>
+      </div>
   );
 };
 

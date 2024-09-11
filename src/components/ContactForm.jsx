@@ -245,7 +245,7 @@ const ContactForm = () => {
       </div>
       <button
         type="submit"
-        className="max-w-full px-5 py-3 mt-8 text-base font-semibold text-white border border-solid rounded-lg shadow-sm bg-sky-400 border-sky-400"
+        className="max-w-full px-5 py-3 mt-8 text-base font-semibold text-white border border-solid rounded-lg shadow-sm  border-[#335064] bg-[#335064] hover:bg-[#243947]"
       >
         Leave us a Message
       </button>

@@ -9,7 +9,7 @@ const StatCard = ({ title, value, bgColor, icon: Icon, iconColor }) => {
         </div>
         <div className="flex flex-col">
           <div className="text-sm lg:text-base text-slate-400">{title}</div>
-          <div className="mt-1 text-xl font-semibold lg:text-2xl text-neutral-800">
+          <div className="mt-1 text-xl font-semibold lg:text-2xl text-[#335064]">
             {value}
           </div>
         </div>

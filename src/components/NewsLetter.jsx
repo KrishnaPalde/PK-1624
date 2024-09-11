@@ -24,7 +24,7 @@ function NewsLetter() {
   return (
     <section className="flex flex-col md:flex-row bg-sky-100 rounded-[30px] overflow-hidden max-w-full mx-auto md:h-[400px] xl:space-x-80">
       <div className="flex flex-col p-8 md:p-18 md:w-1/2">
-        <div className="self-start px-6 py-3 text-base font-bold text-center text-black bg-yellow-400 rounded-[50px]">
+        <div className="self-start px-6 py-3 text-base font-bold text-center text-white bg-[#335064] rounded-[50px]">
           Join our newsletter
         </div>
         <h2 className="text-2xl font-semibold leading-tight text-black md:text-3xl mt-7">
@@ -42,7 +42,7 @@ function NewsLetter() {
           />
           <button
             type="submit"
-            className="px-9 py-4 text-sm font-bold text-center text-white whitespace-nowrap bg-sky-400 rounded-[50px]"
+            className="px-9 py-4 text-sm font-bold text-center text-white whitespace-nowrap bg-[#335064] rounded-[50px]"
             onClick={handleSubscribe}
           >
             Subscribe

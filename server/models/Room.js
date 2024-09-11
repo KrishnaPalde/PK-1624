@@ -23,6 +23,7 @@ const roomSchema = new mongoose.Schema({
     default: 'Available'
   },
   reviews: [reviewSchema],
+  totalReviews: { type: Number, default: 0 },
   images: {
     type: [String],
     validate: [arrayLimit, "{PATH} exceeds the limit of 5"],

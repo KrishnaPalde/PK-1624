@@ -3,6 +3,7 @@ import NavItem from "./NavItem";
 import { Link } from "react-router-dom";
 import { FaFacebookSquare , FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa"; 
 import {FiMenu, FiX} from "react-icons/fi";
+import logo from '../assets/logo.png';
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -24,7 +25,9 @@ function Header() {
     <header className="relative z-50 w-full bg-white bg-opacity-0">
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-4 text-xl font-extrabold text-black">
-          <div className="shrink-0 bg-black rounded-full h-[35px] w-[35px]" />
+          <div className="shrink-0 rounded-full h-[35px] w-[35px]">
+            <img src={logo} alt="logo" />
+            </div>
           <div>Tranquil Trails</div>
         </div>
         <div className="flex items-center md:hidden">
@@ -67,7 +70,7 @@ function Header() {
                 key={index} 
                 to={item.to} 
                 onClick={() => setIsOpen(false)}
-                className="block w-full py-3 text-center text-white transition-colors duration-300 rounded-lg bg-[#3FA2F6] hover:bg-sky-500"
+                className="block w-full py-3 text-center text-white transition-colors duration-300 rounded-lg bg-[#335064] hover:bg-[#2e495b]"
               >
                 {item.label}
               </Link>
@@ -75,7 +78,7 @@ function Header() {
                 key={index} 
                 to={item.to} 
                 onClick={() => setIsOpen(false)}
-                className="block py-2 text-lg font-medium text-gray-800 transition-colors duration-200 hover:text-[#3FA2F6]"
+                className="block py-2 text-lg font-medium text-gray-800 transition-colors duration-200 hover:text-[#768a97]"
               >
                 {item.label}
               </Link>
