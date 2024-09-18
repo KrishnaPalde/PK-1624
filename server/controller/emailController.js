@@ -1,8 +1,7 @@
 const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
-// const pdf = require("html-pdf");
-const puppeteer = require("puppeteer");
+const PDFDocument = require("pdfkit");
 const Booking = require("../models/Bookings");
 const Room = require("../models/Room");
 require("dotenv").config();
@@ -166,25 +165,25 @@ const generatePDF = async (bid) => {
     totalAmount: booking.totalPayment,
   };
 
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
+  // const browser = await puppeteer.launch();
+  // const page = await browser.newPage();
 
-  const htmlPath = path.join(__dirname, "booking_confirmation.html");
-  let htmlContent = fs.readFileSync(htmlPath, "utf-8");
+  // const htmlPath = path.join(__dirname, "booking_confirmation.html");
+  // let htmlContent = fs.readFileSync(htmlPath, "utf-8");
 
   // Update HTML content with booking details using string interpolation
-  htmlContent = htmlContent
-    .replace("bookingID", bookingDetails.bookingId)
-    .replace("checkInDate", bookingDetails.checkInDate)
-    .replace("checkOutDate", bookingDetails.checkOutDate)
-    .replace("roomType", bookingDetails.roomType)
-    .replace("guestName", bookingDetails.guestName)
-    .replace("guestEmail", bookingDetails.email)
-    .replace("guestContactNumber", bookingDetails.contactNumber)
-    .replace("subTotal", `₹${bookingDetails.subTotal}`)
-    .replace("taxesAndFees", `₹${bookingDetails.taxes}`)
-    .replace("serviceCharges", `₹${bookingDetails.serviceCharges}`)
-    .replace("totalAmount", `₹${bookingDetails.totalAmount}`);
+  // htmlContent = htmlContent
+  //   .replace("bookingID", bookingDetails.bookingId)
+  //   .replace("checkInDate", bookingDetails.checkInDate)
+  //   .replace("checkOutDate", bookingDetails.checkOutDate)
+  //   .replace("roomType", bookingDetails.roomType)
+  //   .replace("guestName", bookingDetails.guestName)
+  //   .replace("guestEmail", bookingDetails.email)
+  //   .replace("guestContactNumber", bookingDetails.contactNumber)
+  //   .replace("subTotal", `₹${bookingDetails.subTotal}`)
+  //   .replace("taxesAndFees", `₹${bookingDetails.taxes}`)
+  //   .replace("serviceCharges", `₹${bookingDetails.serviceCharges}`)
+  //   .replace("totalAmount", `₹${bookingDetails.totalAmount}`);
 
   bookingConfirmationHTML = `
     <!DOCTYPE html>
@@ -353,35 +352,35 @@ const generatePDF = async (bid) => {
 
   `;
 
-  await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+  // await page.setContent(htmlContent, { waitUntil: "networkidle0" });
 
   // Ensure all images are loaded before generating the PDF
-  await page.evaluate(() => {
-    const images = Array.from(document.images);
-    return Promise.all(
-      images.map((img) => {
-        if (img.complete) return Promise.resolve();
-        return new Promise((resolve, reject) => {
-          img.addEventListener("load", resolve);
-          img.addEventListener("error", reject);
-        });
-      })
-    );
-  });
+  // await page.evaluate(() => {
+  //   const images = Array.from(document.images);
+  //   return Promise.all(
+  //     images.map((img) => {
+  //       if (img.complete) return Promise.resolve();
+  //       return new Promise((resolve, reject) => {
+  //         img.addEventListener("load", resolve);
+  //         img.addEventListener("error", reject);
+  //       });
+  //     })
+  //   );
+  // });
 
   // Generate PDF with no margins
-  await page.pdf({
-    path: `booking-confirmation-${bid.slice(0, 5)}.pdf`, // Save PDF to this path
-    format: "A4", // Page format
-    printBackground: true, // Include background colors
-    margin: {
-      top: "0",
-      right: "0",
-      bottom: "0",
-      left: "0",
-    },
-    preferCSSPageSize: true, // Use the CSS page size if defined
-  });
+  // await page.pdf({
+  //   path: `booking-confirmation-${bid.slice(0, 5)}.pdf`, // Save PDF to this path
+  //   format: "A4", // Page format
+  //   printBackground: true, // Include background colors
+  //   margin: {
+  //     top: "0",
+  //     right: "0",
+  //     bottom: "0",
+  //     left: "0",
+  //   },
+  //   preferCSSPageSize: true, // Use the CSS page size if defined
+  // });
 
   // const options = {
   //   format: "A4",
@@ -413,8 +412,167 @@ const generatePDF = async (bid) => {
   //       }
   //     });
   // });
+  try {
+    const doc = new PDFDocument({ margin: 50 });
+
+    doc.font("Helvetica");
+
+    // Pipe the PDF into a writable stream
+    doc.pipe(
+      fs.createWriteStream(`booking-confirmation-${bid.slice(0, 5)}.pdf`)
+    );
+
+    // Header Section with logo, company name, and slogan - all left-aligned, address on the right
+    doc
+      .image(path.join(__dirname, "logofull.png"), 50, 45, { width: 80 })
+      .fontSize(20)
+      .fillColor("#314f65")
+      .text("Tranquil Trails", 140, 65, { align: "left" })
+      .fontSize(12)
+      .fillColor("#f2a758")
+      .text("Luxury Holiday Homes", 140, 90, { align: "left" })
+      .moveDown(2);
+
+    // Add address on the right side
+    doc.fontSize(10).fillColor("black").text(
+      "Pacific Hills, Diversion,\n Mussoorie Road, Dehradun, \nUttarakhand, India. 248009\nPhone: +91 767-399-2288\ncare@tranquiltrails.co.in",
+      400, // Adjust x coordinate for right alignment
+      65, // y coordinate to align with logo and company name
+      { align: "right" }
+    );
+
+    // Add a line separator
+    doc.moveTo(50, 140).lineTo(550, 140).stroke();
+
+    doc.moveDown(3);
+
+    // Section: Booking Details with color
+    doc
+      .fontSize(14)
+      .fillColor("#314f65")
+      .text("Booking Details", 50, doc.y, { underline: true })
+      .moveDown(0.5);
+
+    // Booking details table with borders and columns
+    generateTable(doc, [
+      ["Booking ID", bookingDetails.bookingId],
+      ["Check-in", bookingDetails.checkInDate],
+      ["Check-out", bookingDetails.checkOutDate],
+    ]);
+
+    doc.moveDown(1);
+
+    // Section: Guest Details with color
+    doc
+      .fontSize(14)
+      .fillColor("#314f65")
+      .text("Guest Details", 50, doc.y, { underline: true })
+      .moveDown(0.5);
+
+    // Guest details table with borders and columns
+    generateTable(doc, [
+      ["Name", bookingDetails.guestName],
+      ["Email", bookingDetails.email],
+      ["Contact Number", bookingDetails.contactNumber],
+    ]);
+
+    doc.moveDown(1);
+
+    // Section: Price Details with color
+    doc
+      .fontSize(14)
+      .fillColor("#314f65")
+      .text("Price Details", 50, doc.y, { underline: true })
+      .moveDown(0.5);
+
+    // Price details table with borders and columns
+    generateTable(doc, [
+      ["Subtotal", `${bookingDetails.subTotal.toFixed(2)}`],
+      ["Taxes", `${bookingDetails.taxes.toFixed(2)}`],
+      ["Service Fee", `${bookingDetails.serviceCharges.toFixed(2)}`],
+      ["Total Amount", `${bookingDetails.totalAmount.toFixed(2)} INR`],
+    ]);
+
+    doc.moveDown(1);
+
+    // Section: Terms & Conditions
+
+    const terms = [
+      "1. Check-in time is 12:00 PM and check-out time is 11:00 AM.",
+      "2. Cancellations must be made 48 hours before the check-in date.",
+      "3. Smoking is prohibited inside the hotel premises.",
+    ];
+
+    doc
+      .fontSize(14)
+      .fillColor("#314f65")
+      .text("Terms & Conditions", 50, doc.y, { underline: true })
+      .moveDown(0.5);
+
+    // Loop through the static terms and display each
+    doc.fontSize(10).fillColor("black");
+    terms.forEach((term) => {
+      doc.text(term, { align: "justify" }).moveDown(0.5);
+    });
+
+    doc.moveDown(1);
+
+    // Footer
+    doc
+      .fontSize(10)
+      .fillColor("gray")
+      .text(
+        "If you have any questions or need further assistance, please contact our support team at care@tranquiltrails.co.in or call us at +91 767-399-2288.",
+        50,
+        doc.page.height - 90,
+        { align: "center" }
+      );
+
+    // Finalize the PDF and end the document
+    doc.end();
+    console.log(`PDF generated successfully`);
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+  }
   return bookingDetails.email;
 };
+
+// Helper function to generate a table with two columns (title and value)
+function generateTable(doc, rows) {
+  const tableTop = doc.y;
+  const rowHeight = 30;
+  const labelWidth = 200; // Width of the title column
+  const valueWidth = 300; // Width of the value column
+
+  rows.forEach(([label, value], i) => {
+    const y = tableTop + i * rowHeight;
+
+    // Check if the document's height exceeds the page limit, add a new page if necessary
+    if (y + rowHeight > 700) {
+      doc.addPage();
+      // Reset the table position to the top of the new page
+      tableTop = doc.y;
+    }
+
+    // Draw row border for title and value
+    doc
+      .lineWidth(0.5)
+      .rect(50, y, labelWidth, rowHeight)
+      .rect(50 + labelWidth, y, valueWidth, rowHeight)
+      .stroke();
+
+    // Title (left column)
+    doc
+      .font("Helvetica-Bold")
+      .text(label, 50 + 10, y + 10, { width: labelWidth - 20, align: "left" });
+
+    // Value (right column)
+    doc.font("Helvetica").text(value, 50 + labelWidth + 10, y + 10, {
+      width: valueWidth - 20,
+      align: "left",
+    });
+  });
+}
 
 const BookingConfirmationEmail = async (req, res) => {
   try {
