@@ -244,7 +244,6 @@ const getHotelRating = async (req, res) => {
 
 const sendFeedbackLink = async (req, res) => {
   try {
-    console.log("In feedback controller");
     const today = new Date();
     const startOfDay = new Date(today.setHours(0, 0, 0, 0));
     const endOfDay = new Date(today.setHours(23, 59, 59, 999));

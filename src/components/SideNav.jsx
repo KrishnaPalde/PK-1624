@@ -59,8 +59,8 @@ const SideNav = () => {
           screenSize === 'large' ? 'w-64' : 'w-64 lg:w-auto lg:translate-x-0'
         }`}
       >
-        <div className="flex items-center justify-between mb-8">
-          <img src={logo} alt="logo" className='w-10 h-10'/>
+        <div className="flex items-center gap-2 mb-8">
+          <img src={logo} alt="logo" className='object-cover w-10 h-10'/>
           <h2 className="text-2xl font-semibold text-[#335064]">Tranquil Trails</h2>
           {screenSize !== 'large' && (
             <button

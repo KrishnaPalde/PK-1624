@@ -42,8 +42,6 @@ const {
   EnquiryFormEmail,
 } = require("../controller/emailController");
 const Booking = require("../models/Bookings");
-const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
 
 const router = express.Router();
 
@@ -58,7 +56,7 @@ router.get("/admin/dashboard_bookings", fetchBookingsAdmin);
 router.get("/admin/bookings", getBookings);
 router.get("/admin/bookings/:bookingId", getBookingById);
 router.get("/admin/bookings/:bookingId/room", getRoomDetailsForm);
-router.post("/admin/addroom", upload.array("images", 5), addRoom);
+router.post("/admin/addroom", addRoom);
 router.get("/admin/getroomstatus", updateRoomStatuses);
 router.get("/booking-confirmation/:id", BookingConfirmationEmail);
 router.post("/contact-us/enquiry", EnquiryFormEmail);

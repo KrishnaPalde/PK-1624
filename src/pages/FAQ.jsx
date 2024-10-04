@@ -6,24 +6,44 @@ function FAQ() {
   // Define a list of FAQs with questions and answers
   const faqs = [
     {
-      question: "How can I book a property?",
-      answer: "To book a property, simply search for the desired location and dates, select a property, and follow the booking instructions on our platform. You can also contact our support team for assistance.",
+      question: "Where is Tranquil Trails located?",
+      answer: "Tranquil Trails is located at A-610, Pacific Hills, Diversion, Mussoorie Road, Dehradun, Uttarakhand, India, Pin Code: 248009. It's nestled amidst serene surroundings, offering a peaceful getaway near Dehradun.",
     },
     {
-      question: "What is the cancellation policy?",
-      answer: "The cancellation policy varies depending on the property. Please refer to the specific property's terms and conditions for more details. Generally, you can cancel within 24 hours of booking for a full refund.",
+      question: "How far is Tranquil Trails from Dehradun Airport and Railway Station?",
+      answer: "• Dehradun Airport (Jolly Grant): Approximately 37 km (about 1 hour by road). • Dehradun Railway Station: Approximately 13 km (about 30 minutes by road).",
     },
     {
-      question: "Are pets allowed in the property?",
-      answer: "Pet policies vary by property. Please check the property details page for specific rules regarding pets. Some properties allow pets with prior approval, while others may have restrictions.",
+      question: "How can I make a booking at Tranquil Trails?",
+      answer: "You can make a booking directly through our website or by contacting us via phone or email. Once your booking is confirmed, we will send you the payment details for advance payment.",
     },
     {
-      question: "How do I check in to the property?",
-      answer: "After booking, you will receive detailed check-in instructions via email. This typically includes the property's address, check-in time, and any access codes or keys required.",
+      question: "What is the check-in and check-out time?",
+      answer: "•	Check-in: 12:00 PM •	Check-out: 11:00 AM If you need an early check-in or late check-out, please inform us in advance, and we'll do our best to accommodate your request.",
     },
     {
-      question: "Can I request an early check-in or late check-out?",
-      answer: "Early check-in and late check-out requests are subject to availability. Please contact the property owner or manager directly to make arrangements.",
+      question: "What are the payment options available?",
+      answer: "We accept payments through Razorpay, which allows you to pay via credit/debit cards, UPI, net banking, and other online payment methods. You can complete your payment using this link: Payment Link.",
+    },
+    {
+      question: "Do you provide meals at the homestay?",
+      answer: "Yes, we offer home-cooked meals that include breakfast, lunch, and dinner. You can inform us of your meal preferences in advance. Additional charges apply for meals, and vegetarian options are available.",
+    },
+    {
+      question:"Is Wi-Fi available at the property?",
+      answer:"Yes, we provide complimentary high-speed Wi-Fi for all guests during their stay.",
+    },
+    {
+      question:"Are pets allowed at Tranquil Trails?",
+      answer:"Yes, we welcome pets at Tranquil Trails with prior notice. An additional charge applies for accommodating pets to ensure proper cleaning and maintenance. Please inform us in advance if you plan to bring your pet, so we can make the necessary arrangements.",
+    },
+    {
+      question:"What are the nearby tourist attractions?",
+      answer:"Tranquil Trails is located close to popular tourist spots such as: •	Mussoorie: 35 km •	Robber’s Cave: 12 km •	Sahastradhara: 16 km •	Forest Research Institute: 10 km",
+    },
+    {
+      question:"What if I need to cancel my booking?",
+      answer:"You can cancel your booking up to 48 hours before check-in for a full refund. For cancellations within 48 hours of check-in, no refund will be provided. Please review our full cancellation policy when booking.",
     },
   ];
 

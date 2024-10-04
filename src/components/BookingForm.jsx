@@ -202,7 +202,7 @@ function BookingForm() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">Adults</h3>
-                    <p className="text-sm text-gray-500">Aged 18+</p>
+                    <p className="text-sm text-gray-500">Aged 12+</p>
                   </div>
                   <div className="flex items-center md:gap-2">
                     <button type="button" onClick={() => handleAdultsChange("decrement")} className="flex items-center justify-center w-8 h-8 text-gray-600 bg-gray-200 rounded-full hover:bg-gray-300">-</button>
@@ -213,7 +213,7 @@ function BookingForm() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">Children</h3>
-                    <p className="text-sm text-gray-500">Aged 0 to 17</p>
+                    <p className="text-sm text-gray-500">Aged 0 to 11</p>
                   </div>
                   <div className="flex items-center md:gap-2">
                     <button type="button" onClick={() => handleChildrenChange("decrement")} className="flex items-center justify-center w-8 h-8 text-gray-600 bg-gray-200 rounded-full hover:bg-gray-300">-</button>

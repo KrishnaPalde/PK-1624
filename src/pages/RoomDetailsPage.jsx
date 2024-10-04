@@ -21,7 +21,7 @@ const RoomDetailsPage = () => {
   const [roomData, setRoomData] = useState(location.state || null);
   const [isLoading, setIsLoading] = useState(!location.state);
   const [error, setError] = useState(null);
-
+  
   const isWeekend = () => {
     const today = new Date();
     return today.getDay() === 0 || today.getDay() === 6;
@@ -79,7 +79,7 @@ const RoomDetailsPage = () => {
             {roomData.images && roomData.images.length > 0 && (
               <RoomImages images={roomData.images} />
             )}
-            <RoomOverview rating={roomData.rating} reviews={roomData.totalReviews}/>
+            {/* <RoomOverview rating={roomData.rating} reviews={roomData.totalReviews}/> */}
             {/* {roomData.amenities && roomData.amenities.length > 0 && ( */}
               <div className="mt-10">
                 <AmenitiesList />

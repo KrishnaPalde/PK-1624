@@ -1,6 +1,7 @@
 import React from "react";
 import QuoteCard from "./QuoteCard";
 import GuestCard from "./GuestCard";
+import { Link } from "react-router-dom";
 
 const ExploreGuestRooms = () => {
   const images = [
@@ -29,6 +30,8 @@ const ExploreGuestRooms = () => {
           alt=""
         />
       </header>
+      
+      <Link to='/bookings'>
       <main className="mt-9 w-full max-w-[1240px] max-md:max-w-full">
         <div className="flex gap-5 max-md:flex-col">
           <div className="flex flex-col w-6/12 max-md:ml-0 max-md:w-full">
@@ -64,6 +67,7 @@ const ExploreGuestRooms = () => {
           </div>
         </div>
       </main>
+      </Link>
     </section>
   );
 };

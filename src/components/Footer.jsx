@@ -1,7 +1,13 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { Link } from "react-router-dom"; // For internal links
+import logo from '../assets/logo.png';
+import axios from 'axios';
+import {useNavigate} from 'react-router-dom';
+const process = import.meta.env;
 
 const Footer = () => {
+  const [rooms, setRooms] = useState([]);
+  const navigate = useNavigate();
   const socialIcons = [
     {
       src: "https://cdn.builder.io/api/v1/image/assets/TEMP/f9b61e9097571706c541a77075a5bd875ce688df938993de0531acd1271cd1e4?apiKey=2bc25307ed444d758c5818aa40360cbc",
@@ -25,20 +31,43 @@ const Footer = () => {
     },
   ];
 
+  
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/rooms`);
+        setRooms(response.data);
+      } catch (error) {
+        console.error("Error fetching rooms:", error);
+      }
+    };
+
+    fetchRooms();
+  }, []);
+
+  const handleLinkClick = (link) => {
+    if (link.data && link.data.id) {
+      navigate(`/room/${link.data.id}`, { state: link.data });
+    } else {
+      navigate(link.url);
+    }
+  }; 
+  
   const footerLinks = [
     {
       title: "Rooms",
-      links: [
-        { name: "Room with View", url: "/room/room001" }, // Internal link
-        { name: "Single Room", url: "/room/room002" }, // Internal link
-        { name: "Luxury Room", url: "/room/room001" }, // Internal link
-      ],
+      links: rooms.map(room => ({ 
+        name: room.name, 
+        url: `/room/${room.id}`,
+        data: room
+      })),
     },
     {
       title: "Quick links",
       links: [
         { name: "Booking", url: "/bookings" }, // Internal link
-        { name: "Site Map", url: "/sitemap" }, // Internal link
+        { name: "FAQ", url: "/faq" }, // Internal link
       ],
     },
     {
@@ -68,9 +97,10 @@ const Footer = () => {
             <div className="flex gap-3.5 py-px text-4xl font-bold text-white rounded-[30px]">
               <img
                 loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/5a45f9b4f7ade48b0b424da01baaecab08072e240412731f06b15377a9befea9?apiKey=2bc25307ed444d758c5818aa40360cbc"
+                // src="https://cdn.builder.io/api/v1/image/assets/TEMP/5a45f9b4f7ade48b0b424da01baaecab08072e240412731f06b15377a9befea9?apiKey=2bc25307ed444d758c5818aa40360cbc"
+                src={logo}
                 alt=""
-                className="shrink-0 aspect-square rounded-[30px] w-[38px]"
+                className="shrink-0 aspect-square object-cover w-[48px]"
               />
               <div className="flex-auto my-auto">Tranquil Trails</div>
             </div>
@@ -107,7 +137,15 @@ const Footer = () => {
                     <ul className="text-sm leading-8 text-stone-300">
                       {column.links.map((link, linkIndex) => (
                         <li key={linkIndex}>
-                          <Link to={link.url} onClick={handleClick} >{link.name}</Link> {/* Internal link */}
+                           <Link 
+  to={link.url}
+  onClick={(e) => {
+    e.preventDefault();
+    handleLinkClick(link);
+  }}
+>
+  {link.name}
+</Link>
                         </li>
                       ))}
                     </ul>
@@ -115,7 +153,7 @@ const Footer = () => {
                 </div>
               ))}
             </div>
-          </div>
+            </div>
         </div>
         <img
           loading="lazy"

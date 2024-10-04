@@ -418,44 +418,65 @@ const getRoomDetailsForm = async (req, res) => {
   }
 };
 
-const addRoom = async (req, res) => {
-  try {
-    const { name, title, description, price, weekend } = req.body;
-    const amenities = req.body.amenities ? JSON.parse(req.body.amenities) : [];
-    const freebies = req.body.freebies ? JSON.parse(req.body.freebies) : [];
-    const images = req.files ? req.files.map((file) => file.path) : [];
+// const addRoom = async (req, res) => {
+//   try {
+//     const { name, title, description, price, weekend } = req.body;
+//     const amenities = req.body.amenities ? JSON.parse(req.body.amenities) : [];
+//     const freebies = req.body.freebies ? JSON.parse(req.body.freebies) : [];
+//     const images = req.files ? req.files.map((file) => file.path) : [];
 
+//     const newRoom = new Room({
+//       id: Date.now().toString(),
+//       name,
+//       title,
+//       description,
+//       price,
+//       weekend,
+//       amenities,
+//       freebies,
+//       images,
+//     });
+
+//     const savedRoom = await newRoom.save();
+//     res.status(201).json(savedRoom);
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// };
+
+const addRoom = async(req,res) =>{
+  try{
+    const { name, title, description, price, weekend,images,rating } = req.body;
     const newRoom = new Room({
-      id: Date.now().toString(),
-      name,
-      title,
-      description,
-      price,
-      weekend,
-      amenities,
-      freebies,
-      images,
-    });
-
-    const savedRoom = await newRoom.save();
-    res.status(201).json(savedRoom);
-  } catch (error) {
+            id: Date.now().toString(),
+            name,
+            title,
+            description,
+            price,
+            weekend,
+            images,
+            rating,
+          });
+          const savedRoom = await newRoom.save();
+    res.status(200).json(savedRoom);
+  }
+  
+  catch (error) {
     res.status(400).json({ message: error.message });
   }
-};
+}
 
 const updateRoomStatuses = async (req, res) => {
   try {
     const rooms = await Room.find({});
     const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
+    currentDate.setHours(0, 0, 0, 0);
 
     let updatedRooms = 0;
     let occupiedRooms = 0;
     let reservedRooms = 0;
 
     for (let room of rooms) {
-
       const booking = await Booking.findOne({
         roomId: room.id,
         checkInDate: { $lte: currentDate },
@@ -468,14 +489,10 @@ const updateRoomStatuses = async (req, res) => {
       if (booking) {
         if (booking.checkInDate.toDateString() === currentDate.toDateString()) {
           newStatus = "Check-in Today";
-          statusDetails = `Check-in today, check-out on ${
-            booking.checkOutDate.toISOString().split("T")[0]
-          }`;
+          statusDetails = `Check-in today, check-out on ${booking.checkOutDate.toISOString().split("T")[0]}`;
         } else {
           newStatus = "Occupied";
-          statusDetails = `Occupied until ${
-            booking.checkOutDate.toISOString().split("T")[0]
-          }`;
+          statusDetails = `Occupied until ${booking.checkOutDate.toISOString().split("T")[0]}`;
         }
         occupiedRooms++;
       } else {
@@ -486,12 +503,8 @@ const updateRoomStatuses = async (req, res) => {
 
         if (futureBooking) {
           newStatus = "Reserved";
-          statusDetails = `Reserved from ${
-            futureBooking.checkInDate.toISOString().split("T")[0]
-          }`;
+          statusDetails = `Reserved from ${futureBooking.checkInDate.toISOString().split("T")[0]}`;
           reservedRooms++;
-        } else {
-          console.log(`No bookings found for room ${room.id}`);
         }
       }
 
@@ -500,13 +513,6 @@ const updateRoomStatuses = async (req, res) => {
         room.statusDetails = statusDetails;
         await room.save();
         updatedRooms++;
-        console.log(
-          `Updated room ${room.id} status to ${newStatus} (${statusDetails})`
-        );
-      } else {
-        console.log(
-          `Room ${room.id} status unchanged: ${room.status} (${room.statusDetails})`
-        );
       }
     }
 
@@ -519,9 +525,7 @@ const updateRoomStatuses = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in updateRoomStatuses:", error);
-    res
-      .status(500)
-      .json({ message: "Error updating room statuses", error: error.message });
+    res.status(500).json({ message: "Error updating room statuses", error: error.message });
   }
 };
 
