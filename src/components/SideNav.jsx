@@ -41,6 +41,7 @@ const SideNav = () => {
     { icon: <FaBook />, label: 'Bookings', location: '/admin/booking' },
     { icon: <FaBed />, label: 'Rooms', location: '/admin/room' },
     { icon: <MdReviews/>, label: 'Reviews', location: '/admin/reviews'},
+    { icon: <FaHome/>, label: 'Offers', location: '/admin/offers'},
   ];
 
   const variants = {

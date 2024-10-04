@@ -19,6 +19,7 @@ import AdminBlog from './pages/AdminBlog';
 import AdminCreatePost from './pages/AdminCreatePost';
 import Feedback from './pages/Feedback';
 import FAQ from './pages/FAQ';
+import AdminOffersPage from './pages/AdminOffersPage';
 import AdminReviewsPage from './pages/AdminReviewsPage';
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
           <Route path="/admin/createblog" element={<ProtectedRoute><AdminCreatePost/></ProtectedRoute>}/>
           <Route path="/admin/room" element={<ProtectedRoute><AdminRoom/></ProtectedRoute>}/>
           <Route path="/admin/reviews" element={<ProtectedRoute><AdminReviewsPage/></ProtectedRoute>}/>
+          <Route path='/admin/offers' element={<ProtectedRoute><AdminOffersPage/></ProtectedRoute>}/>
           <Route path="/feedback" element={<Feedback/>}/>
           <Route path="/card" element={<BookingConfirm/>}/>
         </Routes>
