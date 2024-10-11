@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { FaHome, FaBook, FaBed } from 'react-icons/fa';
 import { MdReviews } from "react-icons/md";
+import { BiSolidOffer } from "react-icons/bi";
 import { useAuth } from '../AuthContext';
 import logo from '../assets/logo.png';
 
@@ -41,7 +42,7 @@ const SideNav = () => {
     { icon: <FaBook />, label: 'Bookings', location: '/admin/booking' },
     { icon: <FaBed />, label: 'Rooms', location: '/admin/room' },
     { icon: <MdReviews/>, label: 'Reviews', location: '/admin/reviews'},
-    { icon: <FaHome/>, label: 'Offers', location: '/admin/offers'},
+    { icon: <BiSolidOffer/>, label: 'Offers', location: '/admin/offers'},
   ];
 
   const variants = {

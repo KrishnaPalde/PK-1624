@@ -388,7 +388,7 @@ export default BlogPage;
 //                         </button>
 //                       </div>
 //                     </div>
-//                     <h2 className="text-2xl font-semibold mt-8 max-md:text-lg">
+//                     <h2 className="mt-8 text-2xl font-semibold max-md:text-lg">
 //                       {featuredPost.title}
 //                     </h2>
 //                     <div className="flex items-center gap-5 mt-2 text-sm text-zinc-500 max-md:gap-3 max-md:mt-1">
@@ -396,7 +396,7 @@ export default BlogPage;
 //                       <span>&#8226;</span>
 //                       <span>{featuredPost.author}</span>
 //                     </div>
-//                     <p className="text-lg mt-4 text-zinc-600">{featuredPost.excerpt}</p>
+//                     <p className="mt-4 text-lg text-zinc-600">{featuredPost.excerpt}</p>
 //                   </div>
 //                 )}
 //               </div>
@@ -406,7 +406,7 @@ export default BlogPage;
 //                 blogPosts.map((post, index) => (
 //                   <div
 //                     key={index}
-//                     className="flex flex-col bg-white p-4 border border-gray-200 border-solid shadow-lg rounded-2xl"
+//                     className="flex flex-col p-4 bg-white border border-gray-200 border-solid shadow-lg rounded-2xl"
 //                   >
 //                     <img
 //                       loading="lazy"
@@ -414,13 +414,13 @@ export default BlogPage;
 //                       alt={post.title}
 //                       className="w-full aspect-[1.85] rounded-2xl"
 //                     />
-//                     <h3 className="text-xl font-semibold mt-4">{post.title}</h3>
+//                     <h3 className="mt-4 text-xl font-semibold">{post.title}</h3>
 //                     <div className="flex items-center gap-5 mt-2 text-sm text-zinc-500">
 //                       <span>{post.date}</span>
 //                       <span>&#8226;</span>
 //                       <span>{post.author}</span>
 //                     </div>
-//                     <p className="text-base mt-4 text-zinc-600">{post.excerpt}</p>
+//                     <p className="mt-4 text-base text-zinc-600">{post.excerpt}</p>
 //                     <div className="flex gap-2 mt-4">
 //                       {post.tags && post.tags.map((tag, idx) => (
 //                         <span

@@ -12,7 +12,7 @@ const createCoupon = async (req, res) => {
 
   try {
     const coupon = new Coupon({
-      code,
+      code: code.toUpperCase(),
       discountType,
       discountValue,
       type,
@@ -70,6 +70,15 @@ const getAllActiveCoupons = async (req, res) => {
     res.status(200).json(coupons);
   } catch (error) {
     res.status(500).json({ message: "Error fetching coupons", error });
+  }
+};
+
+const getAllCoupons = async (req,res) => {
+  try{
+    const coupons = await Coupon.find({});
+    res.status(200).json(coupons);
+  } catch (error){
+      res.status(500).json({message: "Error fetching coupons", error});
   }
 };
 
@@ -181,4 +190,5 @@ module.exports = {
   deleteCoupon,
   deactivateCoupon,
   getAllActiveCoupons,
+  getAllCoupons,
 };

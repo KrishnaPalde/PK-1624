@@ -1,6 +1,6 @@
 import React from "react";
 import SideNav from "../components/SideNav";
-import BookingDashboard from "../components/BookingDashboard/BookingDashboard";
+import OffersDashboard from "../components/BookingDashboard/OffersDashboard";
 import AdminNav from "../components/BookingDashboard/AdminNav";
 
 
@@ -12,7 +12,7 @@ const AdminOffersPage = () => {
       </div>
       <div className="flex-1 overflow-auto">
         <AdminNav title="Bookings"/>
-        <BookingDashboard /> 
+        <OffersDashboard /> 
       </div>
     </div>
   );

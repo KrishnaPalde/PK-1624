@@ -9,7 +9,7 @@ import Newsletter from "../components/NewsLetter";
 import Footer from "../components/Footer";
 import ExploreGuestRooms from "../components/ExploreGuestRooms";
 import BookingForm from "../components/BookingForm";
-
+import OffersCarousel from "../components/OffersCarousel";
 
 
 function LandingPage() {
@@ -19,8 +19,8 @@ function LandingPage() {
       <HeroSection />
       <div className="md:hidden">
       <BookingForm/>
-        
       </div>
+      <OffersCarousel/>
       <Carousel />
       <Gallery />
       <ExploreGuestRooms/>
