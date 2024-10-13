@@ -22,6 +22,7 @@ function StayDetails({ formData }) {
   });
   const [showCouponModal, setShowCouponModal] = useState(false);
   const [coupons, setCoupons] = useState([]);
+  const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [discountAmount, setDiscountAmount] = useState(0);
 
@@ -85,8 +86,9 @@ function StayDetails({ formData }) {
   };
 
   const formatCurrency = (amount) => {
-    return `₹${amount.toLocaleString('en-IN')}`;
-  };
+    return `₹${Math.abs(amount).toLocaleString('en-IN')}`;
+};
+
 
   const fetchCoupons = async () => {
     try {
@@ -116,6 +118,12 @@ function StayDetails({ formData }) {
       console.error("Failed to apply coupon", error);
     }
   };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setDiscountAmount(0);
+  };
+
 
   return (
     <section className="flex flex-col rounded-xl">
@@ -148,7 +156,7 @@ function StayDetails({ formData }) {
           Duration of stay: <span className="font-bold">{calculateNights} night{calculateNights === 1 ? '' : 's'}</span>
         </p>
 
-        <div className="flex items-center mt-4">
+        {/* <div className="flex items-center mt-4">
           <Button 
             onClick={() => {
               fetchCoupons();
@@ -163,7 +171,46 @@ function StayDetails({ formData }) {
               Coupon applied: {appliedCoupon}
             </span>
           )}
-        </div>
+        </div> */}
+
+<div className="flex flex-col items-center mt-4 border border-gray-300 rounded-lg p-2 bg-white shadow-sm">
+  <div className="flex items-center w-full">
+    <input
+      type="text"
+      placeholder="Enter your coupon code"
+      className="flex-grow h-10 px-3 text-gray-700 border border-transparent focus:border-[#335064] focus:ring-2 focus:ring-[#335064] rounded-md transition duration-200"
+      value={couponCode} // Assuming you have a state variable for the coupon code
+      onChange={(e) => setCouponCode(e.target.value)} // Function to update the coupon code
+    />
+    <Button
+      onClick={() => {
+        fetchCoupons();
+        setShowCouponModal(true);
+      }}
+      className="ml-2 w-32 bg-[#335064] text-white hover:bg-[#284c5e] transition duration-200"
+      disabled={!!appliedCoupon} // Disable if a coupon is already applied
+    >
+      {appliedCoupon ? "Applied" : "Apply"}
+    </Button>
+  </div>
+  {appliedCoupon && (
+  <div className="mt-2 flex items-center">
+    <span className="font-medium text-green-600">
+      Coupon applied: {appliedCoupon}
+    </span>
+    <span 
+      onClick={removeCoupon} 
+      className="ml-4 cursor-pointer text-gray-600" // Optional: Add cursor pointer for better UX
+      aria-hidden="true" // Accessibility
+    >
+      &#10005; {/* This is the HTML entity for a multiplication sign, which looks like a cross */}
+    </span>
+  </div>
+)}
+
+</div>
+
+
 
         <p className="mt-4 text-base font-medium text-neutral-900">
           Your booking is protected by{" "}
@@ -171,15 +218,23 @@ function StayDetails({ formData }) {
         </p>
         <hr className="w-full mt-4 bg-neutral-900 bg-opacity-30" />
         <div className="flex flex-col w-full mt-4 text-base text-neutral-900 max-md:max-w-full">
-          <h2 className="font-semibold">Price Details</h2>
-          {priceDetails.map((detail, index) => (
-            <PriceDetail
-              key={index}
-              label={detail.label}
-              amount={formatCurrency(detail.amount)}
-            />
-          ))}
-        </div>
+  <h2 className="font-semibold">Price Details</h2>
+  {priceDetails.map((detail, index) => {
+    
+    if (detail.label === "Discount" && detail.amount === 0) {
+      return null;
+    }
+
+    return (
+      <PriceDetail
+        key={index}
+        label={detail.label}
+        amount={formatCurrency(detail.amount)}
+      />
+    );
+  })}
+</div>
+
         <hr className="w-full mt-4 bg-neutral-900 bg-opacity-30" />
         <div className="flex items-start justify-between w-full gap-10 mt-4 text-base text-neutral-900 max-md:max-w-full">
           <div className="font-medium">Total </div>

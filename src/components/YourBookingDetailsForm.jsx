@@ -74,11 +74,32 @@ function YourBookingDetailsForm({ formData, onFormDataChange }) {
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    onFormDataChange({
-      ...formData,
-      [id]: value
-    });
+  
+    if (id === "phoneNumber") {
+      // Remove non-digit characters except for the + symbol
+      let numericValue = value.replace(/[^\d+]/g, ""); 
+  
+      if (numericValue == "+91" || numericValue == "+91 ") {
+        numericValue = "";
+      } else if (!numericValue.startsWith("+91")) {
+        numericValue = "+91 " + numericValue.replace(/^\+91/, "");
+      }
+  
+      if (numericValue.length <= 13) {
+        onFormDataChange({
+          ...formData,
+          [id]: numericValue,
+        });
+      }
+    } else {
+      onFormDataChange({
+        ...formData,
+        [id]: value,
+      });
+    }
   };
+  
+  
 
   if (!roomData) {
     useEffect(() => {
