@@ -164,6 +164,7 @@ router.post("/verify-payment", async (req, res) => {
     const secret_key = await fetchSecretKey();
 
     if (!id || !secret_key) {
+      console.error("Failed to fetch Razorpay credentials");
       return res.status(500).json({ error: "Failed to fetch Razorpay credentials" });
     }
 
@@ -190,7 +191,6 @@ router.post("/verify-payment", async (req, res) => {
       baseFare,
       taxes,
       serviceFee,
-      bookingDetails,
     });
 
     // Validate the Razorpay signature
@@ -209,15 +209,16 @@ router.post("/verify-payment", async (req, res) => {
     const payment = await razorpay.payments.fetch(razorpay_payment_id);
     console.log("Fetched payment details:", payment);
 
-    // Verify the amount
-    if (payment.amount !== amount * 100) { // Razorpay amount is in paise
-      console.error("Amount mismatch", { expected: amount * 100, received: payment.amount });
+    // Verify the amount (convert to paise for comparison)
+    const amountInPaise = Math.round(amount * 100);
+    if (payment.amount !== amountInPaise) {
+      console.error("Amount mismatch", { expected: amountInPaise, received: payment.amount });
       return res.status(400).json({ error: "Amount mismatch" });
     }
 
     // Verify that the sum of baseFare, taxes, and serviceFee equals the total amount
     const calculatedTotal = parseFloat(baseFare) + parseFloat(taxes) + parseFloat(serviceFee);
-    if (Math.abs(calculatedTotal - amount) > 0.01) { // Use a small threshold for floating-point comparison
+    if (Math.abs(calculatedTotal - amount) > 0.01) {
       console.error("Payment breakdown mismatch", { 
         baseFare, 
         taxes, 
@@ -239,7 +240,11 @@ router.post("/verify-payment", async (req, res) => {
       email: bookingDetails.email,
       phoneNumber: bookingDetails.phoneNumber,
       idDocument: bookingDetails.idDocument,
-      roomId: bookingDetails.roomId,
+      rooms: bookingDetails.rooms.map(room => ({
+        roomId: room.id,
+        roomName: room.name,
+        price: room.price
+      })),
       checkInDate: bookingDetails.checkInDate,
       checkOutDate: bookingDetails.checkOutDate,
       paymentStatus: "completed",

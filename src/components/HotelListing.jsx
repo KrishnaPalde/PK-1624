@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import SortingHeader from "./SortingHeader";
 import HotelCard from "./HotelCard";
@@ -11,22 +11,24 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedRooms, setSelectedRooms] = useState([]);
   const location = useLocation();
+  const navigate = useNavigate();
   const process = import.meta.env;
 
   const cardsPerPage = 5;
 
-    const isWeekend = () => {
+  const isWeekend = () => {
     const today = new Date();
-    return today.getDay() === 0 || today.getDay() === 6; 
+    return today.getDay() === 0 || today.getDay() === 6;
   };
 
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        // const response = await axios.get("http://localhost:4444/api/admin/rooms");
-        const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/rooms`);
-        
+        const response = await axios.get(
+          `${process.VITE_HOST_URL}/api/admin/rooms`
+        );
         setHotelData(response.data);
         setFilteredData(response.data);
         setLoading(false);
@@ -40,11 +42,11 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
     fetchRooms();
   }, []);
 
-
   useEffect(() => {
     const applyFilters = () => {
       const filtered = hotelData.filter((hotel) => {
-        const currentPrice = isWeekend() && hotel.weekend ? hotel.weekend : hotel.price;
+        const currentPrice =
+          isWeekend() && hotel.weekend ? hotel.weekend : hotel.price;
         return (
           currentPrice >= priceRange[0] &&
           currentPrice <= priceRange[1] &&
@@ -71,6 +73,28 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
+  const handleRoomSelection = (room) => {
+    if (
+      selectedRooms.length === 0 ||
+      (selectedRooms.length > 0 &&
+        selectedRooms[selectedRooms.length - 1].id !== room.id)
+    ) {
+      setSelectedRooms([...selectedRooms, room]);
+    } else {
+      setSelectedRooms(
+        selectedRooms.filter((selectedRoom) => selectedRoom.id !== room.id)
+      );
+    }
+  };
+
+  const handleNextClick = () => {
+    if (selectedRooms.length > 0) {
+      navigate(`/room/${selectedRooms[selectedRooms.length - 1].id}/details`, {
+        state: { selectedRooms },
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center w-full h-screen bg-gray-100">
@@ -91,7 +115,7 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
             animate={{ y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Loading Hotels
+            Loading Rooms
           </motion.div>
           <motion.div
             className="flex space-x-2"
@@ -119,7 +143,6 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
     );
   }
 
-
   if (error) {
     return <div className="mt-8 text-xl text-center text-red-500">{error}</div>;
   }
@@ -136,7 +159,7 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
           className="space-y-8"
         >
           {currentCards.map((room) => (
-            <HotelCard 
+            <HotelCard
               key={room.id}
               id={room.id}
               imageUrl={room.images[0]}
@@ -145,13 +168,22 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
               title={room.title}
               name={room.name}
               description={room.description}
-              guestCount={2} 
+              guestCount={2}
               rating={room.rating}
               totalReviews={room.totalReviews}
               price={isWeekend() && room.weekend ? room.weekend : room.price}
               weekdayPrice={room.price}
               weekendPrice={room.weekend}
               isWeekend={isWeekend()}
+              onSelect={handleRoomSelection}
+              isSelected={selectedRooms.some(
+                (selectedRoom) => selectedRoom.id === room.id
+              )}
+              isLastSelected={
+                selectedRooms.length > 0 &&
+                selectedRooms[selectedRooms.length - 1].id === room.id
+              }
+              room={room}
             />
           ))}
         </motion.div>
@@ -175,6 +207,33 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
           Next
         </button>
       </div>
+      {selectedRooms.length > 0 && (
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 100, opacity: 0 }}
+          className="fixed bottom-0 left-0 right-0 p-4 bg-white shadow-lg"
+        >
+          <div className="flex items-center justify-between max-w-6xl mx-auto">
+            <div className="flex items-center space-x-4">
+              {selectedRooms.map((room, index) => (
+                <div
+                  key={room.id}
+                  className="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-full"
+                >
+                  {room.name}
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={handleNextClick}
+              className="px-6 py-2 text-white transition-colors duration-300 bg-green-500 rounded-full hover:bg-green-600"
+            >
+              Next
+            </button>
+          </div>
+        </motion.div>
+      )}
     </main>
   );
 }

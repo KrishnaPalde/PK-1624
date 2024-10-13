@@ -1,13 +1,11 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-// Define schema for payment breakdown details
 const PaymentBreakdownSchema = new Schema({
   description: { type: String, required: true },
   amount: { type: Number, required: true },
 });
 
-// Define schema for transaction details
 const TransactionSchema = new Schema({
   transactionId: { type: String, required: true },
   orderId: { type: String, required: true },
@@ -31,9 +29,14 @@ const TransactionSchema = new Schema({
   transactionDetails: { type: Schema.Types.Mixed },
 });
 
-// Define schema for booking details
+const RoomBookingSchema = new Schema({
+  roomId: { type: String, required: true },
+  roomName: { type: String, required: true },
+  price: { type: Number, required: true },
+});
+
 const BookingSchema = new Schema({
-  bookingId: { type: String, required: true, unique: true }, // Unique booking identifier
+  bookingId: { type: String, required: true, unique: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   email: { type: String, required: true },
@@ -52,7 +55,7 @@ const BookingSchema = new Schema({
         `${props.value} is not a valid Aadhar or Passport number!`,
     },
   },
-  roomId: { type: String, required: true }, // Custom room ID
+  rooms: [RoomBookingSchema], 
   checkInDate: { type: Date, required: true },
   checkOutDate: { type: Date, required: true },
   paymentStatus: {
@@ -66,7 +69,7 @@ const BookingSchema = new Schema({
   numberOfChildren: { type: Number, required: true },
   numberOfInfants: { type: Number, required: true },
   feedbackLink: { type: Boolean, required: true, default: false },
-  transactions: [TransactionSchema], // Array to store transaction details
+  transactions: [TransactionSchema],
   createdAt: { type: Date, default: Date.now },
 });
 

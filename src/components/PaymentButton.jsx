@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useBooking } from '../contexts/BookingFormContext';
@@ -40,27 +40,27 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, priceDeta
 
       const { orderId } = await response.json();
 
+      const rooms = roomData.map(room => ({
+        id: room.id,
+        name: room.name,
+        price: room.price
+      }));
+
       const bookingDetails = {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         phoneNumber: formData.phoneNumber,
         idDocument: formData.idNumber,
-        roomId: roomData.id,
+        rooms: rooms,
         checkInDate: bookingInfo.checkIn.toISOString(),
         checkOutDate: bookingInfo.checkOut.toISOString(),
         numberOfAdults: adults,
         numberOfChildren: children,
         numberOfInfants: 0,
-        paymentBreakdown: [
-          { description: 'Base Fare', amount: baseFare },
-          { description: 'Taxes', amount: taxes },
-          { description: 'Service Fee', amount: serviceFee }
-        ]
       };
 
       const options = {
-        // key: 'rzp_test_3XPl2MOocYaXjD',
         key: globalSettings.paymentGateway.keyId,
         amount: amount * 100,
         currency: 'INR',
@@ -89,7 +89,7 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, priceDeta
             const idn = result.id;
             await axios.get(`${process.VITE_HOST_URL}/api/booking-confirmation/${idn}`);
             setIsProcessing(false);
-            navigate(`/room/${roomData.id}/bookingconfirm`, { state: { roomData, formData } });
+            navigate(`/booking-confirm`, { state: { roomData, formData, bookingId: idn } });
           } else {
             setIsProcessing(false);
             alert('Payment verification failed!');

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate,Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useBooking } from '../contexts/BookingFormContext';
 import { IoPersonSharp, IoPeopleSharp } from "react-icons/io5";
 import { RiCalendarScheduleFill } from "react-icons/ri";
+import { FaHotel } from "react-icons/fa"; // Import hotel icon
 import axios from 'axios';
 const process = import.meta.env;
 
@@ -27,7 +28,8 @@ function BookingForm() {
   });
 
   const [adults, setAdults] = useState(bookingInfo.adults || 2);
-  const [children, setChildren] = useState(bookingInfo.children || 2);
+  const [children, setChildren] = useState(bookingInfo.children || 0);
+  const [rooms, setRooms] = useState(bookingInfo.rooms || 1);
   const [isGuestDropdownOpen, setIsGuestDropdownOpen] = useState(false);
 
   const [unavailableDates, setUnavailableDates] = useState([]);
@@ -37,6 +39,7 @@ function BookingForm() {
     setCheckOut(new Date(bookingInfo.checkOut) || tomorrow);
     setAdults(bookingInfo.adults || 2);
     setChildren(bookingInfo.children || 0);
+    setRooms(bookingInfo.rooms || 1);
   }, [bookingInfo]);
 
   useEffect(() => {
@@ -88,13 +91,19 @@ function BookingForm() {
     updateBookingInfo({ children: newChildren });
   };
 
+  const handleRoomsChange = (type) => {
+    const newRooms = type === "increment" ? rooms + 1 : (rooms > 1 ? rooms - 1 : 1);
+    setRooms(newRooms);
+    updateBookingInfo({ rooms: newRooms });
+  };
+
   const handleGuestDropdownToggle = () => {
     setIsGuestDropdownOpen(!isGuestDropdownOpen);
   };
 
   const handleApplyGuests = () => {
     setIsGuestDropdownOpen(false);
-    updateBookingInfo({ adults, children });
+    updateBookingInfo({ adults, children, rooms });
   };
 
   const handleSearch = async (e) => {
@@ -105,14 +114,15 @@ function BookingForm() {
         params: {
           checkinDate: checkIn.toISOString(),
           checkoutDate: checkOut.toISOString(),
+          rooms: rooms,
         },
       });
 
       if (response.data.available) {
-        updateBookingInfo({ checkIn, checkOut, adults, children });
+        updateBookingInfo({ checkIn, checkOut, adults, children, rooms });
         navigate("/bookings");
       } else {
-        console.log("Selected dates are not available. Please choose different dates.");
+        console.log("Selected dates or rooms are not available. Please choose different options.");
       }
     } catch (error) {
       console.log("An error occurred. Please try again.");
@@ -138,11 +148,6 @@ function BookingForm() {
             Check In
           </label>
           <div className="flex items-center gap-2">
-            {/* <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/571d9769611fbe06cad72c7a54fd5f7eedfa19f8753c2f5633f0973bd49e173a?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
-              alt=""
-              className="w-4 h-4"
-            /> */}
             <RiCalendarScheduleFill className='text-[#335064] w-4 h-4'/>
             <DatePicker
               id="checkIn"
@@ -164,11 +169,6 @@ function BookingForm() {
             Check Out
           </label>
           <div className="flex items-center gap-2">
-            {/* <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/f86afc0cd2f726681d661e344bc531a1f3c4f638c80b8f3b8d3026730e594a4b?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
-              alt=""
-              className="w-4 h-4"
-            /> */}
             <RiCalendarScheduleFill className='text-[#335064] w-4 h-4'/>
             <DatePicker
               id="checkOut"
@@ -186,14 +186,14 @@ function BookingForm() {
         <div className="hidden w-px md:block h-14 bg-zinc-200"></div>
 
         <div className="relative flex-1 w-full md:w-1/3">
-          <label className="text-sm font-medium text-neutral-500">Guest</label>
+          <label className="text-sm font-medium text-neutral-500">Guest & Rooms</label>
           <div 
             className="flex items-center p-2 rounded-md cursor-pointer"
             onClick={handleGuestDropdownToggle}
           >
             <IoPeopleSharp className='w-4 h-4 mr-2 text-[#335064]'/>
             <span className="text-base font-medium">
-              {adults} Adults, {children} Children
+              {adults} Adults, {children} Children, {rooms} {rooms === 1 ? 'Room' : 'Rooms'}
             </span>
           </div>
           {isGuestDropdownOpen && (
@@ -221,11 +221,22 @@ function BookingForm() {
                     <button type="button" onClick={() => handleChildrenChange("increment")} className="flex items-center justify-center w-8 h-8 text-gray-600 bg-gray-200 rounded-full hover:bg-gray-300">+</button>
                   </div>
                 </div>
+                 <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-medium">Rooms</h3>
+                    <p className="text-sm text-gray-500">From 1 to 4</p>
+                  </div>
+                  <div className="flex items-center md:gap-2">
+                    <button type="button" onClick={() => handleRoomsChange("decrement")} className="flex items-center justify-center w-8 h-8 text-gray-600 bg-gray-200 rounded-full hover:bg-gray-300">-</button>
+                    <span className="w-8 text-lg font-medium text-center">{rooms}</span>
+                    <button type="button" onClick={() => handleRoomsChange("increment")} className="flex items-center justify-center w-8 h-8 text-gray-600 bg-gray-200 rounded-full hover:bg-gray-300">+</button>
+                  </div>
+                </div>
               </div>
               <button
                 type="button"
                 onClick={handleApplyGuests}
-                className="w-full py-2 mt-4 text-white transition-colors duration-300 bg-[#335064] hover:bg-[#243947] rounded-md "
+                className="w-full py-2 mt-4 text-white transition-colors duration-300 bg-[#335064] hover:bg-[#243947] rounded-md"
               >
                 Apply
               </button>
@@ -238,11 +249,7 @@ function BookingForm() {
             type="submit"
             className="flex items-center gap-3 px-8 py-4 text-base font-medium text-white transition-colors duration-300 rounded-full bg-[#335064] hover:bg-[#243947]"
           >
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/aa64914cca97a3fae2c7790d2c452bfa83ddb2b2198d998ffa1b86cddf144d7f?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
-              alt=""
-              className="w-5 h-5"
-            />
+            <FaHotel className="w-5 h-5" />
             <span>Search</span>
           </button>
         </div>
@@ -250,6 +257,5 @@ function BookingForm() {
     </form>
   );
 }
-
 
 export default BookingForm;

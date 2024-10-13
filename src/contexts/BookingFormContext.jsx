@@ -16,6 +16,7 @@ const BookingProvider = ({ children }) => {
         checkOut: new Date(parsedBooking.checkOut) <= today ? tomorrow : new Date(parsedBooking.checkOut),
         adults: parsedBooking.adults || 2,
         children: parsedBooking.children || 0,
+        rooms: parsedBooking.rooms || 1, 
       };
     }
 
@@ -24,6 +25,7 @@ const BookingProvider = ({ children }) => {
       checkOut: tomorrow,
       adults: 2,
       children: 0,
+      rooms: 1, 
     };
   };
 
@@ -41,7 +43,7 @@ const BookingProvider = ({ children }) => {
     setBookingInfo(prevInfo => {
       const updatedInfo = { ...prevInfo, ...newInfo };
       
-      // Ensure checkIn and checkOut are valid Date objects
+     
       if (newInfo.checkIn) {
         updatedInfo.checkIn = new Date(newInfo.checkIn);
       }
@@ -49,10 +51,15 @@ const BookingProvider = ({ children }) => {
         updatedInfo.checkOut = new Date(newInfo.checkOut);
       }
 
-      // Ensure checkOut is after checkIn
+      
       if (updatedInfo.checkOut <= updatedInfo.checkIn) {
         updatedInfo.checkOut = new Date(updatedInfo.checkIn);
         updatedInfo.checkOut.setDate(updatedInfo.checkOut.getDate() + 1);
+      }
+
+      
+      if (newInfo.rooms !== undefined) {
+        updatedInfo.rooms = Math.max(1, Math.min(4, Number(newInfo.rooms))); 
       }
 
       return updatedInfo;

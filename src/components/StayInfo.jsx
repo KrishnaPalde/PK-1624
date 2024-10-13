@@ -1,8 +1,8 @@
 import React from "react";
 import { useBooking } from "../contexts/BookingFormContext";
-import { IoPeopleSharp } from "react-icons/io5";
+import { Users } from "lucide-react";
 
-function StayInfo({name,title,rating,price,images,totalReviews}) {
+function StayInfo({ name, title, rating, price, images, totalReviews }) {
   const { bookingInfo } = useBooking();
 
   if (!bookingInfo.checkIn) {
@@ -22,57 +22,51 @@ function StayInfo({name,title,rating,price,images,totalReviews}) {
       case 5:
         return "Excellent";
       default:
-        return "Unknown"; 
+        return "Unknown";
     }
   };
+
   return (
-    <>
-      <div className="flex w-full gap-6 text-neutral-900 max-md:max-w-full">
-        <img
-          loading="lazy"
-          src={images[0]}
-          alt="Hotel room"
-          className="object-contain shrink-0 my-auto rounded-xl aspect-[1.01] min-h-[120px] w-[121px]"
-        />
-        <div className="flex flex-col justify-center min-w-[240px] w-[304px]">
-          <div className="flex flex-col w-full">
-            <div className="text-base font-medium opacity-75">
-            Tranquil Trails
-            </div>
-            <div className="mt-1 text-xl font-semibold">
-              {name + " - " + title}
-            </div>
-          </div>
-          <div className="flex items-center w-full gap-2 mt-4 text-xs font-medium">
-            <div className="flex flex-col self-stretch w-10 my-auto whitespace-nowrap">
-              <div className="gap-1 self-stretch px-4 py-2.5 w-full rounded border border-[#335064]  border-solid min-h-[32px]">
-                {rating}
-              </div>
-            </div>
-            <div className="self-stretch my-auto">
-              <span className="font-bold">{getTitle()}</span> {totalReviews} reviews
-            </div>
-          </div>
+    <div className="flex flex-col">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold">Tranquil Trails</h2>
+          <p>
+            {name && title
+              ? `${name} - ${title}`
+              : "Room details not available"}
+          </p>
         </div>
+        {rating && (
+          <div className="flex items-center">
+            <span className="mr-2 font-bold">{rating.toFixed(1)}</span>
+            <span>
+              {getTitle()} ({totalReviews} reviews)
+            </span>
+          </div>
+        )}
       </div>
-      <hr className="w-full mt-4 bg-neutral-900 bg-opacity-30" />
-      <p className="mt-4 text-xs font-medium opacity-75 text-neutral-900 max-md:max-w-full">
+
+      {images && images.length > 0 && (
+        <img
+          src={images[0]}
+          alt="Room"
+          className="object-cover w-full h-48 mt-4 rounded-lg"
+        />
+      )}
+
+      <p className="mt-4">
         Unwind in comfort with a plush king bed and a private balcony
         overlooking the city.
       </p>
-      <div className="flex gap-1.5 py-2 mt-4 max-w-full text-sm font-bold leading-loose text-black w-[156px]6 items-center">
-        {/* <img
-          loading="lazy"
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/fdb1d85d49e1569920ef35bfc5528c005294340ccfcfb4f3d686a17386149aff?apiKey=e6b8c17325a24fb29c274ce450ea26a7&&apiKey=e6b8c17325a24fb29c274ce450ea26a7"
-          alt=""
-          className="object-contain w-4 shrink-0 aspect-square"
-        /> */}
-        <IoPeopleSharp className="object-contain w-4 h-4 shrink-0 aspect-square666"/>
-        <div className="grow shrink my-auto w-[131px]">
-        {bookingInfo.adults} Adults, {bookingInfo.children} Children
-        </div>
+
+      <div className="flex items-center mt-4">
+        <Users className="mr-2" />
+        <span>
+          {bookingInfo.adults} Adults, {bookingInfo.children} Children
+        </span>
       </div>
-    </>
+    </div>
   );
 }
 
