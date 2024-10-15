@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import SortingHeader from "./SortingHeader";
+import { useBooking } from "../contexts/BookingFormContext";
 import HotelCard from "./HotelCard";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -12,6 +12,8 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedRooms, setSelectedRooms] = useState([]);
+  const { bookingInfo } = useBooking();
+  const roomCount = bookingInfo.rooms || 1;
   const location = useLocation();
   const navigate = useNavigate();
   const process = import.meta.env;
@@ -74,26 +76,33 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
   };
 
   const handleRoomSelection = (room) => {
-    if (
-      selectedRooms.length === 0 ||
-      (selectedRooms.length > 0 &&
-        selectedRooms[selectedRooms.length - 1].id !== room.id)
-    ) {
-      setSelectedRooms([...selectedRooms, room]);
-    } else {
+    if (selectedRooms.includes(room)) {
       setSelectedRooms(
-        selectedRooms.filter((selectedRoom) => selectedRoom.id !== room.id)
+        selectedRooms.filter((selectedRoom) => selectedRoom !== room)
       );
+    } else {
+      setSelectedRooms([...selectedRooms, room]);
     }
   };
 
-  const handleNextClick = () => {
-    if (selectedRooms.length > 0) {
-      navigate(`/room/${selectedRooms[selectedRooms.length - 1].id}/details`, {
-        state: { selectedRooms },
-      });
-    }
-  };
+  const handleNextClick = (room) => {
+    const roomsToNavigate = selectedRooms.length > 0 ? selectedRooms : [room];
+    
+    const serializableRooms = roomsToNavigate.map(room => ({
+      id: room.id,
+      title: room.title,
+      name: room.name,
+      description: room.description,
+      images: room.images,
+      rating: room.rating,
+      price: isWeekend() && room.weekend ? room.weekend : room.price,
+      weekend: room.weekend,
+      totalReviews: room.totalReviews,
+      type: room.type 
+    }));
+  
+    navigate(`/room/${room.id}/details`, { state: { selectedRooms: serializableRooms } });
+  };  
 
   if (loading) {
     return (
@@ -158,7 +167,7 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
           transition={{ duration: 0.3 }}
           className="space-y-8"
         >
-          {currentCards.map((room) => (
+          {currentCards.map((room, index) => (
             <HotelCard
               key={room.id}
               id={room.id}
@@ -176,14 +185,15 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
               weekendPrice={room.weekend}
               isWeekend={isWeekend()}
               onSelect={handleRoomSelection}
-              isSelected={selectedRooms.some(
-                (selectedRoom) => selectedRoom.id === room.id
-              )}
+              onNext={handleNextClick}
+              isSelected={selectedRooms.includes(room)}
               isLastSelected={
                 selectedRooms.length > 0 &&
-                selectedRooms[selectedRooms.length - 1].id === room.id
+                selectedRooms[selectedRooms.length - 1] === room
               }
               room={room}
+              roomCount={roomCount}
+              isLastRoom={index === currentCards.length - 1}
             />
           ))}
         </motion.div>
@@ -226,7 +236,9 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
               ))}
             </div>
             <button
-              onClick={handleNextClick}
+              onClick={() =>
+                handleNextClick(selectedRooms[selectedRooms.length - 1])
+              }
               className="px-6 py-2 text-white transition-colors duration-300 bg-green-500 rounded-full hover:bg-green-600"
             >
               Next

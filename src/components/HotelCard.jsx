@@ -1,6 +1,5 @@
 import React from "react";
-import PaymentButton from '../components/PaymentButton';
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
 function HotelCard({
@@ -19,9 +18,12 @@ function HotelCard({
   isWeekend,
   totalReviews,
   onSelect,
+  onNext,
   isSelected,
   isLastSelected,
-  room
+  room,
+  roomCount,
+  isLastRoom
 }) {
   const navigate = useNavigate();
 
@@ -94,6 +96,46 @@ function HotelCard({
     }
   };
 
+  const renderActionButton = () => {
+    if (isLastRoom) {
+      return (
+        <button 
+          onClick={() => onNext(room)}
+          className="w-full px-6 py-2 text-sm font-medium text-white transition-colors duration-300 bg-green-500 rounded-full sm:w-auto hover:bg-green-600"
+        >
+          Continue
+        </button>
+      );
+    }
+
+    if (roomCount === 1) {
+      return (
+        <button 
+          onClick={() => onNext(room)}
+          className="w-full px-6 py-2 text-sm font-medium text-white transition-colors duration-300 bg-[#335064] rounded-full sm:w-auto hover:bg-[#243947]"
+        >
+          Next
+        </button>
+      );
+    }
+
+    return (
+      <button 
+        onClick={() => onSelect(room)}
+        className={`w-full px-6 py-2 text-sm font-medium text-white transition-colors duration-300 rounded-full sm:w-auto ${
+          isSelected
+            ? 'bg-green-500 hover:bg-green-600'
+            : 'bg-[#335064] hover:bg-[#243947]'
+        }`}
+        disabled={isLastSelected && !isSelected}
+      >
+        {isSelected ? 'Selected' : 'Select Room'}
+      </button>
+    );
+  };
+
+  const isDisabled = isLastSelected && !isSelected;
+
   return (
     <div className={`space-y-4 overflow-hidden transition-all duration-300 bg-white shadow-lg rounded-xl hover:shadow-xl ${isSelected ? 'border-2 border-blue-500' : ''}`}>
       <div className="sm:flex">
@@ -147,26 +189,14 @@ function HotelCard({
             </div>
           </div>
           <div className="flex flex-wrap items-center justify-between mt-6 space-y-2 sm:space-y-0">
-            <button 
-              onClick={handleCardClick}
-              className="w-full px-6 py-2 text-sm font-medium text-[#335064] transition-colors duration-300 bg-blue-100 rounded-full sm:w-auto hover:bg-blue-200"
-            >
-              View Details
-            </button>
-            <button 
-              onClick={() => onSelect(room)}
-              className={`w-full px-6 py-2 text-sm font-medium text-white transition-colors duration-300 rounded-full sm:w-auto ${
-                isSelected
-                  ? 'bg-green-500 hover:bg-green-600'
-                  : isLastSelected
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-[#335064] hover:bg-[#243947]'
-              }`}
-              disabled={isLastSelected && !isSelected}
-            >
-              {isSelected ? 'Selected' : 'Select Room'}
-            </button>
-          </div>
+        <button 
+          onClick={handleCardClick}
+          className="w-full px-6 py-2 text-sm font-medium text-[#335064] transition-colors duration-300 bg-blue-100 rounded-full sm:w-auto hover:bg-blue-200"
+        >
+          View Details
+        </button>
+        {renderActionButton()}
+      </div>
         </div>
       </div>
     </div>

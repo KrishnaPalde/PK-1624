@@ -78,12 +78,12 @@ const OffersCarousel = ({ onApplyCoupon }) => {
 
   const renderCouponCard = (coupon) => (
     
-    <Card className=" m-4 w-[350px] h-[100px] bg-white border-2 border-[#335064] border-dashed border-spacing-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <Card className=" m-4 md:w-[350px] h-[100px] bg-white border-2 border-[#335064] border-dashed border-spacing-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
       <CardHeader className="px-4 py-3">
         <CardTitle className="text-xl font-bold text-[#335064]">{coupon.code}</CardTitle>
         
       </CardHeader>
-      <CardContent className="flex justify-between items-center px-4 py-2">
+      <CardContent className="flex items-center justify-between px-4 py-2">
         <Badge variant="secondary" className="text-[#335064] border-[#335064]">
           {coupon.type}
         </Badge>
@@ -167,7 +167,7 @@ const OffersCarousel = ({ onApplyCoupon }) => {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto">
+    <div className="w-full mx-auto my-16 max-w-7xl">
       <Carousel className="w-full" plugins={[
         Autoplay({
           delay: 2000,
@@ -175,11 +175,11 @@ const OffersCarousel = ({ onApplyCoupon }) => {
       ]}>
         <CarouselContent>
           {coupons.map((coupon) => (
-            <CarouselItem key={coupon._id} className="md:basis-1/2 lg:basis-1/3">
+            <CarouselItem key={coupon._id} className=" md:basis-1/2 lg:basis-1/3 lg:pl-12">
               <div className="p-1">
                 <Dialog>
                   <DialogTrigger asChild>
-                    <div className="cursor-pointer">
+                    <div className="cursor-pointer ">
                       {renderCouponCard(coupon)}
                     </div>
                   </DialogTrigger>

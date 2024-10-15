@@ -12,6 +12,7 @@ const BookingConfirm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const roomData = location.state;
+  const rooms = location.state;
   // const id = useParams();
   // const {isCalled, setCalled} = useState(false);
 
@@ -47,7 +48,7 @@ const BookingConfirm = () => {
             <div>
                 <BookingConfirmTitle/>
                 <div className="mt-10">
-                    <BookingConfirmationCard {...roomData}/>
+                    <BookingConfirmationCard {...roomData}{...rooms}/>
                 </div>
                 <div className="mt-10">
                     <TermsAndConditions/>

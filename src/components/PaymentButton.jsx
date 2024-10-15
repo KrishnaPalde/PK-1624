@@ -5,7 +5,7 @@ import { useBooking } from '../contexts/BookingFormContext';
 import TransactionSpinner from './TransactionSpinner'; 
 const process = import.meta.env;
 
-const PaymentButton = ({ roomData, formData, adults, children, amount, priceDetails }) => {
+const PaymentButton = ({ roomData, formData, adults, children, amount, priceDetails,calculateNights }) => {
   const navigate = useNavigate();
   const { bookingInfo } = useBooking();
   const location = useLocation();
@@ -89,7 +89,7 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, priceDeta
             const idn = result.id;
             await axios.get(`${process.VITE_HOST_URL}/api/booking-confirmation/${idn}`);
             setIsProcessing(false);
-            navigate(`/booking-confirm`, { state: { roomData, formData, bookingId: idn } });
+            navigate(`/room/bookingconfirm`, { state: { roomData, formData, bookingId: idn, rooms } });
           } else {
             setIsProcessing(false);
             alert('Payment verification failed!');

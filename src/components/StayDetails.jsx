@@ -7,8 +7,14 @@ import PriceDetail from "./PriceDetail";
 import DateDisplay from "./DateDisplay";
 import { HiMiniHomeModern } from "react-icons/hi2";
 import { Dialog, DialogContent, DialogTitle, DialogClose } from "./ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
-import { Check } from "lucide-react";
+import { Check,ChevronDown } from "lucide-react";
 
 const process = import.meta.env;
 
@@ -42,9 +48,7 @@ function StayDetails({ formData }) {
     tax: 0,
     serviceCharges: 0
   });
-  const [showCouponModal, setShowCouponModal] = useState(false);
   const [coupons, setCoupons] = useState([]);
-  const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [discountAmount, setDiscountAmount] = useState(0);
 
@@ -64,6 +68,7 @@ function StayDetails({ formData }) {
       };
 
       fetchGlobalSettings();
+      fetchCoupons();
     }
   }, [navigate, selectedRooms]);
 
@@ -134,7 +139,6 @@ function StayDetails({ formData }) {
 
       setAppliedCoupon(response.data.appliedCoupon);
       setDiscountAmount(response.data.discountAmount);
-      setShowCouponModal(false);
     } catch (error) {
       console.error("Failed to apply coupon", error);
     }
@@ -180,25 +184,28 @@ function StayDetails({ formData }) {
           Duration of stay: <span className="font-bold">{calculateNights} night{calculateNights === 1 ? '' : 's'}</span>
         </p>
 
-        <div className="flex flex-col items-center p-2 mt-4 bg-white border border-gray-300 rounded-lg shadow-sm">
+        <div className="flex flex-col items-center p-2 mt-4 bg-white border border-gray-300 rounded-lg shadow-sm ">
           <div className="flex items-center w-full">
-            <input
-              type="text"
-              placeholder="Enter your coupon code"
-              className="flex-grow h-10 px-3 text-gray-700 border border-transparent focus:border-[#335064] focus:ring-2 focus:ring-[#335064] rounded-md transition duration-200"
-              value={couponCode}
-              onChange={(e) => setCouponCode(e.target.value)}
-            />
-            <Button
-              onClick={() => {
-                fetchCoupons();
-                setShowCouponModal(true);
-              }}
-              className="ml-2 w-32 bg-[#335064] text-white hover:bg-[#284c5e] transition duration-200"
-              disabled={!!appliedCoupon}
-            >
-              {appliedCoupon ? "Applied" : "Apply"}
-            </Button>
+            <DropdownMenu className="w-full">
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="justify-between w-full">
+                  {appliedCoupon ? `Applied: ${appliedCoupon}` : "Select a coupon"}
+                  <ChevronDown className="w-4 h-4 ml-2" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-white w-96 ">
+                {coupons.map((coupon) => (
+                  <DropdownMenuItem
+                    key={coupon._id}
+                    onClick={() => applyCoupon(coupon.code)}
+                    className="flex items-center justify-between cursor-pointer hover:bg-gray-800 "
+                  >
+                    <span>{coupon.code}</span>
+                    {appliedCoupon === coupon.code && <Check className="w-4 h-4 ml-2" />}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           {appliedCoupon && (
             <div className="flex items-center mt-2">
@@ -251,33 +258,10 @@ function StayDetails({ formData }) {
             adults={bookingInfo.adults}
             children={bookingInfo.children}
             priceDetails={priceDetails}
+            calculateNights={calculateNights}
           />
         </div>
       </div>
-
-      <Dialog open={showCouponModal} onOpenChange={setShowCouponModal}>
-        <DialogContent>
-          <DialogTitle>Available Coupons</DialogTitle>
-          {coupons.map((coupon) => (
-            <div key={coupon._id} className="flex items-center justify-between p-2 border-b">
-              <div>
-                <h3 className="font-bold">{coupon.code}</h3>
-                <p>{coupon.description}</p>
-              </div>
-              {appliedCoupon === coupon.code ? (
-                <Button className="bg-green-500 hover:bg-green-600" disabled>
-                  <Check className="w-4 h-4 mr-2" /> Applied
-                </Button>
-              ) : (
-                <Button onClick={() => applyCoupon(coupon.code)}>Apply</Button>
-              )}
-            </div>
-          ))}
-          <DialogClose asChild>
-            <Button className="mt-4">Close</Button>
-          </DialogClose>
-        </DialogContent>
-      </Dialog>
     </section>
   );
 }

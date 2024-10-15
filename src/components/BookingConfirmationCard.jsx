@@ -1,9 +1,9 @@
 import * as React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useBooking } from "../contexts/BookingFormContext";
-import profile from '../assets/profile.png';
+import profile from "../assets/profile.png";
 import { HiMiniHomeModern } from "react-icons/hi2";
-import logo from '../assets/logofull.png';
+import logo from "../assets/logofull.png";
 
 const CheckInOutInfo = ({ time, label }) => (
   <div className="flex items-center gap-2">
@@ -29,20 +29,26 @@ const DateInfo = ({ date, label }) => (
 
 const HotelLogo = () => (
   <div className="flex flex-col items-center justify-center w-full h-full bg-white">
-    <img src={logo} alt="Tranquil Trails" className="object-contain max-w-full max-h-full" />
+    <img
+      src={logo}
+      alt="Tranquil Trails"
+      className="object-contain max-w-full max-h-full"
+    />
   </div>
 );
 
 function BookingConfirmationCard() {
   const { bookingInfo } = useBooking();
   const location = useLocation();
-  const {roomData, formData} = location.state || {};
+  const { roomData, formData, rooms} = location.state || {};
+
+  console.log(rooms);
 
   const formatDate = (date) => {
-    return date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     });
   };
 
@@ -67,12 +73,22 @@ function BookingConfirmationCard() {
             ))}
             <div className="flex flex-col items-center mt-4 w-9 rounded rotate-[1.0183166411256147e-16rad]">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <path d="M10 10 L50 50 L90 10 M50 50 L50 90" stroke="white" stroke-width="2" fill="none"/>
-</svg>
-              <HiMiniHomeModern className="w-8 h-8 mx-4 text-white"/>
+                <path
+                  d="M10 10 L50 50 L90 10 M50 50 L50 90"
+                  stroke="white"
+                  stroke-width="2"
+                  fill="none"
+                />
+              </svg>
+              <HiMiniHomeModern className="w-8 h-8 mx-4 text-white" />
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <path d="M10 90 L50 50 L90 90 M50 50 L50 10" stroke="white" stroke-width="2" fill="none"/>
-</svg>
+                <path
+                  d="M10 90 L50 50 L90 90 M50 50 L50 10"
+                  stroke="white"
+                  stroke-width="2"
+                  fill="none"
+                />
+              </svg>
             </div>
           </div>
         </aside>
@@ -86,13 +102,15 @@ function BookingConfirmationCard() {
                   alt="Profile"
                   className="object-contain w-12 rounded-full shrink-0 aspect-square"
                 />
-                <div>
-                  {formData.firstName + " " + formData.lastName}
-                   </div>
+                <div>{formData.firstName + " " + formData.lastName}</div>
               </div>
-              <div className="text-sm text-right">
-                {roomData.name + " - " + roomData.title}
-                 
+              <div className="text-lg font-medium text-right">
+                {rooms.map((room) => (
+                  <div key={room.id}>
+                    {room.name}
+                    <br/>
+                  </div>
+                ))}
               </div>
             </div>
           </header>
@@ -108,10 +126,10 @@ function BookingConfirmationCard() {
             </div>
             <footer className="flex flex-wrap items-center self-end justify-between w-full gap-5 mt-auto">
               <div className="flex flex-col justify-center whitespace-nowrap text-neutral-900">
-                <div className="text-3xl font-semibold">EK</div>
-                <div className="mt-1 text-xs font-medium opacity-60">
+                <div className="text-xl font-semibold">Enjoy your holidays!!</div>
+                {/* <div className="mt-1 text-xs font-medium opacity-60">
                   ABC12345
-                </div>
+                </div> */}
               </div>
               <div className="flex items-center justify-center p-4">
                 <div className="w-32 h-16 bg-gray-200"></div>
