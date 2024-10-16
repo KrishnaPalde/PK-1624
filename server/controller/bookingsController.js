@@ -444,27 +444,26 @@ const getRoomDetailsForm = async (req, res) => {
 //   }
 // };
 
-const addRoom = async(req,res) =>{
-  try{
-    const { name, title, description, price, weekend,images,rating } = req.body;
+const addRoom = async (req, res) => {
+  try {
+    const { name, title, description, price, weekend, images, rating } =
+      req.body;
     const newRoom = new Room({
-            id: Date.now().toString(),
-            name,
-            title,
-            description,
-            price,
-            weekend,
-            images,
-            rating,
-          });
-          const savedRoom = await newRoom.save();
+      id: Date.now().toString(),
+      name,
+      title,
+      description,
+      price,
+      weekend,
+      images,
+      rating,
+    });
+    const savedRoom = await newRoom.save();
     res.status(200).json(savedRoom);
-  }
-  
-  catch (error) {
+  } catch (error) {
     res.status(400).json({ message: error.message });
   }
-}
+};
 
 const updateRoomStatuses = async (req, res) => {
   try {
@@ -489,10 +488,14 @@ const updateRoomStatuses = async (req, res) => {
       if (booking) {
         if (booking.checkInDate.toDateString() === currentDate.toDateString()) {
           newStatus = "Check-in Today";
-          statusDetails = `Check-in today, check-out on ${booking.checkOutDate.toISOString().split("T")[0]}`;
+          statusDetails = `Check-in today, check-out on ${
+            booking.checkOutDate.toISOString().split("T")[0]
+          }`;
         } else {
           newStatus = "Occupied";
-          statusDetails = `Occupied until ${booking.checkOutDate.toISOString().split("T")[0]}`;
+          statusDetails = `Occupied until ${
+            booking.checkOutDate.toISOString().split("T")[0]
+          }`;
         }
         occupiedRooms++;
       } else {
@@ -503,7 +506,9 @@ const updateRoomStatuses = async (req, res) => {
 
         if (futureBooking) {
           newStatus = "Reserved";
-          statusDetails = `Reserved from ${futureBooking.checkInDate.toISOString().split("T")[0]}`;
+          statusDetails = `Reserved from ${
+            futureBooking.checkInDate.toISOString().split("T")[0]
+          }`;
           reservedRooms++;
         }
       }
@@ -525,7 +530,9 @@ const updateRoomStatuses = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in updateRoomStatuses:", error);
-    res.status(500).json({ message: "Error updating room statuses", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error updating room statuses", error: error.message });
   }
 };
 
@@ -541,6 +548,7 @@ const deleteRoom = async (req, res) => {
     if (!result) {
       return res.status(404).json({ message: "Room not found" });
     }
+
     res.status(200).json({ message: "Room deleted successfully" });
   } catch (error) {
     console.error("Error deleting room:", error);

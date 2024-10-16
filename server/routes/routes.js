@@ -93,6 +93,6 @@ router.post("/offers/apply", applyCoupon);
 router.delete("/admin/offers/delete/:couponCode", deleteCoupon);
 router.patch("/admin/offers/deactivate/:couponCode", deactivateCoupon);
 router.get("/offers/active", getAllActiveCoupons);
-router.get("/offers/all-coupons",getAllCoupons);
+router.get("/offers/all-coupons", getAllCoupons);
 
 module.exports = router;

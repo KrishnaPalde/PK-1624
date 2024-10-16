@@ -134,8 +134,8 @@ const generatePDF = async (bid) => {
   console.log(bid);
 
   const booking = await Booking.findOne({ bookingId: bid });
-  const room = await Room.findOne({ id: booking.roomId });
-  const roomName = room ? room.name : "Unknown Room";
+  // const room = await Room.findOne({ id: booking.roomId });
+  // const roomName = room ? room.name : "Unknown Room";
 
   const bookingDetails = {
     bookingId: "#" + booking.bookingId.slice(booking.bookingId.length - 5),
@@ -155,13 +155,20 @@ const generatePDF = async (bid) => {
       getMonthAbbreviation(booking.checkOutDate.getMonth() + 1) +
       " " +
       booking.checkOutDate.getFullYear(),
-    roomType: roomName,
+    // roomType: roomName,
+    noOfGuest:
+      `${booking.numberOfAdults} Adult(s),` + booking.numberOfChildren == 0
+        ? ""
+        : ` ${booking.numberOfChildren} Children`,
     guestName: booking.firstName + " " + booking.lastName,
     email: booking.email,
     contactNumber: booking.phoneNumber,
     subTotal: booking.paymentBreakdown[0].amount,
     taxes: booking.paymentBreakdown[1].amount,
     serviceCharges: booking.paymentBreakdown[2].amount,
+    discountAmount: Math.abs(booking.paymentBreakdown[3].amount).toLocaleString(
+      "en-IN"
+    ),
     totalAmount: booking.totalPayment,
   };
 
@@ -282,6 +289,21 @@ const generatePDF = async (bid) => {
             font-size: 16px;
             margin-top: 20px;
         }
+        
+        a:link
+{
+    color:#FFFFFF;
+}
+
+a:visited
+{
+    color:#FFFFFF;
+}
+
+a:hover 
+{
+    color:#FFFFFF;
+}
 
         .button:hover {
             background-color: #0056b3;
@@ -295,7 +317,7 @@ const generatePDF = async (bid) => {
 
         <!-- Header -->
         <div class="header">
-            <img src="./logofull.png" alt="Company Logo">
+            <img src="https://firebasestorage.googleapis.com/v0/b/tranquil-trails-70973.appspot.com/o/logo%2Flogofull.png?alt=media&token=d8bdfa41-72d4-400c-a882-b4e93058c889" alt="Company Logo">
             <h1>Booking Confirmation</h1>
         </div>
 
@@ -321,10 +343,7 @@ const generatePDF = async (bid) => {
                         <th>Check-out Date:</th>
                         <td>${bookingDetails.checkOutDate}</td>
                     </tr>
-                    <tr>
-                        <th>Room Type:</th>
-                        <td>${bookingDetails.roomType}</td>
-                    </tr>
+                    
                     <tr>
                         <th>Total Amount:</th>
                         <td>₹${bookingDetails.totalAmount}</td>
@@ -474,6 +493,7 @@ const generatePDF = async (bid) => {
       ["Name", bookingDetails.guestName],
       ["Email", bookingDetails.email],
       ["Contact Number", bookingDetails.contactNumber],
+      ["No. of Guests", bookingDetails.noOfGuest],
     ]);
 
     doc.moveDown(1);
@@ -490,6 +510,7 @@ const generatePDF = async (bid) => {
       ["Subtotal", `${bookingDetails.subTotal.toFixed(2)}`],
       ["Taxes", `${bookingDetails.taxes.toFixed(2)}`],
       ["Service Fee", `${bookingDetails.serviceCharges.toFixed(2)}`],
+      ["Discount", `${bookingDetails.discountAmount}`],
       ["Total Amount", `${bookingDetails.totalAmount.toFixed(2)} INR`],
     ]);
 

@@ -73,12 +73,12 @@ const getAllActiveCoupons = async (req, res) => {
   }
 };
 
-const getAllCoupons = async (req,res) => {
-  try{
+const getAllCoupons = async (req, res) => {
+  try {
     const coupons = await Coupon.find({});
     res.status(200).json(coupons);
-  } catch (error){
-      res.status(500).json({message: "Error fetching coupons", error});
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching coupons", error });
   }
 };
 

@@ -48,6 +48,7 @@ function StayDetails({ formData }) {
     tax: 0,
     serviceCharges: 0
   });
+  const [couponError , setCouponError] = useState('');
   const [coupons, setCoupons] = useState([]);
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [discountAmount, setDiscountAmount] = useState(0);
@@ -137,9 +138,19 @@ function StayDetails({ formData }) {
         },
       });
 
-      setAppliedCoupon(response.data.appliedCoupon);
-      setDiscountAmount(response.data.discountAmount);
+     
+        setAppliedCoupon(response.data.appliedCoupon);
+        setDiscountAmount(response.data.discountAmount);
+      
+
+      
     } catch (error) {
+      console.log(error);
+      if(error.response.status == 400){
+        setCouponError(error.response.data.message);
+      } else {
+        // alert("Error Applying Coupon");
+        }
       console.error("Failed to apply coupon", error);
     }
   };
@@ -221,6 +232,21 @@ function StayDetails({ formData }) {
               </span>
             </div>
           )}
+          {couponError && (
+  <div className="flex items-center mt-2">
+    <span className="font-medium text-red-600">
+      {couponError}
+    </span>
+    <span 
+      onClick={() => setCouponError('')} 
+      className="ml-4 text-gray-600 cursor-pointer"
+      aria-hidden="true"
+    >
+      &#10005;
+    </span>
+  </div>
+)}
+
         </div>
 
         <p className="mt-4 text-base font-medium text-neutral-900">

@@ -15,6 +15,8 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, priceDeta
   const baseFare = priceDetails.find(detail => detail.label.startsWith('Base Fare'))?.amount || 0;
   const taxes = priceDetails.find(detail => detail.label === 'Taxes')?.amount || 0;
   const serviceFee = priceDetails.find(detail => detail.label === 'Service Fee')?.amount || 0;
+  const discount = Math.abs(priceDetails.find(detail => detail.label === 'Discount')?.amount || 0).toLocaleString('en-IN');
+  
 
   useEffect(() => {
     const fetchGlobalSettings = async () => {
@@ -79,6 +81,7 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, priceDeta
               baseFare,
               taxes,
               serviceFee,
+              discount,
               bookingDetails
             })
           });

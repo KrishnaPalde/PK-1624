@@ -131,9 +131,9 @@ function BookingConfirmationCard() {
                   ABC12345
                 </div> */}
               </div>
-              <div className="flex items-center justify-center p-4">
+              {/* <div className="flex items-center justify-center p-4">
                 <div className="w-32 h-16 bg-gray-200"></div>
-              </div>
+              </div> */}
             </footer>
           </main>
         </div>
