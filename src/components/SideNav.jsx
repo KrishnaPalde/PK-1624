@@ -62,7 +62,7 @@ const SideNav = () => {
         }`}
       >
         <div className="flex items-center gap-2 mb-8">
-          <img src={logo} alt="logo" className='object-cover w-10 h-10'/>
+          <img loading="lazy" src={logo} alt="logo" className='object-cover w-10 h-10'/>
           <h2 className="text-2xl font-semibold text-[#335064]">Tranquil Trails</h2>
           {screenSize !== 'large' && (
             <button

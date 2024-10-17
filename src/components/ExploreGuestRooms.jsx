@@ -2,19 +2,25 @@ import React from "react";
 import QuoteCard from "./QuoteCard";
 import GuestCard from "./GuestCard";
 import { Link } from "react-router-dom";
+import sunset4 from "../assets/Sunset4.jpg";
+import guest1 from "../assets/guest1.jpg";
+import guest2 from "../assets/guest2.jpg";
 
 const ExploreGuestRooms = () => {
   const images = [
     {
-      src: "https://cdn.builder.io/api/v1/image/assets/TEMP/a9c642f5a39a60fc86bfeb82e09551ed23c47f35ef4ea5de69a1f07b5dd9f4b2?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
+      // src: "https://cdn.builder.io/api/v1/image/assets/TEMP/a9c642f5a39a60fc86bfeb82e09551ed23c47f35ef4ea5de69a1f07b5dd9f4b2?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
+      src: guest1,
       alt: "Guest room image 1",
     },
     {
-      src: "https://cdn.builder.io/api/v1/image/assets/TEMP/dfe6ebef0b4a9a9a658f251f74f1ab676dbd978f48e741d4d3bbf30dbc5d224d?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
+      // src: "https://cdn.builder.io/api/v1/image/assets/TEMP/dfe6ebef0b4a9a9a658f251f74f1ab676dbd978f48e741d4d3bbf30dbc5d224d?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
+      src: guest2,
       alt: "Guest room image 2",
     },
     {
-      src: "https://cdn.builder.io/api/v1/image/assets/TEMP/d15c067a2a2bb58bc5f125c24be11998a9414f4eb6a71e01e25af5d3ec71831e?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
+      // src: "https://cdn.builder.io/api/v1/image/assets/TEMP/d15c067a2a2bb58bc5f125c24be11998a9414f4eb6a71e01e25af5d3ec71831e?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc",
+      src: sunset4,
       alt: "Guest room image 3",
     },
   ];

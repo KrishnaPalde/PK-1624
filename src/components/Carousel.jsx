@@ -9,15 +9,13 @@ import Chill from "../assets/chill.jpg";
 import Wedding from "../assets/wedding.jpg";
 import Pool from "../assets/pool.jpg";
 import Spa from "../assets/spa.jpg";
-import Restaurant from "../assets/restaurant.jpg";
+import work from "../assets/work.jpg";
+import entertainment from "../assets/entertainment.jpg";
+import enjoy from "../assets/enjoy.jpg";
+import family from "../assets/family.jpg";
+import read from "../assets/read.jpg";
+import rest from "../assets/rest.jpg";
 
-const images = [
-  { src: Chill, caption: "Chill" },
-  { src: Wedding, caption: "Wedding" },
-  { src: Pool, caption: "Pool" },
-  { src: Spa, caption: "Spa" },
-  { src: Restaurant, caption: "Restaurant" },
-];
 
 export const data = [
   {
@@ -25,27 +23,27 @@ export const data = [
     title: "Chill",
   },
   {
-    cover: Wedding,
+    cover: enjoy,
     title: "Enjoy",
   },
   {
-    cover: Pool,
+    cover: family,
     title: "Family Time",
   },
   {
-    cover: Spa,
+    cover: read,
     title: "Read",
   },
   {
-    cover: Restaurant,
+    cover: work,
     title: "Work",
   },
   {
-    cover: Pool,
+    cover: rest,
     title: "Rest",
   },
   {
-    cover: Spa,
+    cover: entertainment,
     title: "Entertainment",
   },
   // {

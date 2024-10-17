@@ -4,8 +4,6 @@ import axios from 'axios';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "./ui/card";
@@ -23,7 +21,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -69,25 +66,19 @@ const OffersCarousel = ({ onApplyCoupon }) => {
   }
 
   if (coupons.length === 0) {
-    return (
-      <div className="p-4 text-center text-gray-500">
-        No coupon offers available at the moment.
-      </div>
-    );
+    return null; 
   }
 
   const renderCouponCard = (coupon) => (
-    
-    <Card className=" m-4 md:w-[350px] h-[100px] bg-white border-2 border-[#335064] border-dashed border-spacing-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <CardHeader className="px-4 py-3">
-        <CardTitle className="text-xl font-bold text-[#335064]">{coupon.code}</CardTitle>
-        
+    <Card className="h-[100px] bg-white border-2 border-[#335064] border-dashed shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <CardHeader className="px-3 py-2">
+        <CardTitle className="text-lg font-bold text-[#335064]">{coupon.code}</CardTitle>
       </CardHeader>
-      <CardContent className="flex items-center justify-between px-4 py-2">
-        <Badge variant="secondary" className="text-[#335064] border-[#335064]">
+      <CardContent className="flex items-center justify-between px-3 py-1">
+        <Badge variant="secondary" className="text-[#335064] border-[#335064] text-xs">
           {coupon.type}
         </Badge>
-        <p className="text-lg font-semibold text-[#335064]">
+        <p className="text-sm font-semibold text-[#335064]">
           {coupon.discountType === "percentage"
             ? `${coupon.discountValue}% OFF`
             : `₹${coupon.discountValue} OFF`}
@@ -95,39 +86,38 @@ const OffersCarousel = ({ onApplyCoupon }) => {
       </CardContent>
     </Card>
   );
-  
 
   const renderCouponDetails = (coupon) => (
-    <div className="p-6 bg-white rounded-lg shadow-xl">
-      <h2 className="mb-4 text-3xl font-bold text-[#335064]">{coupon.code}</h2>
-      <p className="mb-4 text-lg text-gray-700">{coupon.description}</p>
-      <div className="grid grid-cols-2 gap-4 mb-6">
+    <div className="p-4 bg-white rounded-lg shadow-xl">
+      <h2 className="mb-3 text-2xl font-bold text-[#335064]">{coupon.code}</h2>
+      <p className="mb-3 text-sm text-gray-700">{coupon.description}</p>
+      <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="flex items-center">
-          <PercentIcon className="mr-2 text-[#335064]" />
-          <span>
+          <PercentIcon className="mr-2 text-[#335064] w-4 h-4" />
+          <span className="text-sm">
             {coupon.discountType === "percentage"
               ? `${coupon.discountValue}% OFF`
               : `₹${coupon.discountValue} OFF`}
           </span>
         </div>
         <div className="flex items-center">
-          <TagIcon className="mr-2 text-[#335064]" />
-          <span>{coupon.type}</span>
+          <TagIcon className="mr-2 text-[#335064] w-4 h-4" />
+          <span className="text-sm">{coupon.type}</span>
         </div>
         <div className="flex items-center">
-          <CalendarIcon className="mr-2 text-[#335064]" />
-          <span>
+          <CalendarIcon className="mr-2 text-[#335064] w-4 h-4" />
+          <span className="text-sm">
             Valid until: {new Date(coupon.expirationDate).toLocaleDateString()}
           </span>
         </div>
       </div>
       {renderCouponConditions(coupon)}
-      {/* <Button
-        className="w-full mt-4 bg-[#335064] text-white hover:bg-[#2a4a57]"
+      <Button
+        className="w-full mt-3 bg-[#335064] text-white hover:bg-[#2a4a57] text-sm"
         onClick={() => onApplyCoupon(coupon.code)}
       >
         Apply Coupon
-      </Button> */}
+      </Button>
     </div>
   );
 
@@ -159,41 +149,42 @@ const OffersCarousel = ({ onApplyCoupon }) => {
         conditionText = "No special conditions";
     }
     return (
-      <div className="p-4 bg-purple-100 rounded-lg">
-        <h3 className="mb-2 font-semibold text-purple-700">Conditions:</h3>
-        <p>{conditionText}</p>
+      <div className="p-3 bg-purple-100 rounded-lg">
+        <h3 className="mb-1 text-sm font-semibold text-purple-700">Conditions:</h3>
+        <p className="text-xs">{conditionText}</p>
       </div>
     );
   };
 
   return (
-    <div className="w-full mx-auto my-16 max-w-7xl">
-      <Carousel className="w-full" plugins={[
-        Autoplay({
-          delay: 2000,
-        }),
-      ]}>
-        <CarouselContent>
+    <div className="w-full px-4 mx-auto my-8 max-w-7xl">
+      <Carousel
+        className="w-full"
+        plugins={[
+          Autoplay({
+            delay: 3000,
+          }),
+        ]}
+      >
+        <CarouselContent className="-ml-2 md:-ml-4">
           {coupons.map((coupon) => (
-            <CarouselItem key={coupon._id} className=" md:basis-1/2 lg:basis-1/3 lg:pl-12">
-              <div className="p-1">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <div className="cursor-pointer ">
-                      {renderCouponCard(coupon)}
-                    </div>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Coupon Details</DialogTitle>
-                      <DialogDescription>
-                        Get more information about this offer and how to apply it.
-                      </DialogDescription>
-                    </DialogHeader>
-                    {renderCouponDetails(coupon)}
-                  </DialogContent>
-                </Dialog>
-              </div>
+            <CarouselItem key={coupon._id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/3">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div className="cursor-pointer">
+                    {renderCouponCard(coupon)}
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Coupon Details</DialogTitle>
+                    <DialogDescription>
+                      Get more information about this offer and how to apply it.
+                    </DialogDescription>
+                  </DialogHeader>
+                  {renderCouponDetails(coupon)}
+                </DialogContent>
+              </Dialog>
             </CarouselItem>
           ))}
         </CarouselContent>

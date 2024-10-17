@@ -317,7 +317,7 @@ a:hover
 
         <!-- Header -->
         <div class="header">
-            <img src="https://firebasestorage.googleapis.com/v0/b/tranquil-trails-70973.appspot.com/o/logo%2Flogofull.png?alt=media&token=d8bdfa41-72d4-400c-a882-b4e93058c889" alt="Company Logo">
+            <img loading="lazy" src="https://firebasestorage.googleapis.com/v0/b/tranquil-trails-70973.appspot.com/o/logo%2Flogofull.png?alt=media&token=d8bdfa41-72d4-400c-a882-b4e93058c889" alt="Company Logo">
             <h1>Booking Confirmation</h1>
         </div>
 

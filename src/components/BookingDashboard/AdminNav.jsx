@@ -254,6 +254,7 @@ function AdminNav({ title }) {
               >
                 {typeof item.icon === "string" ? (
                   <img
+                  loading="lazy"
                     src={item.icon}
                     className="object-cover w-8 h-8"
                     alt={item.alt}

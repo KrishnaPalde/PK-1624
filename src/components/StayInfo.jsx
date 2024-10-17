@@ -49,6 +49,7 @@ function StayInfo({ name, title, rating, price, images, totalReviews }) {
 
       {images && images.length > 0 && (
         <img
+        loading="lazy"
           src={images[0]}
           alt="Room"
           className="object-cover w-full h-48 mt-4 rounded-lg"

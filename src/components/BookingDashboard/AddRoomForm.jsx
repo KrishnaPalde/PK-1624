@@ -144,6 +144,7 @@ function AddRoomForm({ onSubmit, onCancel }) {
             {room.images.map((image, index) => (
               <div key={index} className="relative group">
                 <img
+                loading="lazy"
                   src={URL.createObjectURL(image)}
                   alt={`Room image ${index + 1}`}
                   className="object-cover w-24 h-24 rounded-lg shadow-md"

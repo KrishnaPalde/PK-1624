@@ -25,6 +25,7 @@ function SelectedRooms({ rooms }) {
       {rooms.map((room, index) => (
         <div key={index} className="flex items-center p-2 mb-4 bg-gray-100 rounded-lg">
           <img
+          loading="lazy"
             src={room.images[0]}
             alt={room.name}
             className="object-cover w-24 h-24 mr-4 rounded-md"

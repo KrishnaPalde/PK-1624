@@ -148,6 +148,7 @@ function HotelCard({
       <div className="sm:flex">
         <div className="relative sm:w-2/5 md:w-1/3">
           <img
+          loading="lazy"
             src={images[0]}
             alt={title}
             className="object-cover w-full h-48 sm:h-full"

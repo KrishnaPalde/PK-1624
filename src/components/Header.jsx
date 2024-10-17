@@ -24,12 +24,14 @@ function Header() {
   return (
     <header className="relative z-50 w-full bg-white bg-opacity-0">
       <div className="flex items-center justify-between p-4">
+        <Link to="/">
         <div className="flex items-center justify-center gap-2 text-xl font-extrabold text-black">
           <div className="shrink-0 rounded-full h-[35px] w-[45px] flex items-center justify-center ">
-            <img src={logo} alt="logo" className="w-[9rem] h-[3rem] object-cover"/>
+            <img loading="lazy" src={logo} alt="logo" className="w-[9rem] h-[3rem] object-cover"/>
             </div>
           <div>Tranquil Trails</div>
         </div>
+        </Link>
         <div className="flex items-center md:hidden">
           <button onClick={toggleMenu} className="text-2xl focus:outline-none">
             {isOpen ? <FiX className="text-black" /> : <FiMenu className="text-black" />}

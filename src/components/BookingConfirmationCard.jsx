@@ -30,6 +30,7 @@ const DateInfo = ({ date, label }) => (
 const HotelLogo = () => (
   <div className="flex flex-col items-center justify-center w-full h-full bg-white">
     <img
+      loading="lazy"
       src={logo}
       alt="Tranquil Trails"
       className="object-contain max-w-full max-h-full"

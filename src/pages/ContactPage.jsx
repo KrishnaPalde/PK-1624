@@ -15,6 +15,7 @@ const ImageLayout = () => {
     <div className="relative w-full p-4 mt-8 rounded-lg h-[600px]" data-aos="fade-left"> 
       <div className="absolute top-0 left-0 w-2/3 overflow-hidden bg-white rounded-lg shadow-lg h-5/6"> 
         <img 
+        loading="lazy"
           src={img1} 
           alt="Interior design" 
           className="object-cover w-full h-full"
@@ -22,6 +23,7 @@ const ImageLayout = () => {
       </div>
       <div className="absolute bottom-0 w-1/2 overflow-hidden bg-white rounded-lg shadow-lg top-20 right-20 h-4/5"> 
         <img 
+        loading="lazy"
           src={img2} 
           alt="Staircase design" 
           className="object-cover w-full h-full"
