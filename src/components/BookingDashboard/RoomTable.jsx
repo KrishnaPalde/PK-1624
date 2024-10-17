@@ -224,12 +224,6 @@ function RoomTable({ addRoom }) {
                   scope="col"
                   className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
                 >
-                  Amenities
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-                >
                   Weekday Price
                 </th>
                 <th
@@ -256,15 +250,12 @@ function RoomTable({ addRoom }) {
                   <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                     {room.name}
                   </td>
-                  <td className="max-w-xl px-6 py-4 text-sm text-gray-500 min-w-sm">
-                    <div className="break-words whitespace-normal">
+                  <td className="max-w-lg px-6 py-4 text-sm text-gray-500 min-w-sm">
+                    <div className="text-justify break-words whitespace-normal">
                       {room.description}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                    {room.amenities.join(", ")}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                  <td className="px-6 py-4 text-sm text-left text-gray-500 whitespace-nowrap">
                     ₹{room.price}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
@@ -567,7 +558,7 @@ export default function App() {
 
        var imageURL = new Array();
       
-
+      console.log("hi" + imageURL);
       for (const [i, image] of newRoom.images.entries()) {
         const storageRef = ref(
           storage,

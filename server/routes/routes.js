@@ -49,6 +49,7 @@ const {
   deactivateCoupon,
   getAllActiveCoupons,
   getAllCoupons,
+  updateCoupon,
 } = require("../controller/couponController");
 
 const router = express.Router();
@@ -90,9 +91,10 @@ router.put("/admin/:adminId/reset-password", resetPasswordAdmin);
 router.post("/admin/create-admin", createAdmin);
 router.post("/admin/offers/create-coupon", createCoupon);
 router.post("/offers/apply", applyCoupon);
-router.delete("/admin/offers/delete/:couponCode", deleteCoupon);
+router.delete("/admin/offers/delete-coupon/:couponCode", deleteCoupon);
 router.patch("/admin/offers/deactivate/:couponCode", deactivateCoupon);
 router.get("/offers/active", getAllActiveCoupons);
 router.get("/offers/all-coupons", getAllCoupons);
+router.put('/offers/update-coupon/:id', updateCoupon);
 
 module.exports = router;

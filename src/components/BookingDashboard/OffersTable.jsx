@@ -4,65 +4,69 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trash2, PencilLine } from "lucide-react";
 import { IoClose } from "react-icons/io5";
-import {Button} from "../ui/button";
+import { Button } from "../ui/button";
 const process = import.meta.env;
 
 const OffersTable = () => {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [bookings, setBookings] = useState([]);
-    const [showModal, setShowModal] = useState(false);
-    const [activePopup, setActivePopup] = useState(null);
-    const [rooms, setRooms] = useState([]);
-    const [couponForm, setCouponForm] = useState({
-      code: "",
-      discountType: "percentage",
-      discountValue: 0,
-      type: "",
-      expirationDate: "",
-      conditions: {
-        advanceBookingDays: null,
-        minBookingAmount: null,
-        minLengthOfStay: null,
-        seasonStartDate: null,
-        seasonEndDate: null,
-        applicableRoomTypes: [],
-      },
-      isActive: true,
-    });
-    const itemsPerPage = 10;
-    const navigate = useNavigate();
-  
-    useEffect(() => {
-      const fetchBookings = async () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [bookings, setBookings] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [activePopup, setActivePopup] = useState(null);
+  const [rooms, setRooms] = useState([]);
+  const [couponForm, setCouponForm] = useState({
+    code: "",
+    discountType: "percentage",
+    discountValue: 0,
+    type: "",
+    expirationDate: "",
+    conditions: {
+      advanceBookingDays: null,
+      minBookingAmount: null,
+      minLengthOfStay: null,
+      seasonStartDate: null,
+      seasonEndDate: null,
+      applicableRoomTypes: [],
+    },
+    isActive: true,
+  });
+  const [selectedCoupon, setSelectedCoupon] = useState(null);
+  const itemsPerPage = 10;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await fetch(
+          `${process.VITE_HOST_URL}/api/offers/all-coupons`
+        );
+        const data = await response.json();
+        setBookings(data);
+      } catch (error) {
+        console.error("Error fetching bookings:", error);
+      }
+    };
+
+    fetchBookings();
+  }, [currentPage]);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      if (couponForm.type === "Room Type") {
         try {
           const response = await fetch(
-            `${process.VITE_HOST_URL}/api/offers/all-coupons`
+            `${process.VITE_HOST_URL}/api/admin/rooms`
           );
           const data = await response.json();
-          setBookings(data);
+          setRooms(data);
         } catch (error) {
-          console.error("Error fetching bookings:", error);
+          console.error("Error fetching rooms:", error);
         }
-      };
-  
-      fetchBookings();
-    }, [currentPage]);
-  
-    useEffect(() => {
-      const fetchRooms = async () => {
-        if (couponForm.type === "Room Type") {
-          try {
-            const response = await fetch(`${process.VITE_HOST_URL}/api/admin/rooms`);
-            const data = await response.json();
-            setRooms(data);
-          } catch (error) {
-            console.error("Error fetching rooms:", error);
-          }
-        }
-      };
-  
-      fetchRooms();
-    }, [couponForm.type]);
+      }
+    };
+
+    fetchRooms();
+  }, [couponForm.type]);
 
   const totalItems = bookings.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -81,11 +85,11 @@ const OffersTable = () => {
 
   const handleCouponFormChange = (e) => {
     const { name, value } = e.target;
-  
+
     if (name === "isActive") {
       setCouponForm({
         ...couponForm,
-        [name]: value === "true", 
+        [name]: value === "true",
       });
     } else {
       setCouponForm({
@@ -107,14 +111,18 @@ const OffersTable = () => {
   };
 
   const handleRoomSelection = (roomId) => {
-    setCouponForm(prevForm => ({
+    setCouponForm((prevForm) => ({
       ...prevForm,
       conditions: {
         ...prevForm.conditions,
-        applicableRoomTypes: prevForm.conditions.applicableRoomTypes.includes(roomId)
-          ? prevForm.conditions.applicableRoomTypes.filter(id => id !== roomId)
-          : [...prevForm.conditions.applicableRoomTypes, roomId]
-      }
+        applicableRoomTypes: prevForm.conditions.applicableRoomTypes.includes(
+          roomId
+        )
+          ? prevForm.conditions.applicableRoomTypes.filter(
+              (id) => id !== roomId
+            )
+          : [...prevForm.conditions.applicableRoomTypes, roomId],
+      },
     }));
   };
 
@@ -122,18 +130,25 @@ const OffersTable = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${process.VITE_HOST_URL}/api/admin/offers/create-coupon`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(couponForm),
-      });
+      const response = await fetch(
+        `${process.VITE_HOST_URL}/api/admin/offers/create-coupon`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(couponForm),
+        }
+      );
 
       const data = await response.json();
       if (response.ok) {
         alert("Coupon created successfully!");
         setShowModal(false);
+        const updatedBookings = await fetch(
+          `${process.VITE_HOST_URL}/api/offers/all-coupons`
+        ).then((res) => res.json());
+        setBookings(updatedBookings);
       } else {
         alert(`Error: ${data.message}`);
       }
@@ -142,6 +157,92 @@ const OffersTable = () => {
     }
   };
 
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(
+        `${process.VITE_HOST_URL}/api/offers/update-coupon/${selectedCoupon._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(couponForm),
+        }
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        alert("Coupon updated successfully!");
+        setShowUpdateModal(false);
+        const updatedBookings = await fetch(
+          `${process.VITE_HOST_URL}/api/offers/all-coupons`
+        ).then((res) => res.json());
+        setBookings(updatedBookings);
+      } else {
+        alert(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Error updating coupon:", error);
+    }
+  };
+
+  const handleUpdateCoupon = (coupon) => {
+    setSelectedCoupon(coupon);
+    setCouponForm({
+      code: coupon.code,
+      discountType: coupon.discountType,
+      discountValue: coupon.discountValue,
+      type: coupon.type,
+      conditions: {
+        advanceBookingDays: coupon.conditions.advanceBookingDays || "",
+        minBookingAmount: coupon.conditions.minBookingAmount || "",
+        minLengthOfStay: coupon.conditions.minLengthOfStay || "",
+        seasonStartDate: coupon.conditions.seasonStartDate
+          ? new Date(coupon.conditions.seasonStartDate)
+              .toISOString()
+              .split("T")[0]
+          : "",
+        seasonEndDate: coupon.conditions.seasonEndDate
+          ? new Date(coupon.conditions.seasonEndDate)
+              .toISOString()
+              .split("T")[0]
+          : "",
+        applicableRoomTypes: coupon.conditions.applicableRoomTypes || [],
+      },
+      expirationDate: coupon.expirationDate
+        ? new Date(coupon.expirationDate).toISOString().split("T")[0]
+        : "",
+      isActive: coupon.isActive,
+    });
+    setShowUpdateModal(true);
+  };
+
+  const handleDeleteCoupon = async (couponCode) => {
+    try {
+      const response = await fetch(
+        `${process.VITE_HOST_URL}/api/admin/offers/delete-coupon/${couponCode}`,
+        {
+          method: "DELETE",
+        }
+      );
+  
+      if (response.ok) {
+        alert("Coupon deleted successfully!");
+        const updatedBookings = await fetch(
+          `${process.VITE_HOST_URL}/api/offers/all-coupons`
+        ).then((res) => res.json());
+        setBookings(updatedBookings);
+      } else {
+        const data = await response.json();
+        alert(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Error deleting coupon:", error);
+    }
+  };
+  
   return (
     <>
       <div className="flex justify-end mb-4">
@@ -170,10 +271,7 @@ const OffersTable = () => {
             </thead>
             <tbody>
               {displayedBookings.map((booking, index) => (
-                <tr
-                  key={index}
-                  className="border-t border-indigo-50 "
-                >
+                <tr key={index} className="border-t border-indigo-50 ">
                   {/* <td className="px-4 py-4 whitespace-nowrap">
                     #{booking._id}
                   </td> */}
@@ -192,7 +290,7 @@ const OffersTable = () => {
                       {booking.isActive ? "Active" : "Inactive"}
                     </span>
                   </td>
-                    <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                  <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                     <div className="relative">
                       <button
                         onClick={() =>
@@ -227,20 +325,20 @@ const OffersTable = () => {
                               <ul>
                                 <li>
                                   <button
-                                    // onClick={() => handleUpdateRoom(room)}
+                                    onClick={() => handleUpdateCoupon(booking)}
                                     className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                                   >
                                     <PencilLine className="w-4 h-4 mr-2 text-blue-500" />
-                                    Update 
+                                    Update
                                   </button>
                                 </li>
                                 <li>
                                   <button
-                                    // onClick={() => handleDeleteRoom(room.id)}
+                                   onClick={() => handleDeleteCoupon(booking.code)}
                                     className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                                   >
                                     <Trash2 className="w-4 h-4 mr-2 text-red-500" />
-                                    Delete 
+                                    Delete
                                   </button>
                                 </li>
                               </ul>
@@ -316,7 +414,6 @@ const OffersTable = () => {
             />
             <h2 className="mb-4 text-xl font-semibold">Create Coupon</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              
               <div className="flex flex-col">
                 <label htmlFor="code" className="font-medium">
                   Coupon Code
@@ -341,124 +438,127 @@ const OffersTable = () => {
                         value="percentage"
                         checked={couponForm.discountType === "percentage"}
                         onChange={handleCouponFormChange}
-                        />
-                        Percentage
-                      </label>
-                      <label>
-                        <input
-                          type="radio"
-                          name="discountType"
-                          value="fixed"
-                          checked={couponForm.discountType === "fixed"}
-                          onChange={handleCouponFormChange}
-                        />
-                        Fixed
-                      </label>
-                    </div>
-                  </div>
-  
-                  <div className="flex flex-col">
-                    <label htmlFor="type" className="font-medium">
-                      Coupon Type
+                      />
+                      Percentage
                     </label>
-                    <select
-                      id="type"
-                      name="type"
-                      className="p-2 border rounded "
-                      value={couponForm.type}
-                      onChange={handleCouponFormChange}
-                      required
-                    >
-                      <option value="" disabled>
-                        Select Coupon Type
-                      </option>
-                      <option value="Advance Booking">Advance Booking</option>
-                      <option value="Minimum Booking Amount">Minimum Booking Amount</option>
-                      <option value="Length of Stay">Length of Stay</option>
-                      <option value="Seasonal Promotion">Seasonal Promotion</option>
-                      <option value="Room Type">Room Type</option>
-                      <option value="Fixed Amount">Fixed Amount</option>
-                    </select>
+                    <label>
+                      <input
+                        type="radio"
+                        name="discountType"
+                        value="fixed"
+                        checked={couponForm.discountType === "fixed"}
+                        onChange={handleCouponFormChange}
+                      />
+                      Fixed
+                    </label>
                   </div>
                 </div>
-  
-                
-                {couponForm.type === "Advance Booking" && (
-                  <div className="flex flex-col">
-                    <label htmlFor="advanceBookingDays" className="font-medium">
-                      Advance Booking Days
-                    </label>
-                    <input
-                      type="number"
-                      id="advanceBookingDays"
-                      name="advanceBookingDays"
-                      className="p-2 border rounded"
-                      value={couponForm.conditions.advanceBookingDays || ""}
-                      onChange={handleConditionChange}
-                    />
-                  </div>
-                )}
-                {couponForm.type === "Minimum Booking Amount" && (
-                  <div className="flex flex-col">
-                    <label htmlFor="minBookingAmount" className="font-medium">
+
+                <div className="flex flex-col">
+                  <label htmlFor="type" className="font-medium">
+                    Coupon Type
+                  </label>
+                  <select
+                    id="type"
+                    name="type"
+                    className="p-2 border rounded "
+                    value={couponForm.type}
+                    onChange={handleCouponFormChange}
+                    required
+                  >
+                    <option value="" disabled>
+                      Select Coupon Type
+                    </option>
+                    <option value="Advance Booking">Advance Booking</option>
+                    <option value="Minimum Booking Amount">
                       Minimum Booking Amount
+                    </option>
+                    <option value="Length of Stay">Length of Stay</option>
+                    <option value="Seasonal Promotion">
+                      Seasonal Promotion
+                    </option>
+                    <option value="Room Type">Room Type</option>
+                    <option value="Fixed Amount">Fixed Amount</option>
+                  </select>
+                </div>
+              </div>
+
+              {couponForm.type === "Advance Booking" && (
+                <div className="flex flex-col">
+                  <label htmlFor="advanceBookingDays" className="font-medium">
+                    Advance Booking Days
+                  </label>
+                  <input
+                    type="number"
+                    id="advanceBookingDays"
+                    name="advanceBookingDays"
+                    className="p-2 border rounded"
+                    value={couponForm.conditions.advanceBookingDays || ""}
+                    onChange={handleConditionChange}
+                  />
+                </div>
+              )}
+              {couponForm.type === "Minimum Booking Amount" && (
+                <div className="flex flex-col">
+                  <label htmlFor="minBookingAmount" className="font-medium">
+                    Minimum Booking Amount
+                  </label>
+                  <input
+                    type="number"
+                    id="minBookingAmount"
+                    name="minBookingAmount"
+                    className="p-2 border rounded"
+                    value={couponForm.conditions.minBookingAmount || ""}
+                    onChange={handleConditionChange}
+                  />
+                </div>
+              )}
+              {couponForm.type === "Length of Stay" && (
+                <div className="flex flex-col">
+                  <label htmlFor="minLengthOfStay" className="font-medium">
+                    Minimum Length of Stay
+                  </label>
+                  <input
+                    type="number"
+                    id="minLengthOfStay"
+                    name="minLengthOfStay"
+                    className="p-2 border rounded"
+                    value={couponForm.conditions.minLengthOfStay || ""}
+                    onChange={handleConditionChange}
+                  />
+                </div>
+              )}
+              {couponForm.type === "Seasonal Promotion" && (
+                <div className="flex flex-row space-x-4">
+                  <div>
+                    <label htmlFor="seasonStartDate" className="font-medium">
+                      Start Date
                     </label>
                     <input
-                      type="number"
-                      id="minBookingAmount"
-                      name="minBookingAmount"
+                      type="date"
+                      id="seasonStartDate"
+                      name="seasonStartDate"
                       className="p-2 border rounded"
-                      value={couponForm.conditions.minBookingAmount || ""}
+                      value={couponForm.conditions.seasonStartDate || ""}
                       onChange={handleConditionChange}
                     />
                   </div>
-                )}
-                {couponForm.type === "Length of Stay" && (
-                  <div className="flex flex-col">
-                    <label htmlFor="minLengthOfStay" className="font-medium">
-                      Minimum Length of Stay
+                  <div>
+                    <label htmlFor="seasonEndDate" className="font-medium">
+                      End Date
                     </label>
                     <input
-                      type="number"
-                      id="minLengthOfStay"
-                      name="minLengthOfStay"
+                      type="date"
+                      id="seasonEndDate"
+                      name="seasonEndDate"
                       className="p-2 border rounded"
-                      value={couponForm.conditions.minLengthOfStay || ""}
+                      value={couponForm.conditions.seasonEndDate || ""}
                       onChange={handleConditionChange}
                     />
                   </div>
-                )}
-                {couponForm.type === "Seasonal Promotion" && (
-                  <div className="flex flex-row space-x-4">
-                    <div>
-                      <label htmlFor="seasonStartDate" className="font-medium">
-                        Start Date
-                      </label>
-                      <input
-                        type="date"
-                        id="seasonStartDate"
-                        name="seasonStartDate"
-                        className="p-2 border rounded"
-                        value={couponForm.conditions.seasonStartDate || ""}
-                        onChange={handleConditionChange}
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="seasonEndDate" className="font-medium">
-                        End Date
-                      </label>
-                      <input
-                        type="date"
-                        id="seasonEndDate"
-                        name="seasonEndDate"
-                        className="p-2 border rounded"
-                        value={couponForm.conditions.seasonEndDate || ""}
-                        onChange={handleConditionChange}
-                      />
-                    </div>
-                  </div>
-                )}
-                 {couponForm.type === "Room Type" && (
+                </div>
+              )}
+              {couponForm.type === "Room Type" && (
                 <div className="flex flex-col">
                   <label className="font-medium">Applicable Rooms</label>
                   <div className="overflow-y-auto max-h-40">
@@ -466,7 +566,9 @@ const OffersTable = () => {
                       <label key={room._id} className="flex items-center">
                         <input
                           type="checkbox"
-                          checked={couponForm.conditions.applicableRoomTypes.includes(room._id)}
+                          checked={couponForm.conditions.applicableRoomTypes.includes(
+                            room._id
+                          )}
                           onChange={() => handleRoomSelection(room._id)}
                           className="mr-2"
                         />
@@ -476,82 +578,320 @@ const OffersTable = () => {
                   </div>
                 </div>
               )}
-  
-                
-                <div className="flex flex-col">
-                  <label htmlFor="discountValue" className="font-medium">
-                    Discount Value
+
+              <div className="flex flex-col">
+                <label htmlFor="discountValue" className="font-medium">
+                  Discount Value
+                </label>
+                <input
+                  type="number"
+                  id="discountValue"
+                  name="discountValue"
+                  className="p-2 border rounded"
+                  value={couponForm.discountValue}
+                  onChange={handleCouponFormChange}
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label htmlFor="expirationDate" className="font-medium">
+                  Expiration Date
+                </label>
+                <input
+                  type="date"
+                  id="expirationDate"
+                  name="expirationDate"
+                  className="p-2 border rounded"
+                  value={couponForm.expirationDate}
+                  onChange={handleCouponFormChange}
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="font-medium">Is Active</label>
+                <div className="flex items-center space-x-4">
+                  <label>
+                    <input
+                      type="radio"
+                      name="isActive"
+                      value="true"
+                      checked={couponForm.isActive === true}
+                      onChange={handleCouponFormChange}
+                    />
+                    Yes
                   </label>
-                  <input
-                    type="number"
-                    id="discountValue"
-                    name="discountValue"
-                    className="p-2 border rounded"
-                    value={couponForm.discountValue}
-                    onChange={handleCouponFormChange}
-                    required
-                  />
-                </div>
-  
-               
-                <div className="flex flex-col">
-                  <label htmlFor="expirationDate" className="font-medium">
-                    Expiration Date
+                  <label>
+                    <input
+                      type="radio"
+                      name="isActive"
+                      value="false"
+                      checked={couponForm.isActive === false}
+                      onChange={handleCouponFormChange}
+                    />
+                    No
                   </label>
-                  <input
-                    type="date"
-                    id="expirationDate"
-                    name="expirationDate"
-                    className="p-2 border rounded"
-                    value={couponForm.expirationDate}
-                    onChange={handleCouponFormChange}
-                    required
-                  />
                 </div>
-  
-                
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-white bg-[#335064] hover:bg-[#243947] rounded "
+                >
+                  Create Coupon
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {showUpdateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-[500px] relative">
+            <IoClose
+              className="absolute text-2xl cursor-pointer top-3 right-3"
+              onClick={() => setShowUpdateModal(false)}
+            />
+            <h2 className="mb-4 text-xl font-semibold">Update Coupon</h2>
+            <form onSubmit={handleUpdate} className="space-y-4">
+              <div className="flex flex-col">
+                <label htmlFor="code" className="font-medium">
+                  Coupon Code
+                </label>
+                <input
+                  type="text"
+                  id="code"
+                  name="code"
+                  className="p-2 uppercase border rounded"
+                  value={couponForm.code}
+                  onChange={handleCouponFormChange}
+                  required
+                />
+              </div>
+              <div className="flex space-x-4">
                 <div className="flex flex-col">
-                  <label className="font-medium">Is Active</label>
+                  <label className="font-medium">Discount Type</label>
                   <div className="flex items-center space-x-4">
                     <label>
                       <input
                         type="radio"
-                        name="isActive"
-                        value="true"
-                        checked={couponForm.isActive === true}
+                        name="discountType"
+                        value="percentage"
+                        checked={couponForm.discountType === "percentage"}
                         onChange={handleCouponFormChange}
                       />
-                      Yes
+                      Percentage
                     </label>
                     <label>
                       <input
                         type="radio"
-                        name="isActive"
-                        value="false"
-                        checked={couponForm.isActive === false}
+                        name="discountType"
+                        value="fixed"
+                        checked={couponForm.discountType === "fixed"}
                         onChange={handleCouponFormChange}
                       />
-                      No
+                      Fixed
                     </label>
                   </div>
                 </div>
-  
-                
-                <div className="flex justify-end">
-                  <button
-                    type="submit"
-                    className="px-4 py-2 text-white bg-[#335064] hover:bg-[#243947] rounded "
+
+                <div className="flex flex-col">
+                  <label htmlFor="type" className="font-medium">
+                    Coupon Type
+                  </label>
+                  <select
+                    id="type"
+                    name="type"
+                    className="p-2 border rounded"
+                    value={couponForm.type}
+                    onChange={handleCouponFormChange}
+                    required
                   >
-                    Create Coupon
-                  </button>
+                    <option value="" disabled>
+                      Select Coupon Type
+                    </option>
+                    <option value="Advance Booking">Advance Booking</option>
+                    <option value="Minimum Booking Amount">
+                      Minimum Booking Amount
+                    </option>
+                    <option value="Length of Stay">Length of Stay</option>
+                    <option value="Seasonal Promotion">
+                      Seasonal Promotion
+                    </option>
+                    <option value="Room Type">Room Type</option>
+                    <option value="Fixed Amount">Fixed Amount</option>
+                  </select>
                 </div>
-              </form>
-            </div>
+              </div>
+
+              {couponForm.type === "Advance Booking" && (
+                <div className="flex flex-col">
+                  <label htmlFor="advanceBookingDays" className="font-medium">
+                    Advance Booking Days
+                  </label>
+                  <input
+                    type="number"
+                    id="advanceBookingDays"
+                    name="advanceBookingDays"
+                    className="p-2 border rounded"
+                    value={couponForm.conditions.advanceBookingDays || ""}
+                    onChange={handleConditionChange}
+                  />
+                </div>
+              )}
+              {couponForm.type === "Minimum Booking Amount" && (
+                <div className="flex flex-col">
+                  <label htmlFor="minBookingAmount" className="font-medium">
+                    Minimum Booking Amount
+                  </label>
+                  <input
+                    type="number"
+                    id="minBookingAmount"
+                    name="minBookingAmount"
+                    className="p-2 border rounded"
+                    value={couponForm.conditions.minBookingAmount || ""}
+                    onChange={handleConditionChange}
+                  />
+                </div>
+              )}
+              {couponForm.type === "Length of Stay" && (
+                <div className="flex flex-col">
+                  <label htmlFor="minLengthOfStay" className="font-medium">
+                    Minimum Length of Stay
+                  </label>
+                  <input
+                    type="number"
+                    id="minLengthOfStay"
+                    name="minLengthOfStay"
+                    className="p-2 border rounded"
+                    value={couponForm.conditions.minLengthOfStay || ""}
+                    onChange={handleConditionChange}
+                  />
+                </div>
+              )}
+              {couponForm.type === "Seasonal Promotion" && (
+                <div className="flex flex-row space-x-4">
+                  <div>
+                    <label htmlFor="seasonStartDate" className="font-medium">
+                      Start Date
+                    </label>
+                    <input
+                      type="date"
+                      id="seasonStartDate"
+                      name="seasonStartDate"
+                      className="p-2 border rounded"
+                      value={couponForm.conditions.seasonStartDate || ""}
+                      onChange={handleConditionChange}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="seasonEndDate" className="font-medium">
+                      End Date
+                    </label>
+                    <input
+                      type="date"
+                      id="seasonEndDate"
+                      name="seasonEndDate"
+                      className="p-2 border rounded"
+                      value={couponForm.conditions.seasonEndDate || ""}
+                      onChange={handleConditionChange}
+                    />
+                  </div>
+                </div>
+              )}
+              {couponForm.type === "Room Type" && (
+                <div className="flex flex-col">
+                  <label className="font-medium">Applicable Rooms</label>
+                  <div className="overflow-y-auto max-h-40">
+                    {rooms.map((room) => (
+                      <label key={room._id} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={couponForm.conditions.applicableRoomTypes.includes(
+                            room._id
+                          )}
+                          onChange={() => handleRoomSelection(room._id)}
+                          className="mr-2"
+                        />
+                        {room.name}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col">
+                <label htmlFor="discountValue" className="font-medium">
+                  Discount Value
+                </label>
+                <input
+                  type="number"
+                  id="discountValue"
+                  name="discountValue"
+                  className="p-2 border rounded"
+                  value={couponForm.discountValue}
+                  onChange={handleCouponFormChange}
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label htmlFor="expirationDate" className="font-medium">
+                  Expiration Date
+                </label>
+                <input
+                  type="date"
+                  id="expirationDate"
+                  name="expirationDate"
+                  className="p-2 border rounded"
+                  value={couponForm.expirationDate}
+                  onChange={handleCouponFormChange}
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="font-medium">Is Active</label>
+                <div className="flex items-center space-x-4">
+                  <label>
+                    <input
+                      type="radio"
+                      name="isActive"
+                      value="true"
+                      checked={couponForm.isActive === true}
+                      onChange={handleCouponFormChange}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="isActive"
+                      value="false"
+                      checked={couponForm.isActive === false}
+                      onChange={handleCouponFormChange}
+                    />
+                    No
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-white bg-[#335064] hover:bg-[#243947] rounded"
+                >
+                  Update Coupon
+                </button>
+              </div>
+            </form>
           </div>
-        )}
-      </>
-    );
-  };
-  
-  export default OffersTable;
-  
+        </div>
+      )}
+    </>
+  );
+};
+
+export default OffersTable;

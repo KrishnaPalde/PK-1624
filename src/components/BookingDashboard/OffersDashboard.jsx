@@ -80,7 +80,6 @@ const OffersDashboard = () => {
   return (
     <main className="flex flex-col p-6 ">
       {error && <div className="mb-4 text-red-500">Error: {error}</div>}{" "}
-      {/* Display error if exists */}
       <section className="w-full mb-6">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {statCards.map((card, index) => (

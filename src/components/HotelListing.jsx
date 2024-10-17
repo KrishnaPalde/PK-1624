@@ -76,17 +76,25 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
   };
 
   const handleRoomSelection = (room) => {
-    if (selectedRooms.includes(room)) {
-      setSelectedRooms(
-        selectedRooms.filter((selectedRoom) => selectedRoom !== room)
-      );
+    if (roomCount === 1) {
+      setSelectedRooms([room]);
     } else {
-      setSelectedRooms([...selectedRooms, room]);
+      if (selectedRooms.includes(room)) {
+        setSelectedRooms(selectedRooms.filter((selectedRoom) => selectedRoom !== room));
+      } else if (selectedRooms.length < roomCount) {
+        setSelectedRooms([...selectedRooms, room]);
+      }
     }
   };
 
+
   const handleNextClick = (room) => {
-    const roomsToNavigate = selectedRooms.length > 0 ? selectedRooms : [room];
+    let roomsToNavigate;
+    if (roomCount === 1) {
+      roomsToNavigate = [room];
+    } else {
+      roomsToNavigate = selectedRooms.length > 0 ? selectedRooms : [room];
+    }
     
     const serializableRooms = roomsToNavigate.map(room => ({
       id: room.id,
@@ -102,7 +110,7 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
     }));
   
     navigate(`/room/${room.id}/details`, { state: { selectedRooms: serializableRooms } });
-  };  
+  };
 
   if (loading) {
     return (
@@ -194,6 +202,7 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
               room={room}
               roomCount={roomCount}
               isLastRoom={index === currentCards.length - 1}
+              disabled={roomCount > 1 && selectedRooms.length >= roomCount && !selectedRooms.includes(room)}
             />
           ))}
         </motion.div>
@@ -202,7 +211,7 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
         <button
           onClick={prevPage}
           disabled={currentPage === 1}
-          className="px-4 py-2 text-white transition-colors duration-200 bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="px-4 py-2 text-white transition-colors duration-200 bg-[#335064] hover:bg-[#243947] rounded-lg shadow-md disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           Previous
         </button>
@@ -211,13 +220,13 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
         </span>
         <button
           onClick={nextPage}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 text-white transition-colors duration-200 bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          // disabled={selectedRooms.length !== roomCount}
+          className="px-4 py-2 text-white transition-colors duration-200 bg-[#335064] hover:bg-[#243947] rounded-lg shadow-md  disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           Next
         </button>
       </div>
-      {selectedRooms.length > 0 && (
+      {selectedRooms.length > 0 && roomCount > 1 && (
         <motion.div
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -235,14 +244,24 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
                 </div>
               ))}
             </div>
-            <button
-              onClick={() =>
-                handleNextClick(selectedRooms[selectedRooms.length - 1])
-              }
-              className="px-6 py-2 text-white transition-colors duration-300 bg-green-500 rounded-full hover:bg-green-600"
-            >
-              Next
-            </button>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm font-medium text-gray-600">
+                {selectedRooms.length} of {roomCount} rooms selected
+              </span>
+              <button
+                onClick={() =>
+                  handleNextClick(selectedRooms[selectedRooms.length - 1])
+                }
+                disabled={selectedRooms.length !== roomCount}
+                className={`px-6 py-2 text-white transition-colors duration-300 rounded-full ${
+                  selectedRooms.length === roomCount
+                    ? "bg-[#335064] hover:bg-[#243947]"
+                    : "bg-gray-400 cursor-not-allowed"
+                }`}
+              >
+                Next
+              </button>
+            </div>
           </div>
         </motion.div>
       )}

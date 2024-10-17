@@ -446,8 +446,7 @@ const getRoomDetailsForm = async (req, res) => {
 
 const addRoom = async (req, res) => {
   try {
-    const { name, title, description, price, weekend, images, rating } =
-      req.body;
+    const { name, title, description, price, weekend, images, rating } = req.body;
     const newRoom = new Room({
       id: Date.now().toString(),
       name,

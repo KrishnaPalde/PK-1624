@@ -31,7 +31,7 @@ const roomSchema = new mongoose.Schema({
 });
 
 function arrayLimit(val) {
-  return val.length <= 5;
+  return val.length <= 10;
 }
 
 const Room = mongoose.model("Room", roomSchema);

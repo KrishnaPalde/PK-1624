@@ -37,9 +37,9 @@ function RoomCard({ guests, name,title, image, isLarge = false, onClick }) {
           isLarge ? "aspect-[0.77]" : "aspect-[1.45]"
         } object-cover`}  
       />
-      <p className="mt-5 max-md:mr-1">{guests} GUESTS</p>
+      {/* <p className="mt-5 max-md:mr-1">{guests} GUESTS</p> */}
       <h2 className="mt-4 text-2xl font-bold text-zinc-800 max-md:mr-1">
-        {name + " " + title}
+        {name}
       </h2>
     </article>
   );

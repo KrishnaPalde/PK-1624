@@ -78,7 +78,7 @@ const RoomDetailsCard = ({
     <article className="flex flex-col items-start justify-between gap-5 p-4 mt-6 mb-6 sm:flex-row">
       <div className="flex flex-col w-full sm:w-2/3 text-neutral-900">
         <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-          <h2 className="text-xl font-bold sm:text-2xl">{name + " - " + title}</h2>
+          <h2 className="text-xl font-bold sm:text-2xl">{name }</h2>
           <div className="flex items-center gap-1 text-xs font-medium">
             <div className="flex">{renderStars()}</div>
             <div>{rating} Star</div>
@@ -97,7 +97,7 @@ const RoomDetailsCard = ({
           </div>
           <div className="flex items-center gap-2 mt-2 text-xs">
             <div className="w-10 px-3 py-2 text-center border rounded border-[#335064]">
-              {rating.toFixed(1)}
+              {rating}
             </div>
             <div>
               <span className="font-bold">{getTitle()}</span> {reviews} reviews
@@ -124,11 +124,9 @@ const RoomDetailsCard = ({
             </div>
           ))}
         </div>
-        {/* <Link to="/yourdetails"> */}
         <button className="w-full sm:w-[150px] mt-4 p-3 bg-[#335064] hover:bg-[#243947] rounded text-sm font-semibold text-white" onClick={handleNextClick}>
           Book now
         </button>
-        {/* </Link> */}
       </div>
     </article>
   );
