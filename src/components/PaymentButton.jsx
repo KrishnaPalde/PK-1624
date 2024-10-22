@@ -122,7 +122,7 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, priceDeta
     <>
       <button 
         onClick={handlePayment}
-        className="w-full py-3 px-2 text-xl text-white transition duration-300 rounded-md bg-[#335064] hover:bg-[#243947]"
+        className="w-full py-3 px-2 text-xl text-white transition duration-300 rounded-md bg-[#255d69] hover:bg-[#243947]"
       >
         Pay {amount} INR
       </button>

@@ -253,7 +253,7 @@ const OffersTable = () => {
     <>
       <div className="flex justify-end mb-4">
         <button
-          className="px-4 py-2 text-white transition bg-[#335064] hover:bg-[#243947] rounded-lg "
+          className="px-4 py-2 text-white transition bg-[#255d69] hover:bg-[#243947] rounded-lg "
           onClick={() => setShowModal(true)}
         >
           Create Coupon
@@ -646,7 +646,7 @@ const OffersTable = () => {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="px-4 py-2 text-white bg-[#335064] hover:bg-[#243947] rounded "
+                  className="px-4 py-2 text-white bg-[#255d69] hover:bg-[#243947] rounded "
                 >
                   Create Coupon
                 </button>
@@ -889,7 +889,7 @@ const OffersTable = () => {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="px-4 py-2 text-white bg-[#335064] hover:bg-[#243947] rounded"
+                  className="px-4 py-2 text-white bg-[#255d69] hover:bg-[#243947] rounded"
                 >
                   Update Coupon
                 </button>

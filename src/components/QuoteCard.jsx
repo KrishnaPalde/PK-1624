@@ -6,7 +6,7 @@ import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons/faQuoteLeft";
 const QuoteCard = ({ quote, author }) => {
   return (
     <div className="flex flex-col w-full max-md:ml-0 max-md:w-full">
-      <div className="flex flex-col grow justify-center w-full bg-[#335064] rounded-[30px] p-5 max-md:p-4">
+      <div className="flex flex-col grow justify-center w-full bg-[#255d69] rounded-[30px] p-5 max-md:p-4">
         <div className="text-5xl font-black text-slate-600 max-md:text-4xl">
           <FontAwesomeIcon icon={faQuoteLeft} className="text-white"></FontAwesomeIcon> 
         </div>

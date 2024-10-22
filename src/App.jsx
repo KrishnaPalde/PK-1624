@@ -21,6 +21,8 @@ import Feedback from './pages/Feedback';
 import FAQ from './pages/FAQ';
 import AdminOffersPage from './pages/AdminOffersPage';
 import AdminReviewsPage from './pages/AdminReviewsPage';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsAndConditions from './pages/TermsAndConditions';
 
 function App() {
   return (
@@ -29,7 +31,9 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<><ScrollToTop/><LandingPage /></>} />
-          <Route path="/contactus" element={<ContactPage />} />
+          <Route path="/contactus" element={<><ScrollToTop/><ContactPage /></>} />
+          <Route path="/privacy-policy" element={<><ScrollToTop/><PrivacyPolicy /></>} />
+          <Route path="/terms-conditions" element={<><ScrollToTop/><TermsAndConditions /></>} />
           <Route path="/blogs" element={<BlogPage />} />
           <Route path="/bookings" element={<><ScrollToTop/> <BookingPage /></>} />
           <Route path="/room/:id" element={<><ScrollToTop/> <RoomDetailsPage /></>} />

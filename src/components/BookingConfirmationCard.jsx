@@ -67,7 +67,7 @@ function BookingConfirmationCard() {
   return (
     <section className="flex flex-wrap w-full max-w-[1231px] max-md:max-w-full">
       <article className="flex flex-1 overflow-hidden bg-white rounded-2xl border border-gray-200 border-solid basis-[140px] min-w-[240px] max-md:max-w-full">
-        <aside className="flex flex-col w-[29%] bg-[#335064] max-md:w-full text-white">
+        <aside className="flex flex-col w-[29%] bg-[#255d69] max-md:w-full text-white">
           <div className="flex flex-col items-start justify-center w-full h-full px-6 grow py-9">
             {checkInOutData.map((data, index) => (
               <DateInfo key={index} date={data.date} label={data.label} />

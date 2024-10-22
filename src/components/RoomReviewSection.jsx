@@ -26,7 +26,7 @@ function RoomReviewSection({rating,reviews}) {
         </h2>
         <Link to='/feedback'>
         <button className="flex flex-col self-stretch my-auto text-sm font-semibold text-white w-[152px]">
-          <span className="gap-1 self-stretch p-4 w-full bg-[#335064] hover:bg-[#243947] rounded min-h-[48px]">
+          <span className="gap-1 self-stretch p-4 w-full bg-[#255d69] hover:bg-[#243947] rounded min-h-[48px]">
             Give your review
           </span>
         </button>

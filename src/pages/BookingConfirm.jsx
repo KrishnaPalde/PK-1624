@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { useNavigate, useLocation,useParams } from "react-router-dom";
 import axios from "axios";
+import WhatsAppButton from "../components/WhatsappButton";
 
 const BookingConfirm = () => {
   const location = useLocation();
@@ -59,6 +60,7 @@ const BookingConfirm = () => {
             </div>
         </main>
       </div>
+      <WhatsAppButton/>
       <Footer/>
     </div>
   );

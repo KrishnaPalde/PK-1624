@@ -77,7 +77,7 @@ const Footer = () => {
         { name: "Contact us", url: "/contactus" }, // Internal link
         { name: "How to reach us", url: "/contactus" }, // Internal link
         { name: "Privacy Policy", url: "/privacy-policy" }, // Internal link
-        { name: "Terms of use", url: "/terms" }, // Internal link
+        { name: "Terms of use", url: "/terms-conditions" }, // Internal link
       ],
     },
   ];

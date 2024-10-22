@@ -5,6 +5,7 @@ import StayDetails from "../components/StayDetails";
 import YourBookingDetailsForm from "../components/YourBookingDetailsForm";
 import NewsLetter from "../components/NewsLetter";
 import Footer from "../components/Footer";
+import WhatsAppButton from "../components/WhatsappButton";
 
 const YourBookingDetails = () => {
   const [formData, setFormData] = useState({
@@ -44,6 +45,7 @@ const YourBookingDetails = () => {
           </div>
         </main>
       </div>
+      <WhatsAppButton/>
       <Footer/>
     </div>
   );

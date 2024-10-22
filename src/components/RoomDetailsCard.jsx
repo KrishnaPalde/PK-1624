@@ -22,22 +22,21 @@ const RoomDetailsCard = ({
 
   const navigate = useNavigate();
   const handleNextClick = () => {
+    console.log("In Next Function");
     navigate(`/room/${id}/details`, { 
-      state: { 
-        id, 
-        images, 
-        imageCount, 
-        title, 
-        name,
-        description, 
-        guestCount, 
-        rating, 
-        price,
-        weekdayPrice,
-  weekendPrice,
-  isWeekend,
-        reviews 
-      } 
+      state: { selectedRooms:
+        [{
+          id: id,
+          title: title,
+          name: name,
+          description: description,
+          images: images,
+          rating: rating,
+          price: isWeekend && weekendPrice ? weekendPrice : weekdayPrice,
+          totalReviews: reviews,
+
+        }]
+     } 
     });
   };
   
@@ -55,6 +54,8 @@ const RoomDetailsCard = ({
     }
     return stars;
   };
+
+  
 
   const getTitle = () => {
     switch (Math.round(rating)) {
@@ -124,7 +125,7 @@ const RoomDetailsCard = ({
             </div>
           ))}
         </div>
-        <button className="w-full sm:w-[150px] mt-4 p-3 bg-[#335064] hover:bg-[#243947] rounded text-sm font-semibold text-white" onClick={handleNextClick}>
+        <button className="w-full sm:w-[150px] mt-4 p-3 bg-[#255d69] hover:bg-[#243947] rounded text-sm font-semibold text-white" onClick={handleNextClick}>
           Book now
         </button>
       </div>

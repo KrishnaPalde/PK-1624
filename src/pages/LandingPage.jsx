@@ -10,6 +10,7 @@ import Footer from "../components/Footer";
 import ExploreGuestRooms from "../components/ExploreGuestRooms";
 import BookingForm from "../components/BookingForm";
 import OffersCarousel from "../components/OffersCarousel";
+import WhatsappButton from "../components/WhatsappButton";
 
 
 function LandingPage() {
@@ -28,6 +29,7 @@ function LandingPage() {
       <Testimonials />
       <WhyChooseUs />
       <Newsletter />
+      <WhatsappButton/>
       <Footer />
     </div>
   );

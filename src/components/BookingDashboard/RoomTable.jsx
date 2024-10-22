@@ -161,7 +161,7 @@ function RoomTable({ addRoom }) {
             <div
               className={`flex items-center gap-2 px-4 py-2 border rounded-full cursor-pointer ${
                 currentFilter === "All"
-                  ? "bg-[#335064] text-white border-blue-600"
+                  ? "bg-[#255d69] text-white border-blue-600"
                   : "text-gray-600 border-gray-400 hover:bg-blue-50"
               }`}
               onClick={() => filterRooms("All")}
@@ -171,7 +171,7 @@ function RoomTable({ addRoom }) {
             <div
               className={`flex items-center gap-2 px-4 py-2 border rounded-full cursor-pointer ${
                 currentFilter === "Available"
-                  ? "bg-[#335064] text-white border-blue-600"
+                  ? "bg-[#255d69] text-white border-blue-600"
                   : "text-gray-600 border-gray-400 hover:bg-blue-50"
               }`}
               onClick={() => filterRooms("Available")}
@@ -184,7 +184,7 @@ function RoomTable({ addRoom }) {
             <div
               className={`flex items-center gap-2 px-4 py-2 border rounded-full cursor-pointer ${
                 currentFilter === "Booked"
-                  ? "bg-[#335064] text-white border-blue-600"
+                  ? "bg-[#255d69] text-white border-blue-600"
                   : "text-gray-600 border-gray-400 hover:bg-blue-50"
               }`}
               onClick={() => filterRooms("Booked")}
@@ -193,7 +193,7 @@ function RoomTable({ addRoom }) {
             </div>
             <div className="md:ml-0">
               <button
-                className="px-6 py-2.5 text-white bg-[#335064] hover:bg-[#243947] rounded-lg"
+                className="px-6 py-2.5 text-white bg-[#255d69] hover:bg-[#243947] rounded-lg"
                 onClick={() => setShowAddForm(true)}
               >
                 Add room
@@ -380,7 +380,7 @@ function RoomTable({ addRoom }) {
                     Cancel
                   </button>
                   <button
-                    className="px-4 py-2 text-white bg-[#335064] hover:bg-[#243947] rounded"
+                    className="px-4 py-2 text-white bg-[#255d69] hover:bg-[#243947] rounded"
                     onClick={handleSavePrice}
                   >
                     Save

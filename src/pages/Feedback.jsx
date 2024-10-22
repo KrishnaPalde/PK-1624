@@ -3,6 +3,7 @@ import axios from "axios";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { FaStar } from "react-icons/fa"; // Import star icon
+import WhatsAppButton from "../components/WhatsappButton";
 const process = import.meta.env;
 
 const StarRating = ({ rating, setRating }) => {
@@ -282,7 +283,7 @@ const Feedback = () => {
             <div className="col-span-1 md:col-span-2">
               <button
                 type="submit"
-                className="w-full px-6 py-3 font-bold text-white transition duration-300 rounded-md bg-[#335064] hover:bg-[#243947]"
+                className="w-full px-6 py-3 font-bold text-white transition duration-300 rounded-md bg-[#255d69] hover:bg-[#243947]"
               >
                 Submit Feedback
               </button>
@@ -294,6 +295,7 @@ const Feedback = () => {
       { isSubmitted ? (<div><br></br><br></br>
       <br></br><br></br></div>) : (<br></br>)}
       </div>
+      <WhatsAppButton/>
       <Footer />
       </div>
   );

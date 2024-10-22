@@ -5,6 +5,7 @@ import FilterSection from "../components/FilterSection";
 import HotelListing from "../components/HotelListing";
 import NewsLetter from "../components/NewsLetter";
 import Footer from "../components/Footer";
+import WhatsAppButton from "../components/WhatsappButton";
 
 const BookingPage = () => {
   const [priceRange, setPriceRange] = useState([50, 100000]);
@@ -39,6 +40,7 @@ const BookingPage = () => {
           </div>
         </main>
       </div>
+      <WhatsAppButton/>
       <Footer />
     </div>
   );

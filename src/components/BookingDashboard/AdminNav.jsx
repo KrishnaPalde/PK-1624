@@ -379,7 +379,7 @@ function AdminNav({ title }) {
                         <button
                           type="button"
                           onClick={handleEditClick}
-                          className="px-4 py-2 text-white bg-[#335064] hover:bg-[#243947] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                          className="px-4 py-2 text-white bg-[#255d69] hover:bg-[#243947] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                         >
                           Edit
                         </button>
@@ -395,7 +395,7 @@ function AdminNav({ title }) {
                           <button
                             type="button"
                             onClick={handleSaveSettings}
-                            className="px-4 py-2 text-white bg-[#335064] hover:bg-[#243947] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                            className="px-4 py-2 text-white bg-[#255d69] hover:bg-[#243947] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                           >
                             Save
                           </button>
@@ -461,7 +461,7 @@ function AdminNav({ title }) {
                         <button
                           type="button"
                           onClick={handleEditClick}
-                          className="px-4 py-2 text-white bg-[#335064] hover:bg-[#243947] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                          className="px-4 py-2 text-white bg-[#255d69] hover:bg-[#243947] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                         >
                           Edit
                         </button>
@@ -477,7 +477,7 @@ function AdminNav({ title }) {
                           <button
                             type="button"
                             onClick={handleSaveSettings}
-                            className="px-4 py-2 text-white bg-[#335064] hover:bg-[#243947] focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+                            className="px-4 py-2 text-white bg-[#255d69] hover:bg-[#243947] focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
                           >
                             Save
                           </button>
@@ -535,7 +535,7 @@ function AdminNav({ title }) {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-white bg-[#335064] hover:bg-[#243947] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                  className="px-4 py-2 text-white bg-[#255d69] hover:bg-[#243947] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                 >
                   Save
                 </button>
@@ -594,7 +594,7 @@ function AdminNav({ title }) {
           </button>
           <button
             type="submit"
-            className="px-4 py-2 text-white bg-[#335064] hover:bg-[#243947] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            className="px-4 py-2 text-white bg-[#255d69] hover:bg-[#243947] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
           >
             Create
           </button>

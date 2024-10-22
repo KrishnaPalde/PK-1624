@@ -156,7 +156,7 @@ function BookingForm() {
               dateFormat="dd/MM/yyyy"
               className="w-full text-base font-medium bg-transparent focus:outline-none"
               minDate={new Date()} 
-              maxDate={new Date().setDate(new Date().getDate() + 30)} 
+              maxDate={new Date().setDate(new Date().getDate() + 364)} 
               excludeDates={unavailableDates} 
             />
           </div>
@@ -177,7 +177,7 @@ function BookingForm() {
               dateFormat="dd/MM/yyyy"
               className="w-full text-base font-medium bg-transparent focus:outline-none"
               minDate={tomorrow}  
-              maxDate={new Date(today.setDate(today.getDate() + 30))}  
+              maxDate={new Date(today.setDate(today.getDate() + 364))}  
               excludeDates={unavailableDates}  
             />
           </div>
@@ -236,7 +236,7 @@ function BookingForm() {
               <button
                 type="button"
                 onClick={handleApplyGuests}
-                className="w-full py-2 mt-4 text-white transition-colors duration-300 bg-[#335064] hover:bg-[#243947] rounded-md"
+                className="w-full py-2 mt-4 text-white transition-colors duration-300 bg-[#255d69] hover:bg-[#243947] rounded-md"
               >
                 Apply
               </button>
@@ -247,7 +247,7 @@ function BookingForm() {
         <div className="flex-none mt-4 md:self-end md:mt-0">
           <button
             type="submit"
-            className="flex items-center gap-3 px-8 py-4 text-base font-medium text-white transition-colors duration-300 rounded-full bg-[#335064] hover:bg-[#243947]"
+            className="flex items-center gap-3 px-8 py-4 text-base font-medium text-white transition-colors duration-300 rounded-full bg-[#255d69] hover:bg-[#243947]"
           >
             <FaHotel className="w-5 h-5" />
             <span>Search</span>

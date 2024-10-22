@@ -172,7 +172,7 @@ function AddRoomForm({ onSubmit, onCancel }) {
         </button>
         <button
           type="submit"
-          className="px-4 py-2 text-white transition-colors bg-[#335064] hover:bg-[#243947]"
+          className="px-4 py-2 text-white transition-colors bg-[#255d69] hover:bg-[#243947]"
         >
           Add Room
         </button>

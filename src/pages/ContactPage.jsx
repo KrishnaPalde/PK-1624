@@ -8,6 +8,7 @@ import GoogleMap from '../components/ContactUsMapComponent';
 import img1 from '../assets/apartment1.png';
 import img2 from '../assets/apartment2.png';
 import AOS from 'aos';
+import WhatsappButton from "../components/WhatsappButton";
 import 'aos/dist/aos.css'; 
 
 const ImageLayout = () => {
@@ -73,6 +74,7 @@ const MainContent = () => {
       
       <br></br><br></br><br></br><br></br>
       <Newsletter />
+      <WhatsappButton/>
       <Footer />
     </main>
   );

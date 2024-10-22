@@ -88,7 +88,7 @@ const SideNav = () => {
                   to={item.location}
                   className={`flex items-center p-3 space-x-4 transition-all duration-300 rounded-lg ${
                     isActive
-                      ? 'bg-[#335064] text-white shadow-md'
+                      ? 'bg-[#255d69] text-white shadow-md'
                       : 'hover:bg-gray-100'
                   }`}
                 >

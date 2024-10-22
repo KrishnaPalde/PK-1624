@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import WhatsAppButton from "../components/WhatsappButton";
 
 function FAQ() {
   // Define a list of FAQs with questions and answers
@@ -23,7 +24,7 @@ function FAQ() {
     },
     {
       question: "What are the payment options available?",
-      answer: "We accept payments through Razorpay, which allows you to pay via credit/debit cards, UPI, net banking, and other online payment methods. You can complete your payment using this link: Payment Link.",
+      answer: "We accept payments through Razorpay, which allows you to pay via credit/debit cards, UPI, net banking, and other online payment methods. You can complete your payment during booking.",
     },
     {
       question: "Do you provide meals at the homestay?",
@@ -93,6 +94,7 @@ function FAQ() {
         <br></br>
       {/* Render Footer */}
       </div>
+      <WhatsAppButton/>
       <Footer />
     </div>
   );

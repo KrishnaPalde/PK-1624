@@ -12,6 +12,7 @@ import Testimonials from "../components/Testimonials";
 import NewsLetter from "../components/NewsLetter";
 import Footer from "../components/Footer";
 import { useBooking } from "../contexts/BookingFormContext";
+import WhatsAppButton from "../components/WhatsappButton";
 const process = import.meta.env;
 
 const RoomDetailsPage = () => {
@@ -85,16 +86,17 @@ const RoomDetailsPage = () => {
                 <AmenitiesList />
               </div>
             {/* )} */}
-            {roomData.totalReviews || (
+            {/* {roomData.totalReviews || (
               <div className="mt-10">
                 <RoomReviewSection rating={roomData.rating} reviews={roomData.totalReviews} />
               </div>
-            )}
+            )} */}
             <Testimonials />
             <NewsLetter />
           </div>
         </main>
       </div>
+      <WhatsAppButton/>
       <Footer />
     </div>
   );

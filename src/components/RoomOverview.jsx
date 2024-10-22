@@ -59,7 +59,7 @@ function RoomOverview({ rating, reviews }) {
         </p>
       </header>
       <div className="grid items-start self-start grid-cols-2 gap-4 mt-8 md:flex md:flex-wrap max-md:max-w-full">
-        <div className="flex gap-2.5 items-start py-4 pr-16 pl-4 bg-[#335064]  rounded-xl min-h-[125px] w-[166px] max-md:pr-5">
+        <div className="flex gap-2.5 items-start py-4 pr-16 pl-4 bg-[#255d69]  rounded-xl min-h-[125px] w-[166px] max-md:pr-5">
           <div className="flex flex-col">
             <div className="text-3xl font-bold text-white">{rating}</div>
             <div className="flex flex-col mt-4 text-white">

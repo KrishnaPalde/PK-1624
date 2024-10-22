@@ -102,7 +102,7 @@ function HotelCard({
       return (
         <button
           onClick={() => onNext(room)}
-          className="w-full px-6 py-2 text-sm font-medium text-white transition-colors duration-300  rounded-full sm:w-auto bg-[#335064] hover:bg-[#243947] disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="w-full px-6 py-2 text-sm font-medium text-white transition-colors duration-300  rounded-full sm:w-auto bg-[#255d69] hover:bg-[#243947] disabled:bg-gray-400 disabled:cursor-not-allowed"
           disabled={disabled}
         >
           Next
@@ -114,7 +114,7 @@ function HotelCard({
       return (
         <button
           onClick={() => onNext(room)}
-          className="w-full px-6 py-2 text-sm font-medium text-white transition-colors duration-300 bg-[#335064] hover:bg-[#243947] rounded-full sm:w-auto  disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="w-full px-6 py-2 text-sm font-medium text-white transition-colors duration-300 bg-[#255d69] hover:bg-[#243947] rounded-full sm:w-auto  disabled:bg-gray-400 disabled:cursor-not-allowed"
           disabled={disabled}
         >
           Continue
@@ -127,8 +127,8 @@ function HotelCard({
         onClick={() => onSelect(room)}
         className={`w-full px-6 py-2 text-sm font-medium text-white transition-colors duration-300 rounded-full sm:w-auto ${
           isSelected
-            ? "bg-[#335064] hover:bg-[#243947]"
-            : "bg-[#335064] hover:bg-[#243947]"
+            ? "bg-[#255d69] hover:bg-[#243947]"
+            : "bg-[#255d69] hover:bg-[#243947]"
         } disabled:bg-gray-400 disabled:cursor-not-allowed`}
         disabled={disabled || (isLastSelected && !isSelected)}
       >

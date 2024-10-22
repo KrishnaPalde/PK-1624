@@ -211,7 +211,7 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
         <button
           onClick={prevPage}
           disabled={currentPage === 1}
-          className="px-4 py-2 text-white transition-colors duration-200 bg-[#335064] hover:bg-[#243947] rounded-lg shadow-md disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="px-4 py-2 text-white transition-colors duration-200 bg-[#255d69] hover:bg-[#243947] rounded-lg shadow-md disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           Previous
         </button>
@@ -221,7 +221,7 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
         <button
           onClick={nextPage}
           // disabled={selectedRooms.length !== roomCount}
-          className="px-4 py-2 text-white transition-colors duration-200 bg-[#335064] hover:bg-[#243947] rounded-lg shadow-md  disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="px-4 py-2 text-white transition-colors duration-200 bg-[#255d69] hover:bg-[#243947] rounded-lg shadow-md  disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           Next
         </button>
@@ -255,7 +255,7 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
                 disabled={selectedRooms.length !== roomCount}
                 className={`px-6 py-2 text-white transition-colors duration-300 rounded-full ${
                   selectedRooms.length === roomCount
-                    ? "bg-[#335064] hover:bg-[#243947]"
+                    ? "bg-[#255d69] hover:bg-[#243947]"
                     : "bg-gray-400 cursor-not-allowed"
                 }`}
               >
