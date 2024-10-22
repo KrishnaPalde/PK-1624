@@ -214,7 +214,7 @@ function HotelCard({
                   />
                 </svg>
                 <span className="text-sm text-gray-600">
-                  {guestCount} Guests
+                  {name == "Panoramic View" ? 10 : guestCount} Guests
                 </span>
               </div>
               <div className="flex items-center">

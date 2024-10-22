@@ -110,20 +110,26 @@ const OffersTable = () => {
     }));
   };
 
-  const handleRoomSelection = (roomId) => {
-    setCouponForm((prevForm) => ({
-      ...prevForm,
+  const handleRoomSelection = (roomName) => {
+    let updatedRoomTypes;
+    if (couponForm.conditions.applicableRoomTypes.includes(roomName)) {
+      updatedRoomTypes = couponForm.conditions.applicableRoomTypes.filter(
+        (name) => name !== roomName
+      );
+    } else {
+      updatedRoomTypes = [
+        ...couponForm.conditions.applicableRoomTypes,
+        roomName,
+      ];
+    }
+
+    setCouponForm({
+      ...couponForm,
       conditions: {
-        ...prevForm.conditions,
-        applicableRoomTypes: prevForm.conditions.applicableRoomTypes.includes(
-          roomId
-        )
-          ? prevForm.conditions.applicableRoomTypes.filter(
-              (id) => id !== roomId
-            )
-          : [...prevForm.conditions.applicableRoomTypes, roomId],
+        ...couponForm.conditions,
+        applicableRoomTypes: updatedRoomTypes,
       },
-    }));
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -227,7 +233,7 @@ const OffersTable = () => {
           method: "DELETE",
         }
       );
-  
+
       if (response.ok) {
         alert("Coupon deleted successfully!");
         const updatedBookings = await fetch(
@@ -242,7 +248,7 @@ const OffersTable = () => {
       console.error("Error deleting coupon:", error);
     }
   };
-  
+
   return (
     <>
       <div className="flex justify-end mb-4">
@@ -334,7 +340,9 @@ const OffersTable = () => {
                                 </li>
                                 <li>
                                   <button
-                                   onClick={() => handleDeleteCoupon(booking.code)}
+                                    onClick={() =>
+                                      handleDeleteCoupon(booking.code)
+                                    }
                                     className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                                   >
                                     <Trash2 className="w-4 h-4 mr-2 text-red-500" />
@@ -567,9 +575,9 @@ const OffersTable = () => {
                         <input
                           type="checkbox"
                           checked={couponForm.conditions.applicableRoomTypes.includes(
-                            room._id
+                            room.name
                           )}
-                          onChange={() => handleRoomSelection(room._id)}
+                          onChange={() => handleRoomSelection(room.name)}
                           className="mr-2"
                         />
                         {room.name}
@@ -810,9 +818,9 @@ const OffersTable = () => {
                         <input
                           type="checkbox"
                           checked={couponForm.conditions.applicableRoomTypes.includes(
-                            room._id
+                            room.name
                           )}
-                          onChange={() => handleRoomSelection(room._id)}
+                          onChange={() => handleRoomSelection(room.name)}
                           className="mr-2"
                         />
                         {room.name}

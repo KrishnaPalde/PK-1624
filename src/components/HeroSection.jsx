@@ -7,7 +7,8 @@ function HeroSection() {
     <section className="relative flex flex-col justify-center w-full md:mb-[10rem] max-md:max-w-full mb-10">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/be68dcf12afc99d7db8d02c7099aa23d28e285172409d79e5f9d7b96b2db1cfc?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
+        // src="https://cdn.builder.io/api/v1/image/assets/TEMP/be68dcf12afc99d7db8d02c7099aa23d28e285172409d79e5f9d7b96b2db1cfc?apiKey=2bc25307ed444d758c5818aa40360cbc&&apiKey=2bc25307ed444d758c5818aa40360cbc"
+        src="https://images.unsplash.com/photo-1715827344360-65c5bb6c7b75?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         alt=""
         className="absolute inset-0 object-cover w-full h-full"
       />
@@ -19,7 +20,7 @@ function HeroSection() {
               <Header />
               <div className="flex flex-col items-start w-full md:w-[630px] mt-20 ml-4 text-black text-7xl max-md:mt-5 max-md:text-3xl">
                 <h1 className="italic font-normal max-md:text-3xl">
-                  Stay that are
+                  Stay for an
                 </h1>
                 <div className="mt-8 font-normal italic tracking-[0.05em] max-md:mt-5 max-md:text-3xl font-italianno">
                   Experience

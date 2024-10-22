@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert"
+import { Check } from "lucide-react";
 import axios from "axios";
 const process = import.meta.env;
 
@@ -12,6 +14,13 @@ const ContactForm = () => {
     message: "",
   });
 
+  const [alert, setAlert] = useState({
+    show: false,
+    type: "",
+    title: "",
+    description: "",
+  });
+  
   // Function to handle input changes and update state
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target;
@@ -38,7 +47,7 @@ const ContactForm = () => {
       // Example POST request using axios
       // const response = await axios.post("http://localhost:4444/api/contact-us/enquiry", data);
       // const response = await axios.post("https://pk-1624.onrender.com/api/contact-us/enquiry", data);
-      const response = await axios.get(`${process.env.VITE_HOST_URL}/api/contact-us/enquiry`, data);
+      const response = await axios.post(`${process.VITE_HOST_URL}/api/contact-us/enquiry`, data);
       
       
       console.log("Response:", response.data);
@@ -52,16 +61,34 @@ const ContactForm = () => {
         message: "",
       });
 
-      // Handle success (e.g., display a success message)
-      alert("Your message has been sent successfully!");
+      setAlert({
+        show: true,
+        type: "success",
+        title: "Success!",
+        description: "Your message has been sent successfully!",
+      });
     } catch (error) {
       console.error("Error submitting form:", error);
-      // Handle error (e.g., display an error message)
-      alert("There was an error sending your message. Please try again.");
+
+      // Show error alert using shadcn Alert component
+      setAlert({
+        show: true,
+        type: "error",
+        title: "Error",
+        description: "There was an error sending your message. Please try again.",
+      });
     }
   };
 
   return (
+    <div>
+    {alert.show && (
+      <Alert variant={alert.type}>
+        <Check className="w-4 h-4 text-blue-400"/>
+        <AlertTitle>{alert.title}</AlertTitle>
+        <AlertDescription>{alert.description}</AlertDescription>
+      </Alert>
+    )}
     <form className="flex flex-col max-w-full px-5 mt-10" onSubmit={handleSubmit}>
       <div className="flex flex-wrap justify-between gap-5">
         <div className="flex flex-col flex-1 min-w-[120px]">
@@ -110,8 +137,8 @@ const ContactForm = () => {
           id="phone"
           type="tel"
           placeholder="+91 00000-00000"
-          maxLength={12}
-          pattern="/^(\+91|\+91\-|0)?[789]\d{9}$/"
+          maxLength={13}
+          pattern="^((0091)|(\+91)|0?)[6789]{1}\d{9}$"
           className="flex-1 px-4 py-3 pr-4 text-gray-500"
           value={formData.phone}
           onChange={handleChange}
@@ -145,6 +172,7 @@ const ContactForm = () => {
         Leave us a Message
       </button>
     </form>
+    </div>
   );
 };
 

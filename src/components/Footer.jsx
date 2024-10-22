@@ -94,7 +94,7 @@ const Footer = () => {
       <div className="relative flex flex-col items-center w-full px-5 pb-5 mx-auto md:px-16 max-w-7xl">
         <div className="flex flex-col justify-between w-full max-w-full md:flex-row">
           <div className="flex flex-col w-full pt-16 md:w-1/3 max-md:mb-10">
-            <div className="flex gap-3.5 py-px text-4xl font-bold text-white rounded-[30px]">
+            <Link to="/" className="flex gap-3.5 py-px text-4xl font-bold text-white rounded-[30px]">
               <img
                 loading="lazy"
                 // src="https://cdn.builder.io/api/v1/image/assets/TEMP/5a45f9b4f7ade48b0b424da01baaecab08072e240412731f06b15377a9befea9?apiKey=2bc25307ed444d758c5818aa40360cbc"
@@ -103,7 +103,7 @@ const Footer = () => {
                 className="shrink-0 aspect-square object-cover w-[48px]"
               />
               <div className="flex-auto my-auto">Tranquil Trails</div>
-            </div>
+            </Link>
             <address className="mt-10 text-sm not-italic leading-6 text-stone-300">
               Pacific Hills, Diversion, Mussoorie Road, Dehradun, Uttarakhand, India. Pin Code-248009
             </address>

@@ -28,7 +28,7 @@ function App() {
       <BookingFormContext>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<><ScrollToTop/><LandingPage /></>} />
           <Route path="/contactus" element={<ContactPage />} />
           <Route path="/blogs" element={<BlogPage />} />
           <Route path="/bookings" element={<><ScrollToTop/> <BookingPage /></>} />
@@ -37,7 +37,7 @@ function App() {
           <Route path="/room/bookingconfirm" element={<><ScrollToTop/><BookingConfirm/></>}/>
           <Route path="/feedback" element={<><ScrollToTop/><Feedback/></>} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/faq" element={<FAQ />} />
+          <Route path="/faq" element={<><ScrollToTop/><FAQ /></>} />
           <Route
             path="/admin/dashboard"
             element={

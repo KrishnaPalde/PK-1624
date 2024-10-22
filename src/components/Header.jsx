@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NavItem from "./NavItem";
 import { Link } from "react-router-dom";
-import { FaFacebookSquare , FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa"; 
-import {FiMenu, FiX} from "react-icons/fi";
-import logo from '../assets/logo.png';
+import { FaFacebookSquare, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+import { FiMenu, FiX } from "react-icons/fi";
+import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import logo from "../assets/logo.png";
 
 const navItems = [
   { label: "Home", to: "/" },
-  // { label: "Blog", to: "/blogs" },
   { label: "Booking", to: "/bookings" },
   { label: "FAQ", to: "/faq" },
   { label: "Contact us", to: "/contactus" },
@@ -16,88 +17,179 @@ const navItems = [
 
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset;
+      if (scrollTop > 50) {
+        setHasScrolled(true);
+      } else {
+        setHasScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <header className="relative z-50 w-full bg-white bg-opacity-0">
-      <div className="flex items-center justify-between p-4">
-        <Link to="/">
-        <div className="flex items-center justify-center gap-2 text-xl font-extrabold text-black">
-          <div className="shrink-0 rounded-full h-[35px] w-[45px] flex items-center justify-center ">
-            <img loading="lazy" src={logo} alt="logo" className="w-[9rem] h-[3rem] object-cover"/>
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        hasScrolled
+          ? "bg-white bg-opacity-90 shadow-lg"
+          : "bg-transparent mt-5 mb-5"
+      }`}
+    >
+      <div className="container px-4 mx-auto">
+        <div className="flex items-center justify-between py-4">
+          <Link to="/">
+            <div className="flex items-center justify-center gap-2 text-xl font-extrabold text-black">
+              <div className="shrink-0 rounded-full h-[35px] w-[45px] flex items-center justify-center">
+                <img
+                  loading="lazy"
+                  src={logo}
+                  alt="logo"
+                  className="w-[9rem] h-[3rem] object-cover"
+                />
+              </div>
+              <div>Tranquil Trails</div>
             </div>
-          <div>Tranquil Trails</div>
-        </div>
-        </Link>
-        <div className="flex items-center md:hidden">
-          <button onClick={toggleMenu} className="text-2xl focus:outline-none">
-            {isOpen ? <FiX className="text-black" /> : <FiMenu className="text-black" />}
-          </button>
-        </div>
-        <nav className="hidden md:flex md:items-center md:gap-4">
-          {navItems.map((item, index) => (
-            <Link key={index} to={item.to}>
-              <NavItem label={item.label} />
-            </Link>
-          ))}
-  
-          <div className="flex items-center gap-4 ml-4">
-            <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
-              <FaFacebookSquare className="text-gray-800 hover:text-[#3FA2F6] transition-colors duration-200" size={25} />
-            </a>
-            <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer">
-              <FaTwitter className="text-gray-800 hover:text-[#3FA2F6] transition-colors duration-200" size={25} />
-            </a>
-            <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
-              <FaInstagram className="text-gray-800 hover:text-[#3FA2F6] transition-colors duration-200" size={25} />
-            </a>
-            <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
-              <FaLinkedin className="text-gray-800 hover:text-[#3FA2F6] transition-colors duration-200" size={25} />
-            </a>
+          </Link>
+          <div className="flex items-center md:hidden">
+            <button
+              onClick={toggleMenu}
+              className="text-2xl focus:outline-none"
+            >
+              {isOpen ? (
+                <FiX className="text-black" />
+              ) : (
+                <FiMenu className="text-black" />
+              )}
+            </button>
           </div>
-        </nav>
+          <nav className="hidden md:flex md:items-center md:gap-4">
+            {navItems.map((item, index) => (
+              <Link key={index} to={item.to}>
+                <NavItem label={item.label} />
+              </Link>
+            ))}
+
+            <div className="flex items-center gap-4 ml-4">
+              <a
+                href="https://www.facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Facebook
+                  className="text-gray-800 hover:text-[#316ff6] transition-colors duration-200"
+                  size={25}
+                />
+              </a>
+              <a
+                href="https://www.twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Twitter
+                  className="text-gray-800 hover:text-[#1da1f2] transition-colors duration-200"
+                  size={25}
+                />
+              </a>
+              <a
+                href="https://www.instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                
+                  <Instagram className="text-gray-800 transition-colors duration-200 hover:text-[#833ab4] via-[#fd1d1d] to-[#fcb045]" size={25} />
+                
+              </a>
+              <a
+                href="https://www.linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Linkedin
+                  className="text-gray-800 hover:text-[#0a66c2] transition-colors duration-200"
+                  size={25}
+                />
+              </a>
+            </div>
+          </nav>
+        </div>
       </div>
       <div
         className={`${
           isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
-        } md:hidden absolute top-full left-0 w-full overflow-hidden bg-white shadow-lg transition-all duration-300 ease-in-out rounded-[30px]`}
+        } md:hidden absolute top-full left-0 w-full overflow-hidden bg-white shadow-lg transition-all duration-300 ease-in-out`}
       >
         <div className="p-4 space-y-4">
-          {navItems.map((item, index) => (
-            item.label === "Log In" 
-            ? <Link 
-                key={index} 
-                to={item.to} 
+          {navItems.map((item, index) =>
+            item.label === "Log In" ? (
+              <Link
+                key={index}
+                to={item.to}
                 onClick={() => setIsOpen(false)}
                 className="block w-full py-3 text-center text-white transition-colors duration-300 rounded-lg bg-[#335064] hover:bg-[#2e495b]"
               >
                 {item.label}
               </Link>
-            : <Link 
-                key={index} 
-                to={item.to} 
+            ) : (
+              <Link
+                key={index}
+                to={item.to}
                 onClick={() => setIsOpen(false)}
                 className="block py-2 text-lg font-medium text-gray-800 transition-colors duration-200 hover:text-[#768a97]"
               >
                 {item.label}
               </Link>
-          ))}
-          
+            )
+          )}
+
           <div className="flex justify-center pt-4 space-x-4">
-            <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
-              <FaFacebookSquare className="text-gray-800 hover:text-[#3FA2F6] transition-colors duration-200" size={24} />
+            <a
+              href="https://www.facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Facebook
+                className="text-gray-800 hover:text-[#3FA2F6] transition-colors duration-200"
+                size={24}
+              />
             </a>
-            <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer">
-              <FaTwitter className="text-gray-800 hover:text-[#3FA2F6] transition-colors duration-200" size={24} />
+            <a
+              href="https://www.twitter.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Twitter
+                className="text-gray-800 hover:text-[#1da1f2] transition-colors duration-200"
+                size={24}
+              />
             </a>
-            <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
-              <FaInstagram className="text-gray-800 hover:text-[#3FA2F6] transition-colors duration-200" size={24} />
+            <a
+              href="https://www.instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Instagram className="text-gray-800 transition-colors duration-200 hover:text-[#833ab4] via-[#fd1d1d] to-[#fcb045]" size={25} />
             </a>
-            <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
-              <FaLinkedin className="text-gray-800 hover:text-[#3FA2F6] transition-colors duration-200" size={24} />
+            <a
+              href="https://www.linkedin.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Linkedin
+                className="text-gray-800 hover:text-[#0a66c2] transition-colors duration-200"
+                size={24}
+              />
             </a>
           </div>
         </div>
@@ -107,4 +199,3 @@ function Header() {
 }
 
 export default Header;
-

@@ -54,7 +54,7 @@ const RoomDetailsPage = () => {
     }
   }, [roomId, navigate, roomData]);
 
-  console.log("Room Data:", roomData); // Add this line for debugging
+  console.log("Room Data:", roomData); 
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -85,7 +85,7 @@ const RoomDetailsPage = () => {
                 <AmenitiesList />
               </div>
             {/* )} */}
-            {roomData.totalReviews && (
+            {roomData.totalReviews || (
               <div className="mt-10">
                 <RoomReviewSection rating={roomData.rating} reviews={roomData.totalReviews} />
               </div>
