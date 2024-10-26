@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 const ContactInfo = ({ className = "" }) => {
   return (
     <div
-      className={`max-w-full flex flex-row flex-wrap items-start justify-center pt-[60px] pb-[84px] pl-[153px] pr-[93px] box-border gap-[75.7px] bg-[url('/public/contact-info@3x.png')] bg-cover bg-no-repeat bg-[top] leading-[normal] tracking-[normal] text-left text-base-5 text-black font-inter mq450:gap-[19px] mq450:pl-5 mq450:pr-5 mq450:box-border mq550:gap-[38px] mq550:pl-[76px] mq550:pr-[46px] mq550:box-border ${className}`}
+      className={`max-w-full flex flex-row flex-wrap items-start justify-center pt-[60px] pb-[84px] pl-[153px] pr-[93px] box-border gap-[75.7px] bg-[url('/contact-info@3x.png')] bg-cover bg-no-repeat bg-[top] leading-[normal] tracking-[normal] text-left text-base-5 text-black font-inter mq450:gap-[19px] mq450:pl-5 mq450:pr-5 mq450:box-border mq550:gap-[38px] mq550:pl-[76px] mq550:pr-[46px] mq550:box-border ${className}`}
     >
       <div className="h-[196px] w-[264.8px] flex flex-col items-start justify-start text-[18px]">
         <div className="self-stretch flex flex-col items-start justify-start gap-[18px]">
