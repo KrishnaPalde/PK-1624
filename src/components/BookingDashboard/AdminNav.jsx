@@ -362,7 +362,7 @@ function AdminNav({ title }) {
                         htmlFor="serviceCharges"
                         className="block mb-2 text-sm font-medium text-gray-700"
                       >
-                        Service Charges (%)
+                        Service Charges (₹/person)
                       </label>
                       <input
                         type="number"
