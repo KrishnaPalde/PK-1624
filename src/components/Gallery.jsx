@@ -24,7 +24,7 @@ function Gallery() {
       </h3>
       <div className="px-px mt-9 w-full max-w-[1241px] max-md:max-w-full">
         <div className="flex gap-5 max-md:flex-col">
-          <div className="flex flex-col w-[51%] max-md:ml-0 max-md:w-full">
+          <div className="flex flex-col lg:w-[51%] md:w-[41%] max-md:ml-0 max-md:w-full">
             <div className="flex relative flex-col grow justify-center p-9 min-h-[300px] rounded-[30px] max-md:px-5 max-md:mt-8 max-md:max-w-full">
               <img
                 loading="lazy"

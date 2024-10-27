@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useBooking } from '../contexts/BookingFormContext';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
+import { useBooking } from "../contexts/BookingFormContext";
 
 function YourBookingDetailsForm({ formData, onFormDataChange }) {
   const location = useLocation();
@@ -12,8 +14,16 @@ function YourBookingDetailsForm({ formData, onFormDataChange }) {
   const [children, setChildren] = useState(bookingInfo.children || 0);
 
   const [guestDetails, setGuestDetails] = useState({
-    adults: Array(bookingInfo.adults || 0).fill({ name: '', age: '', gender: '' }),
-    children: Array(bookingInfo.children || 0).fill({ name: '', age: '', gender: '' }),
+    adults: Array(bookingInfo.adults || 0).fill({
+      name: "",
+      age: "",
+      gender: "",
+    }),
+    children: Array(bookingInfo.children || 0).fill({
+      name: "",
+      age: "",
+      gender: "",
+    }),
   });
 
   useEffect(() => {
@@ -22,18 +32,27 @@ function YourBookingDetailsForm({ formData, onFormDataChange }) {
   }, [bookingInfo]);
 
   useEffect(() => {
-    setGuestDetails(prevDetails => ({
-      adults: Array(bookingInfo.adults || 0).fill({ name: '', age: '', gender: '' })
-        .map((_, i) => prevDetails.adults[i] || { name: '', age: '', gender: '' }),
-      children: Array(bookingInfo.children || 0).fill({ name: '', age: '', gender: '' })
-        .map((_, i) => prevDetails.children[i] || { name: '', age: '', gender: '' }),
+    setGuestDetails((prevDetails) => ({
+      adults: Array(bookingInfo.adults || 0)
+        .fill({ name: "", age: "", gender: "" })
+        .map(
+          (_, i) => prevDetails.adults[i] || { name: "", age: "", gender: "" }
+        ),
+      children: Array(bookingInfo.children || 0)
+        .fill({ name: "", age: "", gender: "" })
+        .map(
+          (_, i) => prevDetails.children[i] || { name: "", age: "", gender: "" }
+        ),
     }));
   }, [bookingInfo.adults, bookingInfo.children]);
 
   const handleGuestChange = (type, index, field, value) => {
-    setGuestDetails(prevDetails => {
+    setGuestDetails((prevDetails) => {
       const updatedDetails = { ...prevDetails };
-      updatedDetails[type][index] = { ...updatedDetails[type][index], [field]: value };
+      updatedDetails[type][index] = {
+        ...updatedDetails[type][index],
+        [field]: value,
+      };
       return updatedDetails;
     });
   };
@@ -41,20 +60,20 @@ function YourBookingDetailsForm({ formData, onFormDataChange }) {
   const addGuest = (type) => {
     updateBookingInfo({
       ...bookingInfo,
-      [type]: bookingInfo[type] + 1
+      [type]: bookingInfo[type] + 1,
     });
   };
 
   const removeGuest = (type, index) => {
-    setGuestDetails(prevDetails => {
+    setGuestDetails((prevDetails) => {
       const updatedDetails = { ...prevDetails };
       updatedDetails[type] = updatedDetails[type].filter((_, i) => i !== index);
       return updatedDetails;
     });
-  
+
     updateBookingInfo({
       ...bookingInfo,
-      [type]: Math.max(0, bookingInfo[type] - 1)
+      [type]: Math.max(0, bookingInfo[type] - 1),
     });
   };
 
@@ -73,33 +92,21 @@ function YourBookingDetailsForm({ formData, onFormDataChange }) {
   };
 
   const handleInputChange = (e) => {
-    const { id, value } = e.target;
-  
-    if (id === "phoneNumber") {
-      // Remove non-digit characters except for the + symbol
-      let numericValue = value.replace(/[^\d+]/g, ""); 
-  
-      if (numericValue == "+91" || numericValue == "+91 ") {
-        numericValue = "";
-      } else if (!numericValue.startsWith("+91")) {
-        numericValue = "+91 " + numericValue.replace(/^\+91/, "");
-      }
-  
-      if (numericValue.length <= 13) {
-        onFormDataChange({
-          ...formData,
-          [id]: numericValue,
-        });
-      }
-    } else {
+    // Handle PhoneInput value (string input)
+    if (typeof e === "string" || e === undefined) {
       onFormDataChange({
         ...formData,
-        [id]: value,
+        phoneNumber: e || ""
+      });
+    } 
+    else {
+      const { id, value } = e.target;
+      onFormDataChange({
+        ...formData,
+        [id]: value
       });
     }
   };
-  
-  
 
   if (!roomData) {
     useEffect(() => {
@@ -120,7 +127,10 @@ function YourBookingDetailsForm({ formData, onFormDataChange }) {
           <div className="flex flex-col items-start w-full gap-8 sm:flex-row">
             {/* First Name Field */}
             <div className="flex flex-col flex-1 w-full shrink basis-0 sm:w-auto">
-              <label className="text-sm font-medium leading-none text-slate-700" htmlFor="firstName">
+              <label
+                className="text-sm font-medium leading-none text-slate-700"
+                htmlFor="firstName"
+              >
                 First name
               </label>
               <input
@@ -134,7 +144,10 @@ function YourBookingDetailsForm({ formData, onFormDataChange }) {
             </div>
             {/* Last Name Field */}
             <div className="flex flex-col flex-1 w-full shrink basis-0 sm:w-auto">
-              <label className="text-sm font-medium leading-none text-slate-700" htmlFor="lastName">
+              <label
+                className="text-sm font-medium leading-none text-slate-700"
+                htmlFor="lastName"
+              >
                 Last name
               </label>
               <input
@@ -149,7 +162,10 @@ function YourBookingDetailsForm({ formData, onFormDataChange }) {
           </div>
           {/* Email Field */}
           <div className="flex flex-col w-full mt-6 whitespace-nowrap">
-            <label className="text-sm font-medium leading-none text-slate-700" htmlFor="email">
+            <label
+              className="text-sm font-medium leading-none text-slate-700"
+              htmlFor="email"
+            >
               Email
             </label>
             <input
@@ -163,17 +179,21 @@ function YourBookingDetailsForm({ formData, onFormDataChange }) {
           </div>
           {/* Phone Number Field */}
           <div className="flex flex-col w-full mt-6">
-            <label className="text-sm font-medium leading-none text-slate-700" htmlFor="phoneNumber">
+            <label
+              className="text-sm font-medium leading-none text-slate-700"
+              htmlFor="phoneNumber"
+            >
               Phone number
             </label>
-            <input
-              id="phoneNumber"
-              type="tel"
-              placeholder="+91 00000-00000"
-              value={formData.phoneNumber}
-              onChange={handleInputChange}
-              className="px-4 py-3 mt-1.5 w-full text-base text-gray-700 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
-            />
+            <div className="mt-1.5 rounded-lg border border-gray-300 border-solid shadow-sm">
+              <PhoneInput
+                id="phoneNumber"
+                placeholder="Enter Phone Number"
+                value={formData.phoneNumber}
+                onChange={(value) => handleInputChange(value)}
+                className="w-full px-4 py-3 text-base text-gray-700 bg-white rounded-lg"
+              />
+            </div>
           </div>
           {/* ID Number Field */}
           <div className="flex flex-col mt-6 w-full text-sm font-medium min-h-[154px]">
@@ -188,7 +208,7 @@ function YourBookingDetailsForm({ formData, onFormDataChange }) {
               onChange={handleInputChange}
               className="px-4 py-3 mt-2.5 w-full text-base text-gray-500 bg-white rounded-lg border border-gray-300 border-solid shadow-sm"
             />
-            
+
             {/* <div className="flex gap-10 mt-5 w-full leading-loose text-black max-w-[368px]">
               <div className="flex flex-1 gap-2.5">
                 <img
@@ -220,7 +240,6 @@ function YourBookingDetailsForm({ formData, onFormDataChange }) {
               </div>
             </div> */}
           </div>
-    
         </div>
       </div>
     </div>

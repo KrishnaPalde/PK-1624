@@ -194,7 +194,7 @@ function MergedTestimonials() {
   }, []);
 
   return (
-    <section className="py-20 px-20 mt-1.5 w-full bg-white max-md:px-5 max-md:max-w-full">
+    <section className="py-20 px-20 mt-1.5 w-full bg-white max-md:px-5 max-w-full">
       <div className="flex gap-5 max-md:flex-col">
         <div className="flex flex-col w-[42%] max-md:w-full">
           <div className="flex flex-col mt-5 font-bold text-black max-md:mt-10 max-md:max-w-full">

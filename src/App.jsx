@@ -23,6 +23,7 @@ import AdminOffersPage from './pages/AdminOffersPage';
 import AdminReviewsPage from './pages/AdminReviewsPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions';
+import HouseRules from './pages/HouseRules';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="/feedback" element={<><ScrollToTop/><Feedback/></>} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/faq" element={<><ScrollToTop/><FAQ /></>} />
+          <Route path="/house-rules" element={<><ScrollToTop/><HouseRules /></>} />
           <Route
             path="/admin/dashboard"
             element={

@@ -33,7 +33,8 @@ function RoomCard({ guests, name,title, image, isLarge = false, onClick }) {
         src={image}
         alt={title}
         onError={handleImageError}
-        className={`w-full rounded-[30px] ${
+        className={`w-full rounded-[30px] transform transition-all duration-300 hover:scale-[1.08] 
+    shadow-lg hover:shadow-xl group ${
           isLarge ? "aspect-[0.77]" : "aspect-[1.45]"
         } object-cover`}  
       />

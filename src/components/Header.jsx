@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import NavItem from "./NavItem";
 import { Link } from "react-router-dom";
-import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { Facebook, Instagram, Youtube } from "lucide-react";
 import { FiMenu, FiX } from "react-icons/fi";
 import logo from "../assets/logo.png";
 
@@ -39,8 +39,8 @@ function Header() {
         hasScrolled ? "bg-[#255d69] shadow-lg" : "bg-transparent"
       }`}
     >
-      <div className="container px-4 mx-auto py-2">
-        <div className="flex items-center justify-between py-4">
+      <div className="container py-2 mx-auto lg:px-4">
+        <div className="flex items-center justify-between px-4 py-4 md:px-0">
           <Link to="/">
             <div className="flex items-center justify-center gap-2 text-xl font-extrabold">
               <div className="shrink-0 rounded-full h-[35px] w-[45px] flex items-center justify-center">
@@ -53,14 +53,14 @@ function Header() {
               </div>
               <div
                 className={`ml-1 mt-1 ${
-                  hasScrolled ? "text-[#efcb6d]" : "text-[#255d69]"
+                  hasScrolled ? "text-[#eea55f]" : "text-[#255d69]"
                 }`}
               >
                 Tranquil Trails
               </div>
             </div>
           </Link>
-          <div className="flex items-center md:hidden">
+          <div className="flex items-center px-4 md:hidden">
             <button
               onClick={toggleMenu}
               className="text-2xl focus:outline-none"
@@ -74,7 +74,7 @@ function Header() {
           </div>
           <nav
             className={`hidden md:flex md:items-center md:gap-4 ${
-              hasScrolled ? "text-white" : "text-black"
+              hasScrolled ? "text-white" : "text-black "
             }`}
           >
             {navItems.map((item, index) => (
@@ -84,6 +84,22 @@ function Header() {
             ))}
 
             <div className="flex items-center gap-4 ml-4">
+              
+             
+              <a
+                href="https://www.instagram.com/tranquil_trails_home?igsh=aHdlMnAwdW42dnV6"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Instagram
+                  className={`${
+                    hasScrolled
+                      ? "text-white hover:text-[#833ab4]"
+                      : "text-black hover:text-[#833ab4]"
+                  } transition-colors duration-200`}
+                  size={25}
+                />
+              </a>
               <a
                 href="https://www.facebook.com"
                 target="_blank"
@@ -103,25 +119,11 @@ function Header() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Twitter
+                <Youtube
                   className={`${
                     hasScrolled
-                      ? "text-white hover:text-[#1da1f2]"
-                      : "text-black hover:text-[#1da1f2]"
-                  } transition-colors duration-200`}
-                  size={25}
-                />
-              </a>
-              <a
-                href="https://www.instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Instagram
-                  className={`${
-                    hasScrolled
-                      ? "text-white hover:text-[#833ab4]"
-                      : "text-black hover:text-[#833ab4]"
+                      ? "text-white hover:text-[#ff0000]"
+                      : "text-black hover:text-[#ff0000]"
                   } transition-colors duration-200`}
                   size={25}
                 />
@@ -170,17 +172,17 @@ function Header() {
               />
             </a>
             <a
-              href="https://www.twitter.com"
+              href="https://www.youtube.com"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Twitter
-                className="text-black hover:text-[#1da1f2] transition-colors duration-200"
+              <Youtube
+                className="text-black hover:text-[#ff0000] transition-colors duration-200"
                 size={24}
               />
             </a>
             <a
-              href="https://www.instagram.com"
+              href="https://www.instagram.com/tranquil_trails_home?igsh=aHdlMnAwdW42dn"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -189,16 +191,7 @@ function Header() {
                 size={25}
               />
             </a>
-            <a
-              href="https://www.linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Linkedin
-                className="text-black hover:text-[#0a66c2] transition-colors duration-200"
-                size={24}
-              />
-            </a>
+            
           </div>
         </div>
       </div>

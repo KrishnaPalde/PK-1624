@@ -2,10 +2,21 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trash2, PencilLine } from "lucide-react";
+import { Trash2, PencilLine, Upload } from "lucide-react";
 import { IoClose } from "react-icons/io5";
 import { Button } from "../ui/button";
+import { initializeApp } from "firebase/app";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 const process = import.meta.env;
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBRXZB9kPFoD57lsXQSjT_gOZz8cZDc_AU",
+  authDomain: "tranquil-trails-70973.firebaseapp.com",
+  projectId: "tranquil-trails-70973",
+  storageBucket: "tranquil-trails-70973.appspot.com",
+  messagingSenderId: "784696713296",
+  appId: "1:784696713296:web:3d7047b5e5a0ff6fd37155",
+};
 
 const OffersTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,6 +44,41 @@ const OffersTable = () => {
   const [selectedCoupon, setSelectedCoupon] = useState(null);
   const itemsPerPage = 10;
   const navigate = useNavigate();
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+
+  const app = initializeApp(firebaseConfig);
+  const storage = getStorage(app);
+
+  const generateImageName = (code) => {
+    return code.toLowerCase().replaceAll(" ", "_");
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadImageToFirebase = async (code, image) => {
+    if (!image) return null;
+    
+    const storageRef = ref(
+      storage,
+      `coupons/${generateImageName(code)}_${Date.now()}`
+    );
+
+    const snapshot = await uploadBytes(storageRef, image);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    return downloadURL;
+  };
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -136,6 +182,11 @@ const OffersTable = () => {
     e.preventDefault();
 
     try {
+      let image = null;
+      if (selectedImage) {
+        image = await uploadImageToFirebase(couponForm.code, selectedImage);
+      }
+
       const response = await fetch(
         `${process.VITE_HOST_URL}/api/admin/offers/create-coupon`,
         {
@@ -143,7 +194,10 @@ const OffersTable = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(couponForm),
+          body: JSON.stringify({
+            ...couponForm,
+            image: image
+          }),
         }
       );
 
@@ -151,6 +205,8 @@ const OffersTable = () => {
       if (response.ok) {
         alert("Coupon created successfully!");
         setShowModal(false);
+        setSelectedImage(null);
+        setImagePreview(null);
         const updatedBookings = await fetch(
           `${process.VITE_HOST_URL}/api/offers/all-coupons`
         ).then((res) => res.json());
@@ -162,7 +218,6 @@ const OffersTable = () => {
       console.error("Error creating coupon:", error);
     }
   };
-
   const handleUpdate = async (e) => {
     e.preventDefault();
 
@@ -642,7 +697,46 @@ const OffersTable = () => {
                   </label>
                 </div>
               </div>
-
+              <div className="flex flex-col space-y-2">
+                <label className="font-medium">Coupon Image</label>
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                      id="image-upload"
+                    />
+                    <label
+                      htmlFor="image-upload"
+                      className="flex items-center px-4 py-2 space-x-2 text-white bg-[#255d69] hover:bg-[#243947] rounded cursor-pointer"
+                    >
+                      <Upload className="w-4 h-4" />
+                      <span>Choose Image</span>
+                    </label>
+                  </div>
+                  {imagePreview && (
+                    <div className="relative w-20 h-20">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="object-cover w-full h-full rounded"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedImage(null);
+                          setImagePreview(null);
+                        }}
+                        className="absolute top-0 right-0 p-1 -mt-2 -mr-2 text-white bg-red-500 rounded-full"
+                      >
+                        <IoClose className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
               <div className="flex justify-end">
                 <button
                   type="submit"

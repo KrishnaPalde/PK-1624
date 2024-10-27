@@ -62,36 +62,36 @@ const OffersCarousel = ({ onApplyCoupon }) => {
     return null;
   }
 
-  // const renderCouponCard = (coupon) => (
-  //   <Card className="h-[100px] bg-white border-2 border-[#335064] border-dashed shadow-lg hover:shadow-xl transition-shadow duration-300">
-  //     <CardHeader className="px-3 py-2">
-  //       <CardTitle className="text-lg font-bold text-[#335064]">
-  //         {coupon.code}
-  //       </CardTitle>
-  //     </CardHeader>
-  //     <CardContent className="flex items-center justify-between px-3 py-1">
-  //       <Badge
-  //         variant="secondary"
-  //         className="text-[#335064] border-[#335064] text-xs"
-  //       >
-  //         {coupon.type}
-  //       </Badge>
-  //       <p className="text-sm font-semibold text-[#335064]">
-          // {coupon.discountType === "percentage"
-          //   ? `${coupon.discountValue}% OFF`
-          //   : `₹${coupon.discountValue} OFF`}
-  //       </p>
-  //     </CardContent>
-  //   </Card>
-  // );
-  
-  const renderCouponCard = (coupon) => (
-    <Card className="flex p-4 items-start bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+  const renderBasicCouponCard = (coupon) => (
+    <Card className="h-[100px] bg-white border-2 border-[#335064] border-dashed shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <CardHeader className="px-3 py-2">
+        <CardTitle className="text-lg font-bold text-[#335064]">
+          {coupon.code}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex items-center justify-between px-3 py-1">
+        <Badge
+          variant="secondary"
+          className="text-[#335064] border-[#335064] text-xs"
+        >
+          {coupon.type}
+        </Badge>
+        <p className="text-sm font-semibold text-[#335064]">
+          {coupon.discountType === "percentage"
+            ? `${coupon.discountValue}% OFF`
+            : `₹${coupon.discountValue} OFF`}
+        </p>
+      </CardContent>
+    </Card>
+  );
+
+  const renderImageCouponCard = (coupon) => (
+    <Card className="flex items-start p-4 transition-shadow duration-300 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md">
       <div className="flex-shrink-0 w-20 h-20 mr-4">
         <img
-          src="https://picsum.photos/200/300"
-          alt={`${coupon.code} coupon`} // Assuming `code` is a unique identifier for the coupon
-          className="w-full h-full object-cover rounded-md"
+          src={coupon.image}
+          alt={`${coupon.code} coupon`}
+          className="object-cover w-full h-full rounded-md"
         />
       </div>
       <div className="flex-1">
@@ -100,67 +100,59 @@ const OffersCarousel = ({ onApplyCoupon }) => {
           <p className="text-xs font-medium text-gray-400">T&C'S APPLY</p>
         </div>
         <h3 className="mt-1 text-lg font-semibold text-gray-800">{coupon.code}</h3>
-        <p className="mt-1 text-sm text-gray-600">{coupon.discountType === "percentage"
+        <p className="mt-1 text-sm text-gray-600">
+          {coupon.discountType === "percentage"
             ? `${coupon.discountValue}% OFF`
-            : `₹${coupon.discountValue} OFF`}</p>
+            : `₹${coupon.discountValue} OFF`}
+        </p>
       </div>
     </Card>
   );
-  
-  
 
-  // const renderCouponDetails = (coupon) => (
-  //   <div className="p-4 bg-white rounded-lg shadow-xl">
-  //     <h2 className="mb-3 text-2xl font-bold text-[#335064]">{coupon.code}</h2>
-  //     <p className="mb-3 text-sm text-gray-700">{coupon.description}</p>
-  //     <div className="grid grid-cols-2 gap-3 mb-4">
-  //       <div className="flex items-center">
-  //         <span className="text-sm">
-  //           {coupon.discountType === "percentage" ? (
-  //             <>
-  //               <PercentIcon className="mr-2 text-[#335064] w-4 h-4" />{" "}
-  //               {`${coupon.discountValue}% OFF`}
-  //             </>
-  //           ) : (
-  //             `₹${coupon.discountValue} OFF`
-  //           )}
-  //         </span>
-  //       </div>
-  //       <div className="flex items-center">
-  //         <TagIcon className="mr-2 text-[#335064] w-4 h-4" />
-  //         <span className="text-sm">{coupon.type}</span>
-  //       </div>
-  //       <div className="flex items-center">
-  //         <CalendarIcon className="mr-2 text-[#335064] w-4 h-4" />
-  //         <span className="text-sm">
-  //           Valid until:{" "}
-  //           {new Date(coupon.expirationDate).toLocaleDateString("en-GB", {
-  //             day: "2-digit",
-  //             month: "2-digit",
-  //             year: "numeric",
-  //           })}
-  //         </span>
-  //       </div>
-  //     </div>
-  //     {renderCouponConditions(coupon)}
-  //     {/* <Button
-  //       className="w-full mt-3 bg-[#335064] text-white hover:bg-[#2a4a57] text-sm"
-  //       onClick={() => onApplyCoupon(coupon.code)}
-  //     >
-  //       Apply Coupon
-  //     </Button> */}
-  //   </div>
-  // );
-
-  const renderCouponDetails = (coupon) => (
+  const renderBasicCouponDetails = (coupon) => (
     <div className="p-4 bg-white rounded-lg shadow-xl">
-      {true && (
-        <img
-          src="https://picsum.photos/200/300"
-          alt={`${coupon.code} full coupon`}
-          className="w-full h-40 mb-3 rounded-lg object-cover"
-        />
-      )}
+      <h2 className="mb-3 text-2xl font-bold text-[#335064]">{coupon.code}</h2>
+      <p className="mb-3 text-sm text-gray-700">{coupon.description}</p>
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        <div className="flex items-center">
+          <span className="text-sm">
+            {coupon.discountType === "percentage" ? (
+              <>
+                <PercentIcon className="mr-2 text-[#335064] w-4 h-4" />{" "}
+                {`${coupon.discountValue}% OFF`}
+              </>
+            ) : (
+              `₹${coupon.discountValue} OFF`
+            )}
+          </span>
+        </div>
+        <div className="flex items-center">
+          <TagIcon className="mr-2 text-[#335064] w-4 h-4" />
+          <span className="text-sm">{coupon.type}</span>
+        </div>
+        <div className="flex items-center">
+          <CalendarIcon className="mr-2 text-[#335064] w-4 h-4" />
+          <span className="text-sm">
+            Valid until:{" "}
+            {new Date(coupon.expirationDate).toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+            })}
+          </span>
+        </div>
+      </div>
+      {renderCouponConditions(coupon)}
+    </div>
+  );
+
+  const renderImageCouponDetails = (coupon) => (
+    <div className="p-4 bg-white rounded-lg shadow-xl">
+      <img
+        src={coupon.image}
+        alt={`${coupon.code} full coupon`}
+        className="object-cover w-full h-40 mb-3 rounded-lg"
+      />
       <h2 className="mb-3 text-2xl font-bold text-[#335064]">{coupon.code}</h2>
       <p className="mb-3 text-sm text-gray-700">{coupon.description}</p>
       <div className="grid grid-cols-2 gap-3 mb-4">
@@ -253,7 +245,10 @@ const OffersCarousel = ({ onApplyCoupon }) => {
               <Dialog>
                 <DialogTrigger asChild>
                   <div className="cursor-pointer">
-                    {renderCouponCard(coupon)}
+                    {coupon.image 
+                      ? renderImageCouponCard(coupon)
+                      : renderBasicCouponCard(coupon)
+                    }
                   </div>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
@@ -263,14 +258,17 @@ const OffersCarousel = ({ onApplyCoupon }) => {
                       Apply this coupon at the payment page.
                     </DialogDescription>
                   </DialogHeader>
-                  {renderCouponDetails(coupon)}
+                  {coupon.image 
+                    ? renderImageCouponDetails(coupon)
+                    : renderBasicCouponDetails(coupon)
+                  }
                 </DialogContent>
               </Dialog>
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        {/* <CarouselPrevious /> */}
+        {/* <CarouselNext /> */}
       </Carousel>
     </div>
   );

@@ -8,23 +8,49 @@ const createCoupon = async (req, res) => {
     type,
     conditions,
     expirationDate,
+    image, 
   } = req.body;
 
   try {
+    if (!code || !discountType || !discountValue || !type) {
+      return res.status(400).json({
+        message:
+          "Missing required fields: code, discountType, discountValue, and type are required",
+      });
+    }
+
+    const existingCoupon = await Coupon.findOne({ code: code.toUpperCase() });
+    if (existingCoupon) {
+      return res.status(409).json({
+        message: "Coupon code already exists",
+      });
+    }
+
     const coupon = new Coupon({
       code: code.toUpperCase(),
       discountType,
       discountValue,
       type,
-      conditions,
-      expirationDate,
+      conditions: conditions || [], 
+      expirationDate: expirationDate || null, 
+      image: image || null, 
       isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     await coupon.save();
-    res.status(201).json({ message: "Coupon created successfully!" });
+
+    res.status(201).json({
+      message: "Coupon created successfully!",
+      coupon,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error creating coupon", error });
+    console.error("Error creating coupon:", error);
+    res.status(500).json({
+      message: "Error creating coupon",
+      error: error.message,
+    });
   }
 };
 
@@ -215,7 +241,9 @@ const updateCoupon = async (req, res) => {
       return res.status(404).json({ message: "Coupon not found" });
     }
 
-    res.status(200).json({ message: "Coupon updated successfully!", coupon: updatedCoupon });
+    res
+      .status(200)
+      .json({ message: "Coupon updated successfully!", coupon: updatedCoupon });
   } catch (error) {
     res.status(500).json({ message: "Error updating coupon", error });
   }

@@ -8,7 +8,7 @@ const PaymentBreakdownSchema = new Schema({
 
 const TransactionSchema = new Schema({
   transactionId: { type: String, required: true },
-  orderId: { type: String, required: true },
+  orderId: { type: String, required: true, default: "0" },
   paymentId: { type: String, required: true },
   paymentMethod: { type: String, required: true },
   amount: { type: Number, required: true },
@@ -71,6 +71,7 @@ const BookingSchema = new Schema({
   feedbackLink: { type: Boolean, required: true, default: false },
   transactions: [TransactionSchema],
   createdAt: { type: Date, default: Date.now },
+  isCustom: {type: Boolean, default: false},
 });
 
 const Booking = mongoose.model("Booking", BookingSchema);

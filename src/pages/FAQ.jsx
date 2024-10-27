@@ -5,6 +5,12 @@ import WhatsAppButton from "../components/WhatsappButton";
 
 function FAQ() {
   // Define a list of FAQs with questions and answers
+  const paymentLink = () => {
+    return (
+      <a href='https://razorpay.me/@tranquiltrails' target='_blank'>Payment Link</a>
+    )
+  }
+  
   const faqs = [
     {
       question: "Where is Tranquil Trails located?",
@@ -24,7 +30,7 @@ function FAQ() {
     },
     {
       question: "What are the payment options available?",
-      answer: "We accept payments through Razorpay, which allows you to pay via credit/debit cards, UPI, net banking, and other online payment methods. You can complete your payment during booking.",
+      answer: "We accept payments through Razorpay, which allows you to pay via credit/debit cards, UPI, net banking, and other online payment methods. You can complete your payment using this link: ",
     },
     {
       question: "Do you provide meals at the homestay?",
@@ -85,7 +91,13 @@ function FAQ() {
                 </span>
               </button>
               {expanded === index && (
-                <p className="mt-4 text-gray-600">{faq.answer}</p>
+                (faq.question === "What are the payment options available?") ? (
+                  <p className="mt-4 text-gray-600">{faq.answer} 
+                  <a href='https://razorpay.me/@tranquiltrails' target='_blank' className="underline text-[#255d69]">Payment Link</a>
+                  </p>
+                ): 
+                (<p className="mt-4 text-gray-600">{faq.answer}</p>)              
+              
               )}
             </div>
           ))}

@@ -1,42 +1,40 @@
-import React,{useState,useEffect} from "react";
-import { Link } from "react-router-dom"; // For internal links
-import logo from '../assets/logo.png';
-import axios from 'axios';
-import {useNavigate} from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom"; // Added useLocation
+import logo from "../assets/logo.png";
+import { Instagram, Facebook, Youtube } from "lucide-react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const process = import.meta.env;
 
 const Footer = () => {
   const [rooms, setRooms] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation(); 
+
   const socialIcons = [
     {
-      src: "https://cdn.builder.io/api/v1/image/assets/TEMP/f9b61e9097571706c541a77075a5bd875ce688df938993de0531acd1271cd1e4?apiKey=2bc25307ed444d758c5818aa40360cbc",
+      src: Facebook,
       alt: "Facebook",
-      link: "https://www.facebook.com", // Add external link
+      link: "https://www.facebook.com",
     },
     {
-      src: "https://cdn.builder.io/api/v1/image/assets/TEMP/61cf18c6c3f5e57131ac7edaf21d1d1918542ff9b4355fd5ae81b9d33b9518b6?apiKey=2bc25307ed444d758c5818aa40360cbc",
-      alt: "Twitter",
-      link: "https://www.twitter.com", // Add external link
-    },
-    {
-      src: "https://cdn.builder.io/api/v1/image/assets/TEMP/cc0daf4828fb4a3c0aecc27d6da0d883dbc9232efe70f97d3a80ad67d6ea99bb?apiKey=2bc25307ed444d758c5818aa40360cbc",
+      src: Instagram,
       alt: "Instagram",
-      link: "https://www.instagram.com", // Add external link
+      link: "https://www.instagram.com/tranquil_trails_home?igsh=aHdlMnAwdW42dnV6",
     },
     {
-      src: "https://cdn.builder.io/api/v1/image/assets/TEMP/1be9bde8a60f614ae50b9c13ad02dcfc435291333c14a22bbdb72a197a28f2a9?apiKey=2bc25307ed444d758c5818aa40360cbc",
-      alt: "LinkedIn",
-      link: "https://www.linkedin.com", // Add external link
+      src: Youtube,
+      alt: "Youtube",
+      link: "https://www.youtube.com",
     },
   ];
-
-  
 
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/rooms`);
+        const response = await axios.get(
+          `${process.VITE_HOST_URL}/api/admin/rooms`
+        );
         setRooms(response.data);
       } catch (error) {
         console.error("Error fetching rooms:", error);
@@ -48,36 +46,44 @@ const Footer = () => {
 
   const handleLinkClick = (link) => {
     if (link.data && link.data.id) {
-      navigate(`/room/${link.data.id}`, { state: link.data });
+      // Force a page reload if we're already on a room page
+      if (location.pathname.includes('/room/')) {
+        window.location.href = `/room/${link.data.id}`;
+      } else {
+        navigate(`/room/${link.data.id}`, { 
+          state: link.data,
+          replace: true // Use replace to avoid building up history
+        });
+      }
     } else {
       navigate(link.url);
     }
-  }; 
-  
+  };
+
   const footerLinks = [
     {
       title: "Rooms",
-      links: rooms.map(room => ({ 
-        name: room.name, 
+      links: rooms.map((room) => ({
+        name: room.name,
         url: `/room/${room.id}`,
-        data: room
+        data: room,
       })),
     },
     {
       title: "Quick links",
       links: [
-        { name: "Booking", url: "/bookings" }, // Internal link
-        { name: "FAQ", url: "/faq" }, // Internal link
+        { name: "Booking", url: "/bookings" },
+        { name: "FAQ", url: "/faq" },
+        { name: "House Rules", url: "/house-rules" },
       ],
     },
     {
       title: "Company",
       links: [
-        // { name: "About us", url: "/about" }, // Internal link
-        { name: "Contact us", url: "/contactus" }, // Internal link
-        { name: "How to reach us", url: "/contactus" }, // Internal link
-        { name: "Privacy Policy", url: "/privacy-policy" }, // Internal link
-        { name: "Terms of use", url: "/terms-conditions" }, // Internal link
+        { name: "Contact us", url: "/contactus" },
+        { name: "How to reach us", url: "/contactus" },
+        { name: "Privacy Policy", url: "/privacy-policy" },
+        { name: "Terms of use", url: "/terms-conditions" },
       ],
     },
   ];
@@ -90,11 +96,14 @@ const Footer = () => {
   };
 
   return (
-    <footer className="flex flex-col self-stretch w-full bg-neutral-900 ">
+    <footer className="flex flex-col self-stretch w-full bg-[#255d69] ">
       <div className="relative flex flex-col items-center w-full px-5 pb-5 mx-auto md:px-16 max-w-7xl">
         <div className="flex flex-col justify-between w-full max-w-full md:flex-row">
           <div className="flex flex-col w-full pt-16 md:w-1/3 max-md:mb-10">
-            <Link to="/" className="flex gap-3.5 py-px text-4xl font-bold text-white rounded-[30px]">
+            <Link
+              to="/"
+              className="flex gap-3.5 py-px text-4xl font-bold text-white rounded-[30px]"
+            >
               <img
                 loading="lazy"
                 // src="https://cdn.builder.io/api/v1/image/assets/TEMP/5a45f9b4f7ade48b0b424da01baaecab08072e240412731f06b15377a9befea9?apiKey=2bc25307ed444d758c5818aa40360cbc"
@@ -105,7 +114,8 @@ const Footer = () => {
               <div className="flex-auto my-auto">Tranquil Trails</div>
             </Link>
             <address className="mt-10 text-sm not-italic leading-6 text-stone-300">
-              Pacific Hills, Diversion, Mussoorie Road, Dehradun, Uttarakhand, India. Pin Code-248009
+              Pacific Hills, Diversion, Mussoorie Road, Dehradun, Uttarakhand,
+              India. Pin Code-248009
             </address>
             <p className="mt-4 text-sm leading-6 text-stone-300">
               Phone: (+91) 7673-992288
@@ -115,12 +125,14 @@ const Footer = () => {
             </p>
             <div className="flex gap-5 pt-10 ">
               {socialIcons.map((icon, index) => (
-                <a key={index} href={icon.link} target="_blank" rel="noopener noreferrer">
-                  <img
-                    loading="lazy"
-                    src={icon.src}
-                    alt={icon.alt}
-                    className="w-6 shrink-0 aspect-square"
+                <a
+                  key={index}
+                  href={icon.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <icon.src
+                    className="w-6 text-white shrink-0 aspect-square hover:text-gray-300"
                   />
                 </a>
               ))}
@@ -129,7 +141,10 @@ const Footer = () => {
           <div className="flex flex-col w-full pt-16 md:w-2/3">
             <div className="flex flex-wrap justify-between">
               {footerLinks.map((column, index) => (
-                <div key={index} className="w-full mb-8 sm:w-1/2 md:w-1/3 md:mb-0">
+                <div
+                  key={index}
+                  className="w-full mb-8 sm:w-1/2 md:w-1/3 md:mb-0"
+                >
                   <div className="flex flex-col">
                     <h3 className="mb-4 text-lg font-semibold leading-6 text-white">
                       {column.title}
@@ -137,15 +152,15 @@ const Footer = () => {
                     <ul className="text-sm leading-8 text-stone-300">
                       {column.links.map((link, linkIndex) => (
                         <li key={linkIndex}>
-                           <Link 
-  to={link.url}
-  onClick={(e) => {
-    e.preventDefault();
-    handleLinkClick(link);
-  }}
->
-  {link.name}
-</Link>
+                          <Link
+                            to={link.url}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleLinkClick(link);
+                            }}
+                          >
+                            {link.name}
+                          </Link>
                         </li>
                       ))}
                     </ul>
@@ -153,7 +168,7 @@ const Footer = () => {
                 </div>
               ))}
             </div>
-            </div>
+          </div>
         </div>
         <img
           loading="lazy"
@@ -163,9 +178,14 @@ const Footer = () => {
           onClick={handleClick}
         />
       </div>
-      <div className="w-full px-5 py-10 mt-2 text-sm leading-6 text-center text-white bg-stone-900">
+      <div className="w-full px-5 pb-5 pt-0 leading-6 text-center font-medium text-md text-white bg-[#255d69]">
         © Copyright Tranquil Trails. All Rights Reserved
-        <p className="pt-2 text-xs">Designed and Developed By <a href="https://tantra-techn.web.app" target="blank">Tantra Technologies</a></p>
+        <p className="pt-1 text-xs ">
+          Designed and Developed By{" "}
+          <a href="https://tantra-techn.web.app" target="blank">
+            Tantra Technologies
+          </a>
+        </p>
       </div>
     </footer>
   );

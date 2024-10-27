@@ -26,6 +26,7 @@ const couponSchema = new mongoose.Schema({
   },
   expirationDate: { type: Date, required: true },
   isActive: { type: Boolean, default: true },
+  image: {type: String},
 });
 
 const Coupon = mongoose.model("Coupon", couponSchema);

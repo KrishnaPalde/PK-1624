@@ -19,8 +19,8 @@ const RoomDetailsPage = () => {
   const { id: roomId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const [roomData, setRoomData] = useState(location.state || null);
-  const [isLoading, setIsLoading] = useState(!location.state);
+  const [roomData, setRoomData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   
   const isWeekend = () => {
@@ -28,45 +28,77 @@ const RoomDetailsPage = () => {
     return today.getDay() === 0 || today.getDay() === 6;
   };
 
+  // Reset state when roomId changes
+  useEffect(() => {
+    setIsLoading(true);
+    setError(null);
+    setRoomData(null);
+  }, [roomId]);
+
   useEffect(() => {
     const fetchRoomData = async () => {
       try {
         setIsLoading(true);
         const response = await axios.get(`${process.VITE_HOST_URL}/api/rooms/${roomId}`);
         const fetchedData = response.data;
-        setRoomData(prevData => ({
-          ...prevData,
+        
+        setRoomData({
           ...fetchedData,
           price: isWeekend() && fetchedData.weekend ? fetchedData.weekend : fetchedData.price,
           weekdayPrice: fetchedData.price,
           weekendPrice: fetchedData.weekend,
           isWeekend: isWeekend()
-        }));
-        setIsLoading(false);
+        });
       } catch (error) {
         console.error("Error fetching room data:", error);
         setError("Failed to fetch room data. Please try again later.");
+      } finally {
         setIsLoading(false);
       }
     };
 
-    if (!roomData || !roomData.id) {
+    if (roomId) {
       fetchRoomData();
     }
-  }, [roomId, navigate, roomData]);
-
-  console.log("Room Data:", roomData); 
+  }, [roomId]); // Only depend on roomId
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex flex-col max-w-full pt-12 bg-white">
+        <div className="flex flex-col self-center w-full max-w-[1323px] max-md:max-w-full px-10">
+          <Header />
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div>Loading...</div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div className="flex flex-col max-w-full pt-12 bg-white">
+        <div className="flex flex-col self-center w-full max-w-[1323px] max-md:max-w-full px-10">
+          <Header />
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div className="text-red-500">Error: {error}</div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!roomData) {
-    return <div>No room data available.</div>;
+    return (
+      <div className="flex flex-col max-w-full pt-12 bg-white">
+        <div className="flex flex-col self-center w-full max-w-[1323px] max-md:max-w-full px-10">
+          <Header />
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div>No room data available.</div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
