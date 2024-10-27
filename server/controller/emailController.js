@@ -4,6 +4,7 @@ const path = require("path");
 const PDFDocument = require("pdfkit");
 const Booking = require("../models/Bookings");
 const Room = require("../models/Room");
+const twilio = require("twilio");
 require("dotenv").config();
 
 // Configure the transporter for nodemailer
@@ -317,7 +318,7 @@ a:hover
 
         <!-- Header -->
         <div class="header">
-            <img loading="lazy" src="https://firebasestorage.googleapis.com/v0/b/tranquil-trails-70973.appspot.com/o/logo%2Flogofull.png?alt=media&token=d8bdfa41-72d4-400c-a882-b4e93058c889" alt="Company Logo">
+            <img loading="lazy" src="https://firebasestorage.googleapis.com/v0/b/tranquil-trails-70973.appspot.com/o/logo%2Fimage.png?alt=media&token=a0abbf8b-8a7f-43b4-8a2b-bc3c2b15d89a" alt="Tranquil Trails">
             <h1>Booking Confirmation</h1>
         </div>
 
@@ -617,7 +618,21 @@ const EnquiryFormEmail = async (req, res) => {
   try {
     const { data } = req.body;
     console.log(data);
+    const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    const authToken = process.env.TWILIO_AUTH_TOKEN;
+    const client = twilio(accountSid, authToken);
+    const message = await client.messages.create({
+      body: `New Enquiry Form Submission
+Here are the details:
+Name: ${data.name}
+Email: ${data.email}
+Phone: ${data.phone}
+Message: ${data.message}`,
+      from: "+12564488314",
+      to: "+919373996091",
+    });
     sendAdminEnquiryFormEntry(data);
+
     return res.status(200).send({ message: "Successful" });
   } catch (error) {
     return res.status(500).send({ error: error });

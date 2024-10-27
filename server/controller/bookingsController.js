@@ -146,7 +146,7 @@ const getUnavailableDates = async (req, res) => {
   try {
     const today = new Date();
     const thirtyDaysFromNow = new Date();
-    thirtyDaysFromNow.setDate(today.getDate() + 30);
+    thirtyDaysFromNow.setDate(today.getDate() + 365);
 
     const bookings = await Booking.find({
       $or: [
@@ -446,7 +446,8 @@ const getRoomDetailsForm = async (req, res) => {
 
 const addRoom = async (req, res) => {
   try {
-    const { name, title, description, price, weekend, images, rating } = req.body;
+    const { name, title, description, price, weekend, images, rating } =
+      req.body;
     const newRoom = new Room({
       id: Date.now().toString(),
       name,

@@ -44,7 +44,7 @@ function BookingForm() {
 
   useEffect(() => {
     const fetchUnavailableDates = async () => {
-      try {
+      try { 
         const response = await axios.get(`${process.VITE_HOST_URL}/api/unavailable_dates`);
         setUnavailableDates(response.data.unavailableDates.map(date => new Date(date)));
       } catch (error) {
