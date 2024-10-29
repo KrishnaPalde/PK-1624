@@ -109,25 +109,25 @@ function BookingForm() {
   const handleSearch = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await axios.get(`${process.VITE_HOST_URL}/api/check_availability_dates`, {
-        params: {
-          checkinDate: checkIn.toISOString(),
-          checkoutDate: checkOut.toISOString(),
-          rooms: rooms,
-        },
-      });
+    // try {
+      // const response = await axios.get(`${process.VITE_HOST_URL}/api/check_availability_dates`, {
+      //   params: {
+      //     checkinDate: checkIn.toISOString(),
+      //     checkoutDate: checkOut.toISOString(),
+      //     rooms: rooms,
+      //   },
+      // });
 
-      if (response.data.available) {
+      // if (response.data.available) {
         updateBookingInfo({ checkIn, checkOut, adults, children, rooms });
         navigate("/bookings");
-      } else {
-        console.log("Selected dates or rooms are not available. Please choose different options.");
-      }
-    } catch (error) {
-      console.log("An error occurred. Please try again.");
-      console.error("Error checking availability:", error);
-    }
+      // } else {
+        // console.log("Selected dates or rooms are not available. Please choose different options.");
+      // }
+    // } catch (error) {
+    //   console.log("An error occurred. Please try again.");
+    //   console.error("Error checking availability:", error);
+    // }
   };
 
    return (

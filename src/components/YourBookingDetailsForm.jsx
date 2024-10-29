@@ -188,7 +188,10 @@ function YourBookingDetailsForm({ formData, onFormDataChange }) {
             <div className="mt-1.5 rounded-lg border border-gray-300 border-solid shadow-sm">
               <PhoneInput
                 id="phoneNumber"
+                defaultCountry="IN"
                 placeholder="Enter Phone Number"
+                maxLength={12}
+                pattern="^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$"
                 value={formData.phoneNumber}
                 onChange={(value) => handleInputChange(value)}
                 className="w-full px-4 py-3 text-base text-gray-700 bg-white rounded-lg"

@@ -29,9 +29,23 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await axios.get(
-          `${process.VITE_HOST_URL}/api/admin/rooms`
-        );
+        console.log(bookingInfo.checkIn.toISOString() + " " + bookingInfo.checkOut.toISOString());
+        // const response = await axios.get(
+        //   `${process.env.VITE_HOST_URL}/api/admin/rooms`,
+        //   {
+        //     params: {
+        //       checkIn: bookingInfo.checkIn.toISOString(), 
+        //       checkOut: bookingInfo.checkOut.toISOString(),
+        //     },
+        //   }
+        // );
+        const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/rooms`, {
+          params: {
+            checkinDate: bookingInfo.checkIn.toISOString(),
+            checkoutDate: bookingInfo.checkOut.toISOString(),
+          },
+        });
+        
         setHotelData(response.data);
         setFilteredData(response.data);
         setLoading(false);
@@ -58,6 +72,14 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
       });
       setFilteredData(filtered);
       setCurrentPage(1);
+
+
+    // Check if no rooms are available
+    if (filtered.length === 0) {
+      setError("No rooms available for the selected dates.");
+    } else {
+      setError("");
+    }
     };
 
     applyFilters();
@@ -84,6 +106,7 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
   const requiredRooms = calculateRequiredRooms();
   
   const handleRoomSelection = (room, index) => {
+    if (filteredData.length === 0) return;
     if (index === filteredData.length - 1) {
       if (selectedRooms.includes(room)) {
         setSelectedRooms(selectedRooms.filter((selectedRoom) => selectedRoom !== room));
@@ -134,6 +157,7 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center w-full h-screen bg-gray-100">
+        
         <motion.div
           className="flex flex-col items-center space-y-4"
           initial={{ opacity: 0 }}
@@ -182,6 +206,8 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
   if (error) {
     return <div className="mt-8 text-xl text-center text-red-500">{error}</div>;
   }
+  
+  
 
   return (
     <main className="flex flex-col grow max-md:mt-6 max-md:max-w-full">

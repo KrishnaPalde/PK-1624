@@ -33,7 +33,7 @@ const Footer = () => {
     const fetchRooms = async () => {
       try {
         const response = await axios.get(
-          `${process.VITE_HOST_URL}/api/admin/rooms`
+          `${process.VITE_HOST_URL}/api/allRooms`
         );
         setRooms(response.data);
       } catch (error) {

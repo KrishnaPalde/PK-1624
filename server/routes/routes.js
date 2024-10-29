@@ -23,6 +23,7 @@ const {
   deleteRoom,
   updateRoomPrice,
   get5Rooms,
+  getAllRoomsStatic,
 } = require("../controller/bookingsController");
 const {
   createFeedback,
@@ -59,6 +60,7 @@ router.get("/check_availability_dates", checkIfAvailable);
 router.get("/unavailable_dates", getUnavailableDates);
 router.get("/rooms/:roomId", getRoomDetails);
 router.get("/admin/rooms", getAllRooms);
+router.get("/allRooms", getAllRoomsStatic);
 // router.get("/admin/bookings", fetchBookings6Admin);
 router.get("/admin/dashboard_stats", getDashboardStats);
 router.get("/admin/dashboard_bookings", fetchBookingsAdmin);
@@ -95,6 +97,6 @@ router.delete("/admin/offers/delete-coupon/:couponCode", deleteCoupon);
 router.patch("/admin/offers/deactivate/:couponCode", deactivateCoupon);
 router.get("/offers/active", getAllActiveCoupons);
 router.get("/offers/all-coupons", getAllCoupons);
-router.put('/offers/update-coupon/:id', updateCoupon);
+router.put("/offers/update-coupon/:id", updateCoupon);
 
 module.exports = router;
