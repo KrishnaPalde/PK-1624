@@ -55,7 +55,7 @@ function RoomTable({ addRoom }) {
   const fetchRooms = async () => {
     try {
       await fetch(`${process.VITE_HOST_URL}/api/admin/getroomstatus`);
-      const response = await fetch(`${process.VITE_HOST_URL}/api/admin/rooms`);
+      const response = await fetch(`${process.VITE_HOST_URL}/api/allRooms`);
       if (!response.ok) {
         throw new Error("Failed to fetch rooms");
       }

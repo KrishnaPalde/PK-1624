@@ -12,8 +12,8 @@ const CustomCalendar = () => {
   useEffect(() => {
     const fetchUnavailableDates = async () => {
       try {
-        const response = await axios.get(`${process.VITE_HOST_URL}/api/unavailable_dates`);
-        setUnavailableDates(response.data.unavailableDates.map(date => new Date(date)));
+        const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/unavailable_dates`);
+        setUnavailableDates(response.data.unavailableDates);
       } catch (error) {
         console.error('Error fetching unavailable dates:', error);
       }
@@ -24,24 +24,26 @@ const CustomCalendar = () => {
 
   const daysInMonth = eachDayOfInterval({
     start: startOfMonth(currentMonth),
-    end: endOfMonth(currentMonth)
+    end: endOfMonth(currentMonth),
   });
 
-  const isDateUnavailable = (date) => {
-    return unavailableDates.some(unavailableDate =>
-      date.toDateString() === unavailableDate.toDateString()
-    );
+  // Determine the status of a given date
+  const getDateStatus = (date) => {
+    const dateStr = format(date, 'yyyy-MM-dd'); // Ensure consistent formatting
+    const foundDate = unavailableDates.find((unavailableDate) => unavailableDate.date === dateStr);
+    return foundDate ? foundDate.status : 'available';
   };
 
   const onDateClick = (date) => {
-    if (!isDateUnavailable(date)) {
+    const status = getDateStatus(date);
+    if (status === 'available') {
       setSelectedDate(date);
     }
   };
 
   const renderDays = () => {
     const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-    return dayNames.map(day => (
+    return dayNames.map((day) => (
       <div key={day} className="text-sm font-semibold text-center text-gray-600">
         {day}
       </div>
@@ -59,18 +61,32 @@ const CustomCalendar = () => {
       const formattedDate = format(day, 'd');
       const isCurrentMonth = isSameMonth(day, currentMonth);
       const isSelected = isCurrentMonth && day.toDateString() === selectedDate.toDateString();
-      const isUnavailable = isDateUnavailable(day);
+      const status = getDateStatus(day);
+
+      // Assign colors based on booking status
+      const statusClass =
+        status === 'fullyBooked'
+          ? 'bg-red-200 text-red-800 cursor-not-allowed'
+          : status === 'partiallyBooked'
+          ? 'bg-yellow-200 text-yellow-800 cursor-not-allowed'
+          : '';
 
       days.push(
         <div
           key={i}
           className={`text-center p-1 ${isCurrentMonth ? '' : 'text-gray-400'} 
           ${isSelected ? 'bg-blue-500 text-white rounded' : ''}
-          ${isUnavailable ? 'bg-red-200 text-red-800 cursor-not-allowed' : ''}
+          ${statusClass}
           ${isToday(day) && !isSelected ? 'border border-blue-500' : ''}
           cursor-pointer hover:bg-gray-100`}
           onClick={() => onDateClick(day)}
-          title={isUnavailable ? 'Date is fully booked' : 'Select date'}
+          title={
+            status === 'fullyBooked'
+              ? 'Date is fully booked'
+              : status === 'partiallyBooked'
+              ? 'Date is partially booked'
+              : 'Select date'
+          }
         >
           {formattedDate}
         </div>
@@ -94,8 +110,12 @@ const CustomCalendar = () => {
       <div className="flex items-center justify-between mb-2">
         <span className="font-semibold">{format(currentMonth, 'MMMM yyyy')}</span>
         <div>
-          <button onClick={prevMonth} className="mr-2 text-gray-600 "><FaChevronLeft/></button>
-          <button onClick={nextMonth} className="text-gray-600"><FaChevronRight/></button>
+          <button onClick={prevMonth} className="mr-2 text-gray-600">
+            <FaChevronLeft />
+          </button>
+          <button onClick={nextMonth} className="text-gray-600">
+            <FaChevronRight />
+          </button>
         </div>
       </div>
       <div className="grid grid-cols-7 gap-1">

@@ -55,7 +55,7 @@ const BookingSchema = new Schema({
         `${props.value} is not a valid Aadhar or Passport number!`,
     },
   },
-  rooms: [RoomBookingSchema], 
+  rooms: [RoomBookingSchema],
   checkInDate: { type: Date, required: true },
   checkOutDate: { type: Date, required: true },
   paymentStatus: {
@@ -70,8 +70,14 @@ const BookingSchema = new Schema({
   numberOfInfants: { type: Number, required: true },
   feedbackLink: { type: Boolean, required: true, default: false },
   transactions: [TransactionSchema],
+  source: {
+    type: String,
+    enum: ["website", "airbnb", "makemytrip", "bookings.com", "external"],
+    required: true,
+    default: "website",
+  },
   createdAt: { type: Date, default: Date.now },
-  isCustom: {type: Boolean, default: false},
+  isCustom: { type: Boolean, default: false },
 });
 
 const Booking = mongoose.model("Booking", BookingSchema);

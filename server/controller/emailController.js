@@ -9,7 +9,7 @@ require("dotenv").config();
 
 // Configure the transporter for nodemailer
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com", // Replace with your SMTP server
+  host: "smtp.gmail.com", // Replace with your SMTP serverfig
   port: 465, // Use 465 for secure connections
   secure: true, // Set to true if using port 465
   service: "Gmail",
@@ -158,7 +158,9 @@ const generatePDF = async (bid) => {
       booking.checkOutDate.getFullYear(),
     // roomType: roomName,
     noOfGuest:
-      `${booking.numberOfAdults} Adult(s),` + booking.numberOfChildren == 0
+      booking.numberOfAdults == 0
+        ? ""
+        : `${booking.numberOfAdults} Adult(s),` + booking.numberOfChildren == 0
         ? ""
         : ` ${booking.numberOfChildren} Children`,
     guestName: booking.firstName + " " + booking.lastName,

@@ -8,6 +8,7 @@ import logo from "../assets/logo.png";
 const navItems = [
   { label: "Home", to: "/" },
   { label: "Booking", to: "/bookings" },
+  { label: "Nearby Attractions", to: "/nearby-attractions" },
   { label: "FAQ", to: "/faq" },
   { label: "Contact us", to: "/contactus" },
   { label: "Log In", to: "/login" },

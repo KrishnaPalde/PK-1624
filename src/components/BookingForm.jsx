@@ -79,16 +79,27 @@ function BookingForm() {
     updateBookingInfo({ checkOut: date });
   };
 
+  const updateRoomCountBasedOnGuests = (newAdults, newChildren) => {
+    const totalGuests = newAdults + newChildren;
+    const calculatedRooms = Math.ceil(totalGuests / 3);
+    setRooms(calculatedRooms);
+    updateBookingInfo({ rooms: calculatedRooms });
+  };
+
   const handleAdultsChange = (type) => {
-    const newAdults = type === "increment" ? adults + 1 : (adults > 1 ? adults - 1 : 1);
-    setAdults(newAdults);
-    updateBookingInfo({ adults: newAdults });
+    if(adults == 12 && type === "increment") return;
+      const newAdults = type === "increment" ? adults + 1 : (adults > 1 ? adults - 1 : 1);
+      setAdults(newAdults);
+      updateBookingInfo({ adults: newAdults });
+      updateRoomCountBasedOnGuests(newAdults, children);
   };
 
   const handleChildrenChange = (type) => {
+    if(children == 10 && type === "increment") return;
     const newChildren = type === "increment" ? children + 1 : (children > 0 ? children - 1 : 0);
     setChildren(newChildren);
     updateBookingInfo({ children: newChildren });
+    updateRoomCountBasedOnGuests(adults, newChildren);
   };
 
   const handleRoomsChange = (type) => {

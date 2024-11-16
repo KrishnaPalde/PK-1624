@@ -20,14 +20,13 @@ function HeroSection() {
               <Header />
               <div className="flex flex-col items-start w-full md:w-[630px] lg:mt-20 ml-4 text-black md:text-5xl lg:text-7xl max-md:mt-5 max-md:text-3xl">
                 <h1 className="italic font-normal max-md:text-3xl">
-                  Stay for an
+                Your Own Holiday Home
                 </h1>
                 <div className="mt-8 font-normal italic tracking-[0.05em] max-md:mt-5 max-md:text-3xl font-italianno">
-                  Experience
+                Away from Home
                 </div>
                 <p className="self-stretch mt-16 mb-10 text-xl max-md:mt-5 max-md:text-base max-md:px-2">
-                  Our exclusive collection of extra-ordinary stays at magical
-                  locations that are hidden from plain sight.
+                  Discover an exclusive collection of extraordinary stays in enchanting locations. Escape the familiar and immerse yourself in a world of comfort, privacy, and hidden beauty.
                 </p>
               </div>
             </div>

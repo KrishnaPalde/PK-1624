@@ -48,6 +48,7 @@ var razorpay;
 router.post("/create-order", async (req, res) => {
   const id = await fetchKeyId();
   const secret_key = await fetchSecretKey();
+  console.log("");
   razorpay = new Razorpay({
     key_id: id,
     key_secret: secret_key,

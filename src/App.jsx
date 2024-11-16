@@ -24,6 +24,7 @@ import AdminReviewsPage from './pages/AdminReviewsPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions';
 import HouseRules from './pages/HouseRules';
+import NearbyAttractions from './pages/NearbyAttractions';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route path="/contactus" element={<><ScrollToTop/><ContactPage /></>} />
           <Route path="/privacy-policy" element={<><ScrollToTop/><PrivacyPolicy /></>} />
           <Route path="/terms-conditions" element={<><ScrollToTop/><TermsAndConditions /></>} />
+          <Route path='/nearby-attractions' element={<NearbyAttractions />}/>
           <Route path="/blogs" element={<BlogPage />} />
           <Route path="/bookings" element={<><ScrollToTop/> <BookingPage /></>} />
           <Route path="/room/:id" element={<><ScrollToTop/> <RoomDetailsPage /></>} />

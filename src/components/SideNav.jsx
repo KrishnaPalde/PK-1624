@@ -10,7 +10,7 @@ import logo from '../assets/logo.png';
 const SideNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [screenSize, setScreenSize] = useState('large');
-  const { logout } = useAuth();
+  const { logout, logoutAndNoNav } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
@@ -33,6 +33,11 @@ const SideNav = () => {
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
+
+  const goToMainWebsite = () => {
+    logoutAndNoNav();
+    window.location.href = '/'; 
+  }
   const Logout = () => {
     logout();
   };
@@ -111,6 +116,7 @@ const SideNav = () => {
           })}
         </ul>
         <div className="absolute flex flex-col items-center justify-center text-center bottom-6 left-6 right-6">
+          <button className='mb-4 p-2 button bg-[#255d69] text-white rounded-lg' onClick={goToMainWebsite}>Go to Main Website</button>
           <hr className="w-full mb-4 border-gray-300" />
             <div>
               <p>Designed and Developed by</p>

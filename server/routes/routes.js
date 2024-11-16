@@ -13,6 +13,7 @@ const {
   getRoomDetails,
   getAllRooms,
   getUnavailableDates,
+  getUnavailableDatesAdmin,
   fetchBookingsAdmin,
   getDashboardStats,
   getBookings,
@@ -58,6 +59,7 @@ const router = express.Router();
 router.post("/authenticateAdmin", login);
 router.get("/check_availability_dates", checkIfAvailable);
 router.get("/unavailable_dates", getUnavailableDates);
+router.get("/admin/unavailable_dates", getUnavailableDatesAdmin);
 router.get("/rooms/:roomId", getRoomDetails);
 router.get("/admin/rooms", getAllRooms);
 router.get("/allRooms", getAllRoomsStatic);

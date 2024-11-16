@@ -210,11 +210,7 @@ function MergedTestimonials() {
             <h2 className="mt-5 text-5xl leading-[58px] max-md:max-w-full max-md:text-4xl max-md:leading-[54px]">
               What our clients are <br /> saying about us?
             </h2>
-            <p className="text-base font-medium leading-7 mt-7 text-neutral-500 max-md:max-w-full">
-              Discover how you can offset your adventure's carbon emissions{" "}
-              <br /> and support the sustainable initiatives practiced by our{" "}
-              <br /> operators worldwide.
-            </p>
+            
           </div>
         </div>
         

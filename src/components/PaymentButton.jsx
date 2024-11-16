@@ -5,6 +5,38 @@ import { useBooking } from '../contexts/BookingFormContext';
 import TransactionSpinner from './TransactionSpinner'; 
 const process = import.meta.env;
 
+function getRoomType(rooms) {
+  if (!Array.isArray(rooms) || rooms.length === 0) {
+    throw new Error("Rooms array is required and must not be empty.");
+  }
+
+  // Check if the array contains only one room and its name is "Panoramic View"
+  if (rooms.length === 1 && rooms[0].name === "Panoramic View") {
+    return { roomType: "penthouse", roomCount: 1 };
+  }
+
+  // Count the total number of rooms and return "single" as roomType
+  const roomCount = rooms.length;
+  return { roomType: "single", roomCount };
+}
+
+
+
+function calculateDatesBetween(checkIn, checkOut) {
+  const formattedDates = [];
+  let currentDate = new Date(checkIn);
+
+  const checkOutDate = new Date(checkOut); // Convert checkOut to a Date object
+
+  while (currentDate < checkOutDate) {
+    formattedDates.push(currentDate.toISOString().split("T")[0]); // Format as "YYYY-MM-DD"
+    currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+  }
+
+  return formattedDates;
+}
+
+
 const PaymentButton = ({ roomData, formData, adults, children, amount, priceDetails,calculateNights }) => {
   const navigate = useNavigate();
   const { bookingInfo } = useBooking();
@@ -12,10 +44,24 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, priceDeta
   const [isProcessing, setIsProcessing] = useState(false);
   const [globalSettings, setGlobalSettings] = useState(null);
 
-  const baseFare = priceDetails.find(detail => detail.label.startsWith('Base Fare'))?.amount || 0;
-  const taxes = priceDetails.find(detail => detail.label === 'Taxes')?.amount || 0;
-  const serviceFee = priceDetails.find(detail => detail.label === 'Service Fee')?.amount || 0;
-  const discount = Math.abs(priceDetails.find(detail => detail.label === 'Discount')?.amount || 0).toLocaleString('en-IN');
+  // var baseFare = 0;
+  // var taxes = 0;
+  // var serviceFee = 0;
+  // var discount = 0;
+
+  // let testing = false;
+  // if(testing){
+  //   amount = 1;
+  //   baseFare = 0.90;
+  //   taxes = 0.05;
+  //   serviceFee = 0.05;
+  //    discount = 0;
+  // } else {
+    const baseFare = priceDetails.find(detail => detail.label.startsWith('Base Fare'))?.amount || 0;
+    const taxes = priceDetails.find(detail => detail.label === 'Taxes')?.amount || 0;
+    const serviceFee = priceDetails.find(detail => detail.label === 'Service Fee')?.amount || 0;
+    const discount = Math.abs(priceDetails.find(detail => detail.label === 'Discount')?.amount || 0).toLocaleString('en-IN'); 
+  // }
   
 
   useEffect(() => {
@@ -34,6 +80,7 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, priceDeta
   const handlePayment = async () => {
     setIsProcessing(true);
     try {
+      
       const response = await fetch(`${process.VITE_HOST_URL}/api/payments/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -66,8 +113,8 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, priceDeta
         key: globalSettings.paymentGateway.keyId,
         amount: amount * 100,
         currency: 'INR',
-        name: 'Tantra Technologies',
-        description: 'Booking Payment',
+        name: 'Tranquil Trails',
+        description: 'Bookings Payment',
         order_id: orderId,
         handler: async function (response) {
           const verificationResponse = await fetch(`${process.VITE_HOST_URL}/api/payments/verify-payment`, {
@@ -90,6 +137,13 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, priceDeta
 
           if (result.status === 'success') {
             const idn = result.id;
+            const dates = calculateDatesBetween(bookingInfo.checkIn.toISOString(),bookingInfo.checkOut.toISOString())
+            const roomTypeResponse = getRoomType(rooms);
+            const roomType = roomTypeResponse[roomType];
+            const roomCount = roomTypeResponse[roomCount];
+            const source = "website";
+            const response = await axios.post(`${process.VITE_HOST_URL}/api/add-event`, { dates, roomType, source, roomCount })
+            console.log(response.status);
             await axios.get(`${process.VITE_HOST_URL}/api/booking-confirmation/${idn}`);
             setIsProcessing(false);
             navigate(`/room/bookingconfirm`, { state: { roomData, formData, bookingId: idn, rooms } });
@@ -124,7 +178,7 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, priceDeta
         onClick={handlePayment}
         className="w-full py-3 px-2 text-xl text-white transition duration-300 rounded-md bg-[#255d69] hover:bg-[#243947]"
       >
-        Pay {amount} INR
+        Pay {new Intl.NumberFormat().format(amount)} INR
       </button>
       {isProcessing && <TransactionSpinner />}
     </>

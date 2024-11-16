@@ -26,7 +26,7 @@ function FAQ() {
     },
     {
       question: "What is the check-in and check-out time?",
-      answer: "•	Check-in: 12:00 PM •	Check-out: 11:00 AM If you need an early check-in or late check-out, please inform us in advance, and we'll do our best to accommodate your request.",
+      answer: "•	Guests are requested to check in between 2 pm and 8 pm on the day of arrival. Check-out to be completed by 11 am on the departure date. If you require a early check-in or late check-out, please let us know in advance, as additional fees may apply.",
     },
     {
       question: "What are the payment options available?",
