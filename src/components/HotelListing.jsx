@@ -99,7 +99,8 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
   };
 
   const calculateRequiredRooms = () => {
-    if (guestCount <= GUEST_LIMIT_PER_ROOM) return 1;
+    if (guestCount <= GUEST_LIMIT_PER_ROOM && bookingInfo.rooms == 1) return 1;
+    if(bookingInfo.rooms > 1) return bookingInfo.rooms;
     return Math.ceil(guestCount / GUEST_LIMIT_PER_ROOM);
   };
 
@@ -110,7 +111,7 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
     if (index === filteredData.length - 1) {
       if (selectedRooms.includes(room)) {
         setSelectedRooms(selectedRooms.filter((selectedRoom) => selectedRoom !== room));
-      } else if (guestCount <= GUEST_LIMIT_PER_ROOM) {
+      } else if (guestCount <= GUEST_LIMIT_PER_ROOM && bookingInfo.rooms == 1) {
         setSelectedRooms([room]);
       } else {
         setSelectedRooms([...selectedRooms, room]);
@@ -118,7 +119,7 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
       return;
     }
 
-    if (guestCount <= GUEST_LIMIT_PER_ROOM) {
+    if (guestCount <= GUEST_LIMIT_PER_ROOM && bookingInfo.rooms == 1) {
       setSelectedRooms([room]);
     } else {
       if (selectedRooms.includes(room)) {
@@ -132,7 +133,7 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
 
   const handleNextClick = (room) => {
     let roomsToNavigate;
-    if (guestCount <= GUEST_LIMIT_PER_ROOM) {
+    if (guestCount <= GUEST_LIMIT_PER_ROOM && bookingInfo.rooms == 1) {
       roomsToNavigate = [room];
     } else {
       roomsToNavigate = selectedRooms.length > 0 ? selectedRooms : [room];
@@ -250,10 +251,11 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
               disabled={
                 index !== currentCards.length - 1 && 
                 ((guestCount > GUEST_LIMIT_PER_ROOM && 
-                  selectedRooms.length >= requiredRooms && 
-                  !selectedRooms.includes(room)) ||
+                  selectedRooms.length == requiredRooms && 
+                  !selectedRooms.includes(room)) 
+                  ||
                 (guestCount <= GUEST_LIMIT_PER_ROOM && 
-                  selectedRooms.length === 1 && 
+                  selectedRooms.length === requiredRooms && 
                   !selectedRooms.includes(room)))
               }
               selectedRooms={selectedRooms}
@@ -280,7 +282,7 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
           Next
         </button>
       </div>
-      {selectedRooms.length > 0 && guestCount > GUEST_LIMIT_PER_ROOM && (
+      {selectedRooms.length > 0 && (guestCount > GUEST_LIMIT_PER_ROOM || selectedRooms.length <= requiredRooms) && (
         <motion.div
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}

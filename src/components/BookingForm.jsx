@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useBooking } from '../contexts/BookingFormContext';
@@ -12,7 +12,7 @@ const process = import.meta.env;
 function BookingForm() {
   const navigate = useNavigate();
   const { bookingInfo, updateBookingInfo } = useBooking();
-
+  const location = useLocation();
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -131,6 +131,9 @@ function BookingForm() {
 
       // if (response.data.available) {
         updateBookingInfo({ checkIn, checkOut, adults, children, rooms });
+        if(location.pathname === "/bookings"){
+          window.location.reload();
+        }
         navigate("/bookings");
       // } else {
         // console.log("Selected dates or rooms are not available. Please choose different options.");

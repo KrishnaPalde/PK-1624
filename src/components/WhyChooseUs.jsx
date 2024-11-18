@@ -82,7 +82,7 @@ function WhyChooseUs() {
       </div>
 
       {/* Feature and Image Cards Section */}
-      <div className="w-full md:w-1/2 flex flex-col space-y-4 mt-8 md:mt-0">
+      <div className="w-full md:w-1/2 flex flex-col justify-center space-y-4 mt-8 md:mt-0">
         <div className="grid grid-cols-2 gap-4">
           {featureData.map((feature, index) => (
             <ChooseCard key={index} {...feature} />

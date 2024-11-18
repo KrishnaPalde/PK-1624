@@ -7,7 +7,8 @@ function NavItem({ label }) {
         {label}
       </span>
     );
-  } else {
+  }
+  else {
     return (
       <span className="py-2 text-lg font-medium transition-colors duration-300 lg:px-4 whitespace-nowrap hover:text-black hover:text-opacity-75">
         {label}

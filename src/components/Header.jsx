@@ -8,7 +8,7 @@ import logo from "../assets/logo.png";
 const navItems = [
   { label: "Home", to: "/" },
   { label: "Booking", to: "/bookings" },
-  { label: "Nearby Attractions", to: "/nearby-attractions" },
+  { label: "Attractions", to: "/nearby-attractions" },
   { label: "FAQ", to: "/faq" },
   { label: "Contact us", to: "/contactus" },
   { label: "Log In", to: "/login" },
@@ -74,7 +74,7 @@ function Header() {
             </button>
           </div>
           <nav
-            className={`hidden md:flex md:items-center md:gap-4 ${
+            className={`hidden md:flex md:items-center md:gap-4  ${
               hasScrolled ? "text-white" : "text-black "
             }`}
           >
