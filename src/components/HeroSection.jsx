@@ -23,11 +23,11 @@ function HeroSection() {
                 Your Own Holiday Home
                 </h1>
                 <div className="mt-8 font-normal italic tracking-[0.05em] max-md:mt-5 max-md:text-3xl font-italianno">
-                Away from Home
+                <h2>Away from Home</h2>
                 </div>
-                <p className="self-stretch mt-16 mb-10 text-xl max-md:mt-5 max-md:text-base max-md:px-2">
+                <h3 className="self-stretch mt-16 mb-10 text-xl max-md:mt-5 max-md:text-base max-md:px-2">
                   Discover an exclusive collection of extraordinary stays in enchanting locations. Escape the familiar and immerse yourself in a world of comfort, privacy, and hidden beauty.
-                </p>
+                </h3>
               </div>
             </div>
           </div>
