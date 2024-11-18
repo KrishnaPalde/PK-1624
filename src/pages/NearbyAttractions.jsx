@@ -1,57 +1,157 @@
-import React from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import React from "react";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import robbersCave from "../assets/robbers_cave.jpeg";
+import mussoorie from "../assets/Mussoorie.jpg";
+import Rajaji_National_Park from "../assets/Rajaji_National_Park.jpg";
+import clockTower from "../assets/clock_tower.jpg";
+import wadiaInstitute from "../assets/wadia_institute.jpg";
+import malsi_forest from "../assets/malsi_reserve_forest.png";
+import buddhaTemple from "../assets/buddha_temple.jpg";
+import shikharFall from "../assets/shikhar.jpg";
+import khalangaWar from "../assets/Khalanga_war.jpeg";
+import tapovan from "../assets/tapovan.jpg";
+import dehradunZoo from "../assets/dehradun_zoo.jpg";
+import FRI from "../assets/fri.jpg";
+import mindrolling from "../assets/mindrolling.jpg";
+import Tapkeshwar from "../assets/Tapkeshwar.jpg";
+import Sahastradhara from "../assets/sahastradhara.webp";
 
 const attractions = [
   {
     id: 1,
-    name: "Kempty Falls",
-    image: "/images/kempty-falls.jpg",
-    description:
-      "A popular picnic spot and waterfall, perfect for nature lovers.",
-    distance: "15 km",
+    name: "Robber's Cave (Gucchupani)",
+    image: robbersCave,
+    description: "A natural cave formation with a river flowing through it, ideal for picnics and nature walks.",
+    distance: "~12 km",
     category: "Nature",
-    mapLink: "https://goo.gl/maps/KemptyFalls",
+    mapLink: "https://maps.app.goo.gl/xiGeMmH4bbEbB7My8",
   },
   {
     id: 2,
-    name: "Robber's Cave",
-    image: "/images/robbers-cave.jpg",
-    description:
-      "Known for its natural caves and water streams, a must-visit spot.",
-    distance: "8 km",
-    category: "Adventure",
-    mapLink: "https://goo.gl/maps/RobbersCave",
+    name: "Sahastradhara",
+    image: Sahastradhara,
+    description: "Famous for its natural sulfur springs, waterfalls, and caves. The name means 'Thousand Fold Spring'.",
+    distance: "~16 km",
+    category: "Wellness",
+    mapLink: "https://maps.app.goo.gl/c3r11do1vfJnEKpj7",
   },
   {
     id: 3,
-    name: "Mussoorie Mall Road",
-    image: "/images/mall-road.jpg",
-    description:
-      "Famous for shopping, dining, and scenic views of the hills.",
-    distance: "25 km",
-    category: "Leisure",
-    mapLink: "https://goo.gl/maps/MussoorieMallRoad",
+    name: "Tapkeshwar Temple",
+    image: Tapkeshwar,
+    description: "A revered Hindu temple dedicated to Lord Shiva, situated by a natural cave and a stream.",
+    distance: "~11 km",
+    category: "Cultural",
+    mapLink: "https://maps.app.goo.gl/E1pHTtQALzLATVRj8",
   },
   {
     id: 4,
-    name: "Sahastradhara",
-    image: "/images/sahastradhara.jpg",
-    description:
-      "Known for its therapeutic water springs and beautiful surroundings.",
-    distance: "12 km",
-    category: "Wellness",
-    mapLink: "https://goo.gl/maps/Sahastradhara",
+    name: "Mindrolling Monastery",
+    image: mindrolling,
+    description: "One of the largest Buddhist centers in India, known for its impressive architecture and tranquil surroundings.",
+    distance: "~7 km",
+    category: "Cultural",
+    mapLink: "https://maps.app.goo.gl/enz6eXpoQQgfx4qE6",
   },
   {
     id: 5,
-    name: "Mindrolling Monastery",
-    image: "/images/mindrolling.jpg",
-    description:
-      "A stunning Buddhist monastery with vibrant architecture and peaceful vibes.",
-    distance: "20 km",
+    name: "Forest Research Institute (FRI)",
+    image: FRI,
+    description: "A premier institution in the field of forestry research, housed in a beautiful colonial building with a museum.",
+    distance: "~10 km",
+    category: "Educational",
+    mapLink: "https://maps.app.goo.gl/xKLbEaPBawzxfsrY8",
+  },
+  {
+    id: 6,
+    name: "Dehradun Zoo (Malsi Deer Park)",
+    image: dehradunZoo,
+    description: "A small zoo located at the base of the Shivalik range, home to a variety of animals and birds.",
+    distance: "~9 km",
+    category: "Adventure",
+    mapLink: "https://maps.app.goo.gl/T2Mf8AcCPxRX3fbs6",
+  },
+  {
+    id: 7,
+    name: "Tapovan",
+    image: tapovan,
+    description: "Known for its serene environment and spiritual significance, it’s a popular place for meditation and yoga.",
+    distance: "~13 km",
+    category: "Spiritual",
+    mapLink: "https://maps.app.goo.gl/vrkPCZEW4kPiRn8C8",
+  },
+  {
+    id: 8,
+    name: "Khalanga War Memorial",
+    image: khalangaWar,
+    description: "A historical site commemorating the battle between the British and Gorkhas, offering a beautiful view of Dehradun valley.",
+    distance: "~8 km",
+    category: "Historical",
+    mapLink: "https://maps.app.goo.gl/4YYMBoLprVduKTAG7",
+  },
+  {
+    id: 9,
+    name: "Shikhar Fall",
+    image: shikharFall,
+    description: "A serene waterfall and picnic spot amidst dense forests, perfect for nature lovers.",
+    distance: "~15 km",
+    category: "Nature",
+    mapLink: "https://maps.app.goo.gl/97xBAyQ6JX1J1cUm9",
+  },
+  {
+    id: 10,
+    name: "Buddha Temple (Clement Town)",
+    image: buddhaTemple,
+    description: "A major Tibetan Buddhist monastery featuring a large statue of Buddha and peaceful gardens.",
+    distance: "~8 km",
     category: "Cultural",
-    mapLink: "https://goo.gl/maps/MindrollingMonastery",
+    mapLink: "https://maps.app.goo.gl/UdaqFuXNRNH2nNn8A",
+  },
+  {
+    id: 11,
+    name: "Malsi Reserve Forest",
+    image: malsi_forest,
+    description: "Ideal for wildlife enthusiasts and nature walks, located near the Malsi Deer Park.",
+    distance: "~9 km",
+    category: "Adventure",
+    mapLink: "https://maps.app.goo.gl/5e193LkMk1YVPXEN6",
+  },
+  {
+    id: 12,
+    name: "Wadia Institute of Himalayan Geology",
+    image: wadiaInstitute,
+    description: "An autonomous research institute specializing in the geology of the Himalayas, offering educational tours.",
+    distance: "~10 km",
+    category: "Educational",
+    mapLink: "https://maps.app.goo.gl/ddHvSpdbwSeDSnLU9",
+  },
+  {
+    id: 13,
+    name: "Clock Tower (Ghanta Ghar)",
+    image: clockTower,
+    description: "A prominent landmark in the heart of Dehradun, known for its historical significance and nearby shopping areas.",
+    distance: "~5 km",
+    category: "Historical",
+    mapLink: "https://maps.app.goo.gl/TVXpEyKR3VZb1gxbA",
+  },
+  {
+    id: 14,
+    name: "Rajaji National Park",
+    image: Rajaji_National_Park,
+    description: "A national park known for its rich biodiversity, including elephants, tigers, and leopards. Ideal for wildlife safaris.",
+    distance: "~20 km",
+    category: "Adventure",
+    mapLink: "https://maps.app.goo.gl/dcLN2UDqZjdowGuy8",
+  },
+  {
+    id: 15,
+    name: "Mussoorie",
+    image: mussoorie,
+    description: "A popular hill station known as the 'Queen of the Hills,' offering beautiful views, a pleasant climate, and attractions like Kempty Falls, Mall Road, and Gun Hill.",
+    distance: "~35 km",
+    category: "Leisure",
+    mapLink: "https://maps.app.goo.gl/KhW2X88bSd4QByBc9",
   },
 ];
 
@@ -59,15 +159,13 @@ const NearbyAttractions = () => {
   return (
     <>
       <Header />
-      <div className="container mx-auto px-6 sm:px-8 md:px-12 lg:px-20 xl:px-24 py-8 mt-24">
-        <h1 className="text-3xl sm:text-4xl pb-4 font-bold text-center" style={{ color: "#255d69" }}>
+      <div className="container mx-auto px-4 sm:px-6 md:px-10 lg:px-20 py-12 mt-16 mb-16">
+        <h1 className="text-3xl sm:text-4xl font-bold text-center text-[#255d69] mb-6">
           Nearby Attractions & Activities
         </h1>
-        <p className="text-lg text-gray-700 text-center mb-8">
+        <p className="text-center text-gray-700 mb-8">
           Discover the best places to visit near Pacific Hills, Dehradun. From serene nature spots to cultural landmarks, there’s something for everyone.
         </p>
-
-        {/* Attractions Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {attractions.map((attraction) => (
             <div
@@ -80,50 +178,23 @@ const NearbyAttractions = () => {
                 className="w-full h-48 object-cover"
               />
               <div className="p-4">
-                <h2 className="text-lg font-semibold" style={{ color: "#255d69" }}>
-                  {attraction.name}
-                </h2>
-                <p className="mt-2 text-sm text-gray-600">{attraction.description}</p>
+                <h2 className="text-lg font-semibold text-[#255d69]">{attraction.name}</h2>
+                <p className="text-sm text-gray-600 mt-2">{attraction.description}</p>
                 <div className="mt-4 flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Distance: {attraction.distance}</span>
-                  <span
-                    className="px-3 py-1 rounded-full text-xs text-white"
-                    style={{ backgroundColor: "#255d69" }}
-                  >
-                    {attraction.category}
-                  </span>
+                  <span className="text-sm text-gray-500">{attraction.distance}</span>
+                  <span className="bg-[#255d69] text-white text-xs rounded-full px-3 py-1">{attraction.category}</span>
                 </div>
                 <a
                   href={attraction.mapLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block mt-4 text-center text-white font-semibold py-2 rounded-lg"
-                  style={{
-                    backgroundColor: "#255d69",
-                    transition: "background-color 0.3s ease",
-                  }}
+                  className="block text-center bg-[#255d69] text-white font-semibold py-2 rounded-lg mt-4 hover:bg-opacity-90 transition duration-300"
                 >
                   Get Directions
                 </a>
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Map Integration */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold text-center mb-6" style={{ color: "#255d69" }}>
-            Explore on Map
-          </h2>
-          <iframe
-            src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3442.237654841007!2d78.07458107636155!3d30.372608774759968!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3908d7b81915745b%3A0xc5310d4d85c27ae!2sPacific%20Hills!5e0!3m2!1sen!2sin!4v1731759287665!5m2!1sen!2sin`}
-            width="100%"
-            height="450"
-            className="rounded-lg shadow-md border"
-            allowFullScreen=""
-            loading="lazy"
-            title="Property Location"
-          ></iframe>
         </div>
       </div>
       <Footer />
