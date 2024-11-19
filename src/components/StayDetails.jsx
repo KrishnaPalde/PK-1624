@@ -47,7 +47,8 @@ function StayDetails({ formData }) {
   const { bookingInfo } = useBooking();
   const [globalSettings, setGlobalSettings] = useState({
     tax: 0,
-    serviceCharges: 0
+    serviceCharges: 0,
+    extraPersonCharges: 0
   });
   const [couponError , setCouponError] = useState('');
   const [coupons, setCoupons] = useState([]);
@@ -90,14 +91,40 @@ function StayDetails({ formData }) {
     return selectedRooms.reduce((total, room) => total + room.price, 0) * calculateNights;
   }, [selectedRooms, calculateNights]);
 
+  function calculateExtraPersonCharges(adultCount, roomCount, extraPersonRate) {
+    const maxAdultsPerRoom = 2;
+    const maxTotalAdults = roomCount * maxAdultsPerRoom;
+    const extraPersons = adultCount > maxTotalAdults ? adultCount - maxTotalAdults : 0;
+    return [Math.round(extraPersons * extraPersonRate), extraPersons];
+  }
+
   const priceDetails = useMemo(() => {
     const taxes = Math.round(totalBasePrice * (globalSettings.tax / 100));
-    const serviceFee = Math.round(countGuests * globalSettings.serviceCharges); 
+    const serviceFee = Math.round(countGuests * globalSettings.serviceCharges);
+    var extraPersonCharges = 0;
+    var extraPersonCount = 0;
+    console.log(selectedRooms);
+    if(!(selectedRooms.length === 1 && selectedRooms[0].name === "Panoramic View")) {
+      const res = calculateExtraPersonCharges(bookingInfo.adults, selectedRooms.length, globalSettings.extraPersonCharges);
+      extraPersonCharges = res[0];
+      extraPersonCount = res[1];
+    }
+    // if(bookingInfo.adults === 3 && selectedRooms.length === 1 && selectedRooms[0].name != "Panoramic View"){
+    //   extraPersonCharges = Math.round(1 * globalSettings.extraPersonCharges);
+    // } else if (bookingInfo.adults === 6 && selectedRooms.length === 2) {
+    //   extraPersonCharges = Math.round(2 * globalSettings.extraPersonCharges);
+    // } else if (bookingInfo.adults === 9 && selectedRooms.length === 3){
+    //   extraPersonCharges = Math.round(3 * globalSettings.extraPersonCharges);
+    // } else if (bookingInfo.adults === 12 && selectedRooms.length === 4) {
+    //   extraPersonCharges = Math.round(4 * globalSettings.extraPersonCharges);
+    // }
+     
 
     return [
       { label: `Base Fare (${calculateNights} night${calculateNights === 1 ? '' : 's'})`, amount: totalBasePrice },
       { label: "Taxes", amount: taxes },
       { label: "Service Fee", amount: serviceFee },
+      { label: `Extra Person Charges (x${extraPersonCount})`, amount:extraPersonCharges },
       { label: "Discount", amount: -discountAmount },
     ];
   }, [totalBasePrice, calculateNights, countGuests, globalSettings, discountAmount]);
@@ -196,59 +223,61 @@ function StayDetails({ formData }) {
           Duration of stay: <span className="font-bold">{calculateNights} night{calculateNights === 1 ? '' : 's'}</span>
         </p>
 
-        <div className="flex flex-col items-center p-2 mt-4 bg-white border border-gray-300 rounded-lg shadow-sm ">
-          <div className="flex items-center w-full">
-            <DropdownMenu className="w-full">
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="justify-between w-full">
-                  {appliedCoupon ? `Applied: ${appliedCoupon}` : "Select a coupon"}
-                  <ChevronDown className="w-4 h-4 ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white w-96 ">
-                {coupons.map((coupon) => (
-                  <DropdownMenuItem
-                    key={coupon._id}
-                    onClick={() => applyCoupon(coupon.code)}
-                    className="flex items-center justify-between cursor-pointer hover:bg-gray-800 "
-                  >
-                    <span>{coupon.code}</span>
-                    {appliedCoupon === coupon.code && <Check className="w-4 h-4 ml-2" />}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          {appliedCoupon && (
-            <div className="flex items-center mt-2">
-              <span className="font-medium text-green-600">
-                Coupon applied: {appliedCoupon}
-              </span>
-              <span 
-                onClick={removeCoupon} 
-                className="ml-4 text-gray-600 cursor-pointer"
-                aria-hidden="true"
-              >
-                &#10005;
-              </span>
+        {coupons.length > 0 
+        ? <div className="flex flex-col items-center p-2 mt-4 bg-white border border-gray-300 rounded-lg shadow-sm ">
+            <div className="flex items-center w-full">
+              <DropdownMenu className="w-full">
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="justify-between w-full">
+                    {appliedCoupon ? `Applied: ${appliedCoupon}` : "Select a coupon"}
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-white w-96 ">
+                  {coupons.map((coupon) => (
+                    <DropdownMenuItem
+                      key={coupon._id}
+                      onClick={() => applyCoupon(coupon.code)}
+                      className="flex items-center justify-between cursor-pointer hover:bg-gray-800 "
+                    >
+                      <span>{coupon.code}</span>
+                      {appliedCoupon === coupon.code && <Check className="w-4 h-4 ml-2" />}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-          )}
-          {couponError && (
-  <div className="flex items-center mt-2">
-    <span className="font-medium text-red-600">
-      {couponError}
-    </span>
-    <span 
-      onClick={() => setCouponError('')} 
-      className="ml-4 text-gray-600 cursor-pointer"
-      aria-hidden="true"
-    >
-      &#10005;
-    </span>
-  </div>
-)}
-
-        </div>
+            {appliedCoupon && (
+              <div className="flex items-center mt-2">
+                <span className="font-medium text-green-600">
+                  Coupon applied: {appliedCoupon}
+                </span>
+                <span 
+                  onClick={removeCoupon} 
+                  className="ml-4 text-gray-600 cursor-pointer"
+                  aria-hidden="true"
+                >
+                  &#10005;
+                </span>
+              </div>
+            )}
+            {couponError && (
+                <div className="flex items-center mt-2">
+                  <span className="font-medium text-red-600">
+                    {couponError}
+                  </span>
+                  <span 
+                    onClick={() => setCouponError('')} 
+                    className="ml-4 text-gray-600 cursor-pointer"
+                    aria-hidden="true"
+                  >
+                    &#10005;
+                  </span>
+                </div>
+              )
+            }
+          </div>
+        : <div></div>} 
 
         <p className="mt-4 text-base font-medium text-neutral-900">
           Your booking is protected by{" "}

@@ -23,6 +23,7 @@ function AdminNav({ title }) {
     _id: "",
     tax: "",
     serviceCharges: "",
+    extraPersonCharges: "",
     keyId: "",
     secretKey: "",
   });
@@ -76,6 +77,7 @@ function AdminNav({ title }) {
             _id: response.data._id,
             tax: response.data.roomTaxesAndCharges.tax,
             serviceCharges: response.data.roomTaxesAndCharges.serviceCharges,
+            extraPersonCharges: response.data.roomTaxesAndCharges.extraPersonCharges,
             keyId: response.data.paymentGateway.keyId,
             secretKey: response.data.paymentGateway.secretKey,
           });
@@ -369,6 +371,23 @@ function AdminNav({ title }) {
                         id="serviceCharges"
                         name="serviceCharges"
                         value={settings.serviceCharges}
+                        onChange={handleSettingsChange}
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        disabled={!isEditing}
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label
+                        htmlFor="extraPersonCharges"
+                        className="block mb-2 text-sm font-medium text-gray-700"
+                      >
+                        Extra Person Charges (₹/person)
+                      </label>
+                      <input
+                        type="number"
+                        id="extraPersonCharges"
+                        name="extraPersonCharges"
+                        value={settings.extraPersonCharges}
                         onChange={handleSettingsChange}
                         className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         disabled={!isEditing}
