@@ -20,7 +20,7 @@ function HeroSection() {
               <Header />
               <div className="flex flex-col items-start w-full md:w-[630px] lg:mt-20 ml-4 text-black md:text-5xl lg:text-7xl max-md:mt-5 max-md:text-3xl">
                 <h1 className="italic font-normal max-md:text-3xl">
-                Your Own Holiday Home
+                Your Own<br></br> Holiday Home
                 </h1>
                 <div className="mt-8 font-normal italic tracking-[0.05em] max-md:mt-5 max-md:text-3xl font-italianno">
                 <h2>Away from Home</h2>

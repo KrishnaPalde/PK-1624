@@ -12,21 +12,21 @@ const Footer = () => {
   const location = useLocation(); 
 
   const socialIcons = [
-    {
-      src: Facebook,
-      alt: "Facebook",
-      link: "https://www.facebook.com",
-    },
+    // {
+    //   src: Facebook,
+    //   alt: "Facebook",
+    //   link: "https://www.facebook.com",
+    // },
     {
       src: Instagram,
       alt: "Instagram",
       link: "https://www.instagram.com/tranquil_trails_home?igsh=aHdlMnAwdW42dnV6",
     },
-    {
-      src: Youtube,
-      alt: "Youtube",
-      link: "https://www.youtube.com",
-    },
+    // {
+    //   src: Youtube,
+    //   alt: "Youtube",
+    //   link: "https://www.youtube.com",
+    // },
   ];
 
   useEffect(() => {

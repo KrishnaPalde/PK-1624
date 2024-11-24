@@ -557,37 +557,43 @@ const getDashboardStats = async (req, res) => {
       "check-out": checkOuts,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };
 
 const getBookings = async (req, res) => {
   try {
+    // Fetch all bookings sorted by creation date
     const bookings = await Booking.find({}).sort({ createdAt: -1 });
 
-    const bookingsWithRoomNames = await Promise.all(
-      bookings.map(async (booking) => {
-        const room = await Room.findOne({ id: booking.roomId });
-        const roomName = room ? room.name : "Unknown Room";
+    // Process each booking and map relevant data
+    const bookingsWithRoomNames = bookings.map((booking) => {
+      // Extract all room names from the rooms array
+      const roomNames = booking.rooms.map(
+        (room) => room.roomName || "Unknown Room"
+      );
 
-        const bookingId = booking.bookingId.slice(-4);
+      // Generate a shortened booking ID
+      const bookingId = booking.bookingId.slice(-4);
 
-        const bookingData = {
-          bookingId,
-          firstName: booking.firstName,
-          lastName: booking.lastName,
-          phoneNumber: booking.phoneNumber,
-          totalPayment: booking.totalPayment,
-          checkInDate: booking.checkInDate,
-          checkOutDate: booking.checkOutDate,
-          roomName,
-          roomId: booking.roomId,
-          createdAt: booking.createdAt,
-        };
+      // Prepare the booking data
+      const bookingData = {
+        bookingId,
+        firstName: booking.firstName,
+        lastName: booking.lastName,
+        phoneNumber: booking.phoneNumber,
+        totalPayment: booking.totalPayment,
+        checkInDate: booking.checkInDate,
+        checkOutDate: booking.checkOutDate,
+        rooms: roomNames,
+        numberOfAdults: booking.numberOfAdults,
+        numberOfChildren: booking.numberOfChildren,
+        source: booking.source,
+      };
 
-        return bookingData;
-      })
-    );
+      return bookingData;
+    });
 
     res.json(bookingsWithRoomNames);
   } catch (error) {
@@ -607,18 +613,10 @@ const getBookingById = async (req, res) => {
 
     console.log("Matching bookings found:", bookings.length);
 
-    if (bookings.length === 0) {
-      return res.status(404).json({ message: "Booking not found" });
-    }
-
-    if (bookings.length > 1) {
-      console.warn("Multiple bookings found with the same last 4 characters");
-    }
-
     const booking = bookings[0];
 
-    const room = await Room.findOne({ id: booking.roomId });
-    const roomName = room ? room.name : "Unknown Room";
+    const rooms = booking.rooms.map((room) => room.roomName || "Unknown Room");
+    const roomNames = rooms.join(", ");
     const transactionId =
       booking.transactions.length > 0
         ? booking.transactions[0].transactionId
@@ -638,7 +636,7 @@ const getBookingById = async (req, res) => {
       numberOfAdults: booking.numberOfAdults,
       numberOfChildren: booking.numberOfChildren,
       numberOfInfants: booking.numberOfInfants,
-      roomName,
+      roomNames,
       roomId: booking.roomId,
       transactionId,
     };
@@ -655,6 +653,7 @@ const getRoomDetailsForm = async (req, res) => {
     const { bookingId } = req.params;
     console.log("Received bookingId:", bookingId);
 
+    // Find bookings by matching the last characters of the bookingId
     const bookings = await Booking.find({
       bookingId: { $regex: bookingId + "$" },
     });
@@ -665,23 +664,23 @@ const getRoomDetailsForm = async (req, res) => {
 
     const booking = bookings[0];
 
-    const room = await Room.findOne({ id: booking.roomId });
+    // Fetch room details for each room in the booking
+    const roomDetails = await Promise.all(
+      booking.rooms.map(async (room) => {
+        const roomData = await Room.findOne({ id: room.roomId });
+        return {
+          id: roomData?.id || room.roomId, // Fallback to the room ID in booking if not found
+          name: roomData?.name || "Unknown Room",
+          title: roomData?.title || "No Title Available",
+          description: roomData?.description || "No Description Available",
+          rating: roomData?.rating || 0,
+          price: roomData?.price || room.price, // Use price from booking as fallback
+          images: roomData?.images || [],
+        };
+      })
+    );
 
-    if (!room) {
-      return res.status(404).json({ message: "Room not found" });
-    }
-
-    const roomData = {
-      id: room.id,
-      name: room.name,
-      title: room.title,
-      description: room.description,
-      rating: room.rating,
-      price: room.price,
-      images: room.images,
-    };
-
-    res.json(roomData);
+    res.json(roomDetails);
   } catch (error) {
     console.error("Error fetching room details for booking:", error);
     res.status(500).json({ message: "Internal Server Error" });

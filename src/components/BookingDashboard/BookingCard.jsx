@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function formatDate(date) {
   // Define the array of month abbreviations
@@ -13,9 +14,10 @@ function formatDate(date) {
   return `${day} ${month} ${year}`;
 }
 
-function BookingCard({ firstName, lastName, checkInDate, checkOutDate }) {
+function BookingCard({bookingId, firstName, lastName, checkInDate, checkOutDate }) {
+  const navigate = useNavigate(); 
   return (
-    <div className="flex flex-col w-3/12 max-md:ml-0 max-md:w-full">
+    <div className="flex flex-col w-3/12 max-md:ml-0 max-md:w-full" onClick={() => navigate(`/admin/booking/details/${bookingId}`)} >
       <div className="flex flex-col grow justify-center items-center py-11 w-full bg-white rounded-xl border border-solid border-blue-500 border-opacity-50 min-h-[267px] shadow-[0px_8px_12px_rgba(47,131,255,0.1)] max-md:mt-5">
         <img
           loading="lazy"

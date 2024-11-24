@@ -16,6 +16,7 @@ import FRI from "../assets/fri.jpg";
 import mindrolling from "../assets/mindrolling.jpg";
 import Tapkeshwar from "../assets/Tapkeshwar.jpg";
 import Sahastradhara from "../assets/sahastradhara.webp";
+import WhatsAppButton from "../components/WhatsappButton";
 
 const attractions = [
   {
@@ -197,6 +198,7 @@ const NearbyAttractions = () => {
           ))}
         </div>
       </div>
+      <WhatsAppButton/>
       <Footer />
     </>
   );

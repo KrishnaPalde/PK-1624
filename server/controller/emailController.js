@@ -106,7 +106,7 @@ const sendBookingConfirmation = (
 const sendAdminEnquiryFormEntry = (enquiryDetails) => {
   const mailOptions = {
     from: '"Tranquil Trails" <help.tranquiltrails@gmail.com>', // Sender address
-    to: "help.tantratech@gmail.com", // Admin recipient address
+    to: "care@tranquiltrails.co.in", // Admin recipient address
     subject: "New Enquiry Form Submission", // Subject line
     html: `
       <h1>New Enquiry Form Submission</h1>
@@ -174,6 +174,22 @@ const generatePDF = async (bid) => {
     ),
     totalAmount: booking.totalPayment,
   };
+
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  const client = twilio(accountSid, authToken);
+  const message = await client.messages.create({
+    body: `New Booking !!!
+  Here are the details:
+  Name: ${bookingDetails.guestName}
+  Email: ${bookingDetails.email}
+  Phone: ${bookingDetails.contactNumber}
+  Check In: ${bookingDetails.checkInDate}
+  Check Out: ${bookingDetails.checkOutDate}
+  Number of Guests: ${bookingDetails.noOfGuest}`,
+    from: "+12564488314",
+    to: "+917673992288",
+  });
 
   // const browser = await puppeteer.launch();
   // const page = await browser.newPage();
@@ -606,7 +622,7 @@ const BookingConfirmationEmail = async (req, res) => {
     console.log(custemail);
     sendBookingConfirmation(
       custemail,
-      "help.tantratech@gmail.com",
+      "care@tranquiltrails.co.in",
       id,
       `booking-confirmation-${id.slice(0, 5)}.pdf`
     );
@@ -625,13 +641,13 @@ const EnquiryFormEmail = async (req, res) => {
     const client = twilio(accountSid, authToken);
     const message = await client.messages.create({
       body: `New Enquiry Form Submission
-Here are the details:
-Name: ${data.name}
-Email: ${data.email}
-Phone: ${data.phone}
-Message: ${data.message}`,
+    Here are the details:
+    Name: ${data.name}
+    Email: ${data.email}
+    Phone: ${data.phone}
+    Message: ${data.message}`,
       from: "+12564488314",
-      to: "+919373996091",
+      to: "+917673992288",
     });
     sendAdminEnquiryFormEntry(data);
 
@@ -677,7 +693,7 @@ const sendFeedbackRequestEmail = async (email, customerName, checkoutDate) => {
         <p>Your feedback is invaluable to us as it helps us improve our services and ensure that every guest has a memorable stay.</p>
         <p>Please take a moment to share your thoughts by clicking on the link below:</p>
          <p>
-          <a href= ${process.env.ORIGIN}/feedback 
+          <a href="https://search.google.com/local/writereview?placeid=ChIJUWOfy_bXCDkRW3L_qZpDRcc"
              style="
                 display: inline-block;
                 padding: 10px 20px;

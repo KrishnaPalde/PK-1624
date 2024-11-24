@@ -16,13 +16,14 @@ const BookingTable = () => {
       try {
         const response = await fetch(`${process.VITE_HOST_URL}/api/admin/bookings`);
         const data = await response.json();
+        console.log(data);
         setBookings(data);
       } catch (error) {
         console.error('Error fetching bookings:', error);
       }
     };
   
-    fetchBookings();
+    fetchBookings(); 
   }, [currentPage]);
 
   const handleCreateBooking = async (bookingData) => {
@@ -85,8 +86,11 @@ const BookingTable = () => {
     { title: 'Name', width: 'flex-1' },
     { title: 'Room Type', width: 'w-[212px]' },
     { title: 'Mobile Number', width: 'flex-1' },
+    { title: 'Check-In Date', width: 'flex-1' },
+    { title: 'Check-Out Date', width: 'flex-1' },
     { title: 'Total Payment', width: 'flex-1' },
     { title: 'Status', width: 'flex-1' },
+    { title: 'Source', width: 'flex-1' },
   ];
 
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -126,14 +130,25 @@ const BookingTable = () => {
                 >
                   <td className="px-4 py-4 whitespace-nowrap">#{booking.bookingId}</td>
                   <td className="py-4 pl-4">{`${booking.firstName} ${booking.lastName}`}</td>
-                  <td className="px-4 py-4">{booking.roomName || 'Unknown Room'}</td>
+                  <td className="px-4 py-4">{booking.rooms.join(", ") || 'Unknown Room'}</td>
                   <td className="px-4 py-4">{booking.phoneNumber}</td>
-                  <td className="px-4 py-4">{`₹${booking.totalPayment}`}</td>
+                  <td className="px-4 py-4">{`${new Date(booking.checkInDate).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}`}</td>
+                  <td className="px-4 py-4">{`${new Date(booking.checkOutDate).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}`}</td>
+                  <td className="px-4 py-4">{booking.totalPayment}</td>
                   <td className="px-4 py-4">
                     <span className={`px-2 py-1 rounded-full text-xs ${getStatusStyle(determineStatus(new Date(booking.checkInDate), new Date(booking.checkOutDate)))}`}>
                       {determineStatus(new Date(booking.checkInDate), new Date(booking.checkOutDate))}
                     </span>
                   </td>
+                  <td className="px-4 py-4 capitalize">{booking.source}</td>
                 </tr>
               ))}
             </tbody>

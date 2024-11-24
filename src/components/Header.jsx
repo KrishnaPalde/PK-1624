@@ -101,7 +101,7 @@ function Header() {
                   size={25}
                 />
               </a>
-              <a
+              {/* <a
                 href="https://www.facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -128,7 +128,7 @@ function Header() {
                   } transition-colors duration-200`}
                   size={25}
                 />
-              </a>
+              </a> */}
             </div>
           </nav>
         </div>
