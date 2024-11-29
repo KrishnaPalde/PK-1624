@@ -33,13 +33,18 @@ const CreateBookingForm = ({ isOpen, onClose, onSubmit }) => {
       try {
        
         const [roomsResponse, settingsResponse] = await Promise.all([
-          fetch(`${process.VITE_HOST_URL}/api/admin/rooms`),
+          fetch(`${process.VITE_HOST_URL}/api/allRooms`),
           fetch(`${process.VITE_HOST_URL}/api/admin/global-settings`),
         ]);
         const roomsData = await roomsResponse.json();
         const settingsData = await settingsResponse.json();
         
-        setRooms(roomsData);
+    //     console.log('Rooms Data:', roomsData); // Debug this
+    // console.log('Settings Data:', settingsData); // Debug this
+
+        // setRooms(roomsData);
+        console.log(Array.isArray(roomsData) ? roomsData : [])
+        setRooms(Array.isArray(roomsData) ? roomsData : []);
         setGlobalSettings(settingsData);
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -151,93 +156,88 @@ const CreateBookingForm = ({ isOpen, onClose, onSubmit }) => {
     return day === 0 || day === 6;
   };
 
-  const calculateTotalAmount = (selectedRooms, isWeekend, currentFormData) => {
+  const calculateTotalAmount = (selectedRooms, isWeekend, currentFormData = {}) => {
     if (!selectedRooms || selectedRooms.length === 0) {
-     
       return 0;
     }
   
-    
+    // Calculate the base amount for selected rooms
     const baseAmount = selectedRooms.reduce((total, room) => {
       let roomPrice = Number(room.price) || 0;
       if (isWeekend && room.weekend) {
         roomPrice = Number(room.weekend) || roomPrice;
       }
-      
       return total + roomPrice;
     }, 0);
   
-   
-  
     let totalAmount = baseAmount;
   
+    // Extract required properties with fallback values
+    const { numberOfAdults = 0, numberOfChildren = 0, paymentMethod } = currentFormData;
+  
+    // Add taxes, service charges, and service tax if global settings exist
     if (globalSettings) {
-      const { tax = 0, serviceCharges = 0, serviceTaxRate = 0 } = 
-        globalSettings.roomTaxesAndCharges || {};
-      
-     
-      const totalGuests = Number(formData.numberOfAdults || 0) + 
-                         Number(formData.numberOfChildren || 0);
-      
-      
+      const { tax = 0, serviceCharges = 0, serviceTaxRate = 0 } = globalSettings.roomTaxesAndCharges || {};
   
-      
+      const totalGuests = numberOfAdults + numberOfChildren;
       const serviceTax = serviceTaxRate * totalGuests;
-      
   
-      if (formData.paymentMethod === "cash") {
+      if (paymentMethod === "cash") {
+        // Add tax and service charges as a percentage of the base amount
         const taxAndServiceCharge = (baseAmount * (Number(tax) + Number(serviceCharges))) / 100;
-        
         totalAmount += taxAndServiceCharge;
       }
   
-      
+      // Add the fixed service tax per person (applies to all payment methods)
       totalAmount += serviceTax;
-      
     }
   
+    // Return the rounded total amount
     return Math.round(totalAmount) || 0;
   };
+  
+  
 
   const handleRoomSelection = (room) => {
-   
-    
     setFormData((prev) => {
       const isLargeRoom = room.id === '1729158937285';
       const isSelected = prev.selectedRooms.some((r) => r.id === room.id);
-      
-      
+  
       let updatedRooms;
   
       if (isLargeRoom) {
+        // If the selected room is a large room, toggle its selection
         updatedRooms = isSelected ? [] : [room];
       } else {
-        updatedRooms = isSelected 
-          ? prev.selectedRooms.filter((r) => r.id !== room.id) 
+        // For regular rooms, toggle their selection while excluding large rooms if selected
+        updatedRooms = isSelected
+          ? prev.selectedRooms.filter((r) => r.id !== room.id)
           : [...prev.selectedRooms, room].filter((r) => r.id !== '1729158937285');
       }
-
-      
+  
       const totalCapacity = calculateTotalCapacity(updatedRooms);
       const totalGuests = prev.numberOfAdults + prev.numberOfChildren;
   
-      
-
-      if (totalCapacity >= totalGuests) {
+      if (totalCapacity >= totalGuests || isSelected) {
         const isWeekendStay = isWeekend(prev.checkInDate) || isWeekend(prev.checkOutDate);
-       
-        const newTotal = calculateTotalAmount(updatedRooms, isWeekendStay);
+        const newTotal = calculateTotalAmount(updatedRooms, isWeekendStay, {
+          ...prev,
+          selectedRooms: updatedRooms,
+        });
   
         return {
           ...prev,
           selectedRooms: updatedRooms,
-          totalAmount: newTotal
+          totalAmount: newTotal,
         };
       }
   
+      // If deselection fails due to capacity constraints, return the current state
       return prev;
     });
   };
+  
+  
 
   useEffect(() => {
   

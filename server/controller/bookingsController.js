@@ -102,8 +102,6 @@ const getAllRooms = async (req, res) => {
     console.log(req.query);
     const { checkinDate, checkoutDate } = req.query;
 
-    console.log(checkinDate);
-    console.log(checkoutDate);
     // Parse dates and check if they are valid
     const parsedCheckIn = new Date(checkinDate);
     const parsedCheckOut = new Date(checkoutDate);
@@ -114,7 +112,7 @@ const getAllRooms = async (req, res) => {
       });
     }
 
-    // Find all bookings that overlap with the requested dates
+    // Find bookings that overlap with the requested date range
     const bookings = await Booking.find({
       $or: [
         {
@@ -122,12 +120,13 @@ const getAllRooms = async (req, res) => {
           checkOutDate: { $gte: parsedCheckIn },
         },
       ],
-    }).select("rooms");
+    }).select("rooms checkInDate checkOutDate");
 
-    // Get the names of rooms that are already booked within the requested date range
+    // Initialize tracking variables
     const bookedRoomNames = new Set();
     let isPenthouseBooked = false;
 
+    // Process bookings
     bookings.forEach((booking) => {
       booking.rooms.forEach((room) => {
         if (room.roomName === "Panoramic View") {
@@ -138,12 +137,27 @@ const getAllRooms = async (req, res) => {
       });
     });
 
+    // Fetch calendar events that overlap with the requested date range
+    const calendarEvents = await Calendar.find({
+      date: { $gte: parsedCheckIn, $lte: parsedCheckOut },
+      status: "booked",
+    });
+
+    // Process calendar events
+    calendarEvents.forEach((event) => {
+      if (event.roomType === "Panoramic View") {
+        isPenthouseBooked = true;
+      } else {
+        bookedRoomNames.add(event.roomType);
+      }
+    });
+
     let rooms;
     if (isPenthouseBooked) {
-      // If penthouse is booked, exclude all rooms 1 to 4
+      // If penthouse is booked, exclude all rooms
       rooms = [];
     } else if (bookedRoomNames.size > 0) {
-      // If any individual room (1-4) is booked, exclude penthouse
+      // If any individual room (1-4) is booked, exclude penthouse and booked rooms
       rooms = await Room.find({
         name: { $nin: ["Panoramic View", ...Array.from(bookedRoomNames)] },
       }).select("-reviews");
@@ -151,8 +165,10 @@ const getAllRooms = async (req, res) => {
       // If no rooms are booked, return all available rooms
       rooms = await Room.find().select("-reviews");
     }
+
     res.status(200).json(rooms);
   } catch (error) {
+    console.error("Error fetching available rooms:", error.message);
     res.status(500).json({ message: error.message });
   }
 };
@@ -301,20 +317,35 @@ const getUnavailableDatesAdmin = async (req, res) => {
     const unavailableDates = {}; // Tracks dates and their statuses
 
     // Helper function to process a date
-    const processDate = (dateStr, roomType) => {
+    const processDate = (dateStr, roomName) => {
+      const isPenthouse = roomName === "Panoramic View";
+
       if (!unavailableDates[dateStr]) {
-        unavailableDates[dateStr] = { singleCount: 0, status: "available" };
+        unavailableDates[dateStr] = {
+          singleCount: 0,
+          penthouse: false,
+          status: "available",
+        };
       }
 
-      if (roomType === "penthouse") {
-        unavailableDates[dateStr] = { singleCount: 0, status: "fullyBooked" };
-      } else if (roomType === "single") {
-        unavailableDates[dateStr].singleCount += 1;
+      if (isPenthouse) {
+        // If penthouse is booked, mark the date as fully booked
+        unavailableDates[dateStr] = {
+          singleCount: 0,
+          penthouse: true,
+          status: "fullyBooked",
+        };
+      } else {
+        // Increment single room count only if the penthouse is not booked
+        if (!unavailableDates[dateStr].penthouse) {
+          unavailableDates[dateStr].singleCount += 1;
 
-        if (unavailableDates[dateStr].singleCount >= 4) {
-          unavailableDates[dateStr].status = "fullyBooked";
-        } else {
-          unavailableDates[dateStr].status = "partiallyBooked";
+          // Update status based on single room bookings
+          if (unavailableDates[dateStr].singleCount >= 4) {
+            unavailableDates[dateStr].status = "fullyBooked";
+          } else {
+            unavailableDates[dateStr].status = "partiallyBooked";
+          }
         }
       }
     };
@@ -331,16 +362,14 @@ const getUnavailableDatesAdmin = async (req, res) => {
     }).select("checkInDate checkOutDate rooms");
 
     bookings.forEach((booking) => {
-      const isPenthouse = booking.rooms.some(
-        (room) => room.roomName === "Panoramic View"
-      );
-
-      let currentDate = new Date(booking.checkInDate);
-      while (currentDate <= new Date(booking.checkOutDate)) {
-        const dateStr = currentDate.toISOString().split("T")[0];
-        processDate(dateStr, isPenthouse ? "penthouse" : "single");
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
+      booking.rooms.forEach((room) => {
+        let currentDate = new Date(booking.checkInDate);
+        while (currentDate <= new Date(booking.checkOutDate)) {
+          const dateStr = currentDate.toISOString().split("T")[0];
+          processDate(dateStr, room.roomName);
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+      });
     });
 
     // Step 2: Process Calendar Events
@@ -351,20 +380,101 @@ const getUnavailableDatesAdmin = async (req, res) => {
 
     calendarEvents.forEach((event) => {
       const dateStr = event.date.toISOString().split("T")[0];
-      processDate(dateStr, event.roomType);
+      processDate(dateStr, event.roomType); // Assuming `roomType` maps to room names
     });
 
-    // Format the response
+    // Step 3: Format the response
     const formattedUnavailableDates = Object.entries(unavailableDates).map(
       ([date, { status }]) => ({ date, status })
     );
-    console.log(formattedUnavailableDates);
+
     res.status(200).json({ unavailableDates: formattedUnavailableDates });
   } catch (error) {
+    console.error("Error fetching unavailable dates:", error);
     res.status(500).json({ message: error.message });
   }
 };
 
+// const getUnavailableDates = async (req, res) => {
+//   try {
+//     const today = new Date();
+//     const oneYearFromNow = new Date();
+//     oneYearFromNow.setDate(today.getDate() + 365);
+
+//     const unavailableDates = new Set();
+//     const singleRoomBookings = {}; // To track single-room bookings per date
+
+//     // Step 1: Fetch Bookings
+//     const bookings = await Booking.find({
+//       $or: [
+//         {
+//           checkInDate: { $gte: today, $lte: oneYearFromNow },
+//           checkOutDate: { $gte: today },
+//         },
+//         { checkOutDate: { $gte: today, $lte: oneYearFromNow } },
+//       ],
+//     }).select("checkInDate checkOutDate rooms");
+
+//     // Process bookings
+//     bookings.forEach((booking) => {
+//       const isPenthouse = booking.rooms.some(
+//         (room) => room.roomName === "Panoramic View"
+//       );
+
+//       let currentDate = new Date(booking.checkInDate);
+//       while (currentDate <= new Date(booking.checkOutDate)) {
+//         const dateStr = currentDate.toISOString().split("T")[0];
+
+//         if (isPenthouse) {
+//           unavailableDates.add(dateStr); // Block all rooms if penthouse is booked
+//         } else {
+//           booking.rooms.forEach((room) => {
+//             if (room.roomName !== "Panoramic View") {
+//               singleRoomBookings[dateStr] =
+//                 (singleRoomBookings[dateStr] || 0) + 1;
+
+//               // If all 4 single rooms are booked, block the date
+//               if (singleRoomBookings[dateStr] >= 4) {
+//                 unavailableDates.add(dateStr);
+//               }
+//             }
+//           });
+//         }
+
+//         currentDate.setDate(currentDate.getDate() + 1);
+//       }
+//     });
+
+//     // Step 2: Fetch Calendar Events
+//     const calendarEvents = await Calendar.find({
+//       date: { $gte: today, $lte: oneYearFromNow },
+//       status: "booked", // Only consider booked events
+//     });
+
+//     // Process calendar events
+//     calendarEvents.forEach((event) => {
+//       const { roomType, date } = event;
+
+//       if (roomType === "penthouse") {
+//         // Block date for all rooms if the penthouse is booked
+//         unavailableDates.add(date.toISOString().split("T")[0]);
+//       } else {
+//         // Count single-room bookings from the calendar
+//         singleRoomBookings[date.toISOString().split("T")[0]] =
+//           (singleRoomBookings[date.toISOString().split("T")[0]] || 0) + 1;
+
+//         // If all 4 single rooms are booked, block the date
+//         if (singleRoomBookings[date.toISOString().split("T")[0]] >= 4) {
+//           unavailableDates.add(date.toISOString().split("T")[0]);
+//         }
+//       }
+//     });
+
+//     res.status(200).json({ unavailableDates: Array.from(unavailableDates) });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 const getUnavailableDates = async (req, res) => {
   try {
     const today = new Date();
@@ -385,34 +495,31 @@ const getUnavailableDates = async (req, res) => {
       ],
     }).select("checkInDate checkOutDate rooms");
 
-    // Process bookings
     bookings.forEach((booking) => {
-      const isPenthouse = booking.rooms.some(
-        (room) => room.roomName === "Panoramic View"
-      );
+      booking.rooms.forEach((room) => {
+        const isPenthouse = room.roomName === "Panoramic View";
+        let currentDate = new Date(booking.checkInDate);
 
-      let currentDate = new Date(booking.checkInDate);
-      while (currentDate <= new Date(booking.checkOutDate)) {
-        const dateStr = currentDate.toISOString().split("T")[0];
+        while (currentDate <= new Date(booking.checkOutDate)) {
+          const dateStr = currentDate.toISOString().split("T")[0];
 
-        if (isPenthouse) {
-          unavailableDates.add(dateStr); // Block all rooms if penthouse is booked
-        } else {
-          booking.rooms.forEach((room) => {
-            if (room.roomName !== "Panoramic View") {
-              singleRoomBookings[dateStr] =
-                (singleRoomBookings[dateStr] || 0) + 1;
+          if (isPenthouse) {
+            // Block all rooms if the penthouse is booked
+            unavailableDates.add(dateStr);
+          } else {
+            // Track single-room bookings if the penthouse is not booked
+            singleRoomBookings[dateStr] =
+              (singleRoomBookings[dateStr] || 0) + 1;
 
-              // If all 4 single rooms are booked, block the date
-              if (singleRoomBookings[dateStr] >= 4) {
-                unavailableDates.add(dateStr);
-              }
+            // If 4 or more single rooms are booked, mark the date as unavailable
+            if (singleRoomBookings[dateStr] >= 4) {
+              unavailableDates.add(dateStr);
             }
-          });
-        }
+          }
 
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+      });
     });
 
     // Step 2: Fetch Calendar Events
@@ -421,27 +528,28 @@ const getUnavailableDates = async (req, res) => {
       status: "booked", // Only consider booked events
     });
 
-    // Process calendar events
     calendarEvents.forEach((event) => {
       const { roomType, date } = event;
+      const dateStr = date.toISOString().split("T")[0];
 
-      if (roomType === "penthouse") {
+      if (roomType === "Panoramic View") {
         // Block date for all rooms if the penthouse is booked
-        unavailableDates.add(date.toISOString().split("T")[0]);
+        unavailableDates.add(dateStr);
       } else {
         // Count single-room bookings from the calendar
-        singleRoomBookings[date.toISOString().split("T")[0]] =
-          (singleRoomBookings[date.toISOString().split("T")[0]] || 0) + 1;
+        singleRoomBookings[dateStr] = (singleRoomBookings[dateStr] || 0) + 1;
 
-        // If all 4 single rooms are booked, block the date
-        if (singleRoomBookings[date.toISOString().split("T")[0]] >= 4) {
-          unavailableDates.add(date.toISOString().split("T")[0]);
+        // If 4 or more single rooms are booked, mark the date as unavailable
+        if (singleRoomBookings[dateStr] >= 4) {
+          unavailableDates.add(dateStr);
         }
       }
     });
 
+    // Respond with the unavailable dates
     res.status(200).json({ unavailableDates: Array.from(unavailableDates) });
   } catch (error) {
+    console.error("Error fetching unavailable dates:", error.message);
     res.status(500).json({ message: error.message });
   }
 };

@@ -19,6 +19,10 @@ function AdminNav({ title }) {
   const [password, setPassword] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [isCalendarLinksPopupVisible, setCalendarLinksPopupVisible] = useState(false); // New state for Calendar Links popup
+  const [calendarLinks, setCalendarLinks] = useState([]); // State for fetched calendar links
+  const [editedLinks, setEditedLinks] = useState([]); // State for inline edits of calendar links
+  
   const [settings, setSettings] = useState({
     _id: "",
     tax: "",
@@ -65,6 +69,43 @@ function AdminNav({ title }) {
   const toggleProfilePopup = () => {
     setProfilePopupVisible(!isProfilePopupVisible);
   };
+
+  const handleCalendarLinksToggle = async () => {
+    if (!isCalendarLinksPopupVisible) {
+      try {
+        const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/calendar-links`);
+        setCalendarLinks(response.data); // Load calendar links
+        setEditedLinks([...response.data]); // Initialize editable links
+      } catch (error) {
+        console.error("Failed to fetch calendar links", error);
+      }
+    }
+    setCalendarLinksPopupVisible(!isCalendarLinksPopupVisible);
+  };
+
+  const handleLinkChange = (index, field, value) => {
+    setEditedLinks((prevLinks) => {
+      const updatedLinks = [...prevLinks];
+      updatedLinks[index][field] = value;
+      return updatedLinks;
+    });
+  };
+
+  const handleSaveCalendarLinks = async () => {
+    try {
+      await axios.put(`${process.VITE_HOST_URL}/api/admin/calendar-links`, editedLinks);
+      console.log("Calendar links updated successfully");
+      setCalendarLinksPopupVisible(false);
+    } catch (error) {
+      console.error("Failed to update calendar links", error);
+    }
+  };
+
+  const handleCancelCalendarLinks = () => {
+    setEditedLinks([...calendarLinks]); // Revert to original links
+    setCalendarLinksPopupVisible(false);
+  };
+  
 
   const toggleSettingsPopup = async () => {
     if (!isSettingsPopupVisible) {
@@ -168,6 +209,22 @@ function AdminNav({ title }) {
       console.error("Error creating admin:", error);
     }
   };
+  
+  const copyICalLink = (roomType) => {
+    const exportUrl = `https://www.tranquiltrails.co.in/api/calendar/${encodeURIComponent(
+      roomType
+    )}.ics`;
+  
+    navigator.clipboard
+      .writeText(exportUrl)
+      .then(() => {
+        alert(`Link copied to clipboard: ${exportUrl}`);
+      })
+      .catch((err) => {
+        console.error("Failed to copy link:", err);
+      });
+  };
+  
   
   const handleEditClick = (e) => {
     e.preventDefault();
@@ -323,6 +380,14 @@ function AdminNav({ title }) {
                       Create Admin
                     </button>
                   </li>
+                  <li>
+                    <button
+                      onClick={handleCalendarLinksToggle}
+                      className="block w-full px-4 py-2 text-left text-gray-700 rounded-lg text-md hover:bg-gray-100">
+                      Calendar Links
+                    </button>
+                  </li>
+
                 </ul>
               </div>
             )}
@@ -622,6 +687,109 @@ function AdminNav({ title }) {
     </div>
   </div>
 )}
+
+{isCalendarLinksPopupVisible && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="w-full max-w-4xl p-6 bg-white rounded-lg shadow-xl calendar-links-popup">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-bold text-gray-800">Edit Calendar Links</h2>
+        <button
+          onClick={handleCancelCalendarLinks}
+          className="text-gray-500 hover:text-gray-700"
+        >
+          <FaTimes size={24} />
+        </button>
+      </div>
+      <form>
+        <div className="space-y-4">
+          {editedLinks.map((link, index) => (
+            <div
+              key={index}
+              className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 items-center gap-4"
+            >
+              <div>
+                <label
+                  htmlFor={`roomType-${index}`}
+                  className="block mb-1 text-sm font-medium text-gray-700"
+                >
+                  Room Type
+                </label>
+                <input
+                  type="text"
+                  id={`roomType-${index}`}
+                  value={link.roomType}
+                  disabled
+                  className="w-full px-3 py-2 border bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 cursor-not-allowed"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor={`source-${index}`}
+                  className="block mb-1 text-sm font-medium text-gray-700"
+                >
+                  Source
+                </label>
+                <input
+                  type="text"
+                  id={`source-${index}`}
+                  value={link.source}
+                  onChange={(e) =>
+                    handleLinkChange(index, "source", e.target.value)
+                  }
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor={`url-${index}`}
+                  className="block mb-1 text-sm font-medium text-gray-700"
+                >
+                  iCal URL
+                </label>
+                <input
+                  type="text"
+                  id={`url-${index}`}
+                  value={link.url}
+                  onChange={(e) =>
+                    handleLinkChange(index, "url", e.target.value)
+                  }
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => copyICalLink(link.roomType)}
+                  className="px-4 py-2 text-white bg-[#255d69] hover:bg-[#243947] rounded-md focus:outline-none focus:ring-2 focus:ring-[#255d69]"
+                >
+                  Export iCal Link
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-end space-x-2 mt-4">
+          <button
+            type="button"
+            onClick={handleCancelCalendarLinks}
+            className="px-4 py-2 text-gray-900 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSaveCalendarLinks}
+            className="px-4 py-2 text-white bg-[#255d69] hover:bg-[#243947] focus:outline-none focus:ring-2 focus:ring-[#255d69]"
+          >
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
+
           </div>
         </div>
       </nav>

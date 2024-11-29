@@ -26,6 +26,22 @@ const GlobalSettingSchema = new mongoose.Schema(
         required: true,
       },
     },
+    calendarLinks: [
+      {
+        roomType: {
+          type: String,
+          required: true,
+        },
+        source: {
+          type: String,
+          required: true,
+        },
+        url: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

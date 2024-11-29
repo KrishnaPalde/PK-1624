@@ -1,5 +1,39 @@
 const GlobalSetting = require("../models/GlobalSetting");
 
+const getCalendarLinks = async (req, res) => {
+  try {
+    const globalSettings = await GlobalSetting.findOne(); // Assuming there's only one settings document
+    if (!globalSettings || !globalSettings.calendarLinks) {
+      return res.status(404).json({ message: "No calendar links found." });
+    }
+    res.status(200).json(globalSettings.calendarLinks);
+  } catch (error) {
+    console.error("Error fetching calendar links:", error.message);
+    res.status(500).json({ message: "Failed to fetch calendar links." });
+  }
+};
+
+const updateCalendarLinks = async (req, res) => {
+  try {
+    const updatedLinks = req.body; // Expect an array of calendar links
+
+    const globalSettings = await GlobalSetting.findOne();
+    if (!globalSettings) {
+      return res.status(404).json({ message: "Global settings not found." });
+    }
+
+    // Replace the existing calendar links with the updated ones
+    globalSettings.calendarLinks = updatedLinks;
+
+    await globalSettings.save();
+
+    res.status(200).json({ message: "Calendar links updated successfully." });
+  } catch (error) {
+    console.error("Error updating calendar links:", error.message);
+    res.status(500).json({ message: "Failed to update calendar links." });
+  }
+};
+
 const saveGlobalSettings = async (req, res) => {
   try {
     const { tax, serviceCharges, extraPersonCharges, keyId, secretKey } =
@@ -103,4 +137,6 @@ module.exports = {
   editGlobalSettings,
   getGlobalSettings,
   getGatewaySettings,
+  getCalendarLinks,
+  updateCalendarLinks,
 };

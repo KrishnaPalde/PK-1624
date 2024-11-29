@@ -8,8 +8,8 @@ const CalendarSchema = new mongoose.Schema({
     type: String,
     enum: ["website", "airbnb", "makemytrip", "bookings.com", "external"],
     default: "website",
-  }, // Event source
-  status: { type: String, enum: ["booked", "available"], default: "booked" }, // Availability status
+  },
+  status: { type: String, enum: ["booked", "available"], default: "booked" },
 });
 
 module.exports = mongoose.model("Calendar", CalendarSchema);

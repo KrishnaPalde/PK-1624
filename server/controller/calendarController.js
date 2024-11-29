@@ -1,203 +1,180 @@
 const Calendar = require("../models/Calendar");
 const Booking = require("../models/Bookings");
 const ical = require("ical");
-// const fetch = require("node-fetch");
+const { createEvents } = require("ics");
+const { v4: uuidv4 } = require("uuid");
 
-// const addCalendarEvent = async (req, res) => {
-//   const { dates, roomType, source } = req.body;
+// Sync external calendars
 
-//   if (!dates || !roomType) {
-//     return res
-//       .status(400)
-//       .json({ message: "Dates and room type are required." });
-//   }
+const syncCalendar = async (req, res) => {
+  const { roomType, url } = req.query;
 
-//   try {
-//     const events = dates.map((date) => ({
-//       eventId: `${roomType}_${date}_${source}`, // Unique event ID
-//       roomType,
-//       date: new Date(date),
-//       source,
-//       status: "booked",
-//     }));
-
-//     await Calendar.insertMany(events, { ordered: false }).catch((err) => {
-//       if (err.code !== 11000) throw err; // Ignore duplicate errors
-//     });
-
-//     res.status(200).json({ message: "Events added successfully." });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-const addCalendarEvent = async (req, res) => {
-  const { dates, roomType, source, roomCount } = req.body; // roomCount is optional, default to 1
-
-  if (!dates || !roomType) {
-    return res
-      .status(400)
-      .json({ message: "Dates and room type are required." });
-  }
-
-  try {
-    // Fetch existing events for the specified roomType and dates
-    const existingEvents = await Calendar.find({
-      date: { $in: dates.map((date) => new Date(date)) },
-      roomType,
-      status: "booked",
-    });
-
-    // Count existing single room bookings per date
-    const dateRoomCounts = {};
-    existingEvents.forEach((event) => {
-      const dateStr = event.date.toISOString().split("T")[0];
-      dateRoomCounts[dateStr] = (dateRoomCounts[dateStr] || 0) + 1;
-    });
-
-    // Prepare events to add
-    const events = [];
-    dates.forEach((date) => {
-      const dateStr = new Date(date).toISOString().split("T")[0];
-
-      if (roomType === "single") {
-        const currentRoomCount = dateRoomCounts[dateStr] || 0;
-
-        // If all 4 single rooms are booked, block the entire date for single room bookings
-        if (currentRoomCount + roomCount > 4) {
-          throw new Error(`All single rooms are fully booked on ${dateStr}.`);
-        }
-
-        // Add events for each single room being booked
-        for (let i = 0; i < roomCount; i++) {
-          events.push({
-            eventId: `${roomType}_${date}_${source}_${
-              currentRoomCount + i + 1
-            }`,
-            roomType,
-            date: new Date(date),
-            source,
-            status: "booked",
-          });
-        }
-
-        dateRoomCounts[dateStr] = currentRoomCount + roomCount;
-      } else if (roomType === "penthouse") {
-        // Block the date for penthouse booking
-        if (dateRoomCounts[dateStr]) {
-          throw new Error(
-            `Penthouse cannot be booked as single rooms are booked on ${dateStr}.`
-          );
-        }
-
-        events.push({
-          eventId: `${roomType}_${date}_${source}`,
-          roomType,
-          date: new Date(date),
-          source,
-          status: "booked",
-        });
-
-        // Mark the date as fully booked
-        dateRoomCounts[dateStr] = 4; // Treat as fully booked
-      }
-    });
-
-    // Insert events into the database
-    await Calendar.insertMany(events, { ordered: false }).catch((err) => {
-      if (err.code !== 11000) throw err; // Ignore duplicate errors
-    });
-
-    res.status(200).json({ message: "Events added successfully." });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-const syncExternalCalendar = async (req, res) => {
-  const { url, roomType, source } = req.query;
-
-  if (!url || !roomType) {
-    return res.status(400).json({ message: "URL and room type are required." });
+  if (!roomType || !url) {
+    return res.status(400).json({ message: "Room type and URL are required." });
   }
 
   try {
     const fetch = (await import("node-fetch")).default;
-    const response = await fetch(url);
-    const icsData = await response.text();
-    const parsedData = ical.parseICS(icsData);
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36",
+        Accept: "text/calendar, text/plain, */*",
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+      },
+    });
 
+    if (!response.ok) {
+      console.error(
+        `Failed to fetch calendar for ${roomType}:`,
+        response.statusText
+      );
+      return res
+        .status(response.status)
+        .json({ message: `Failed to fetch calendar: ${response.statusText}` });
+    }
+
+    const icsData = await response.text();
+
+    if (!icsData.startsWith("BEGIN:VCALENDAR")) {
+      console.error(`Invalid iCal data for ${roomType}:`, icsData);
+      return res
+        .status(500)
+        .json({ message: `Invalid iCal data received for ${roomType}` });
+    }
+
+    const parsedData = ical.parseICS(icsData);
+    console.log(parsedData);
     const dates = Object.values(parsedData)
-      .filter((event) => event.type === "VEVENT")
+      .filter((event) => event.type === "VEVENT" && event.start && event.end)
       .map((event) => ({
         checkInDate: new Date(event.start),
         checkOutDate: new Date(event.end),
       }));
 
-    const bookings = [];
+    // Clear existing events for this room type
+    await Calendar.deleteMany({ roomType });
+
     const events = [];
 
-    dates.forEach((entry) => {
-      // Prepare Calendar events
+    console.log(dates);
+    for (const entry of dates) {
+      console.log(`Processing entry:`, entry);
+
       let currentDate = new Date(entry.checkInDate);
-      while (currentDate <= entry.checkOutDate) {
+      const endDate = new Date(entry.checkOutDate);
+
+      while (currentDate < endDate) {
         const dateStr = currentDate.toISOString().split("T")[0];
-        events.push({
-          eventId: `${roomType}_${dateStr}_${source}`,
-          roomType,
+
+        // Fetch events for this date to avoid duplicates
+        const existingEvents = await Calendar.find({
           date: new Date(dateStr),
-          source,
-          status: "booked",
+          roomType,
+        }).catch((err) => {
+          console.error(`Error fetching events for date ${dateStr}:`, err);
+          return []; // Safeguard against errors
         });
+
+        if (existingEvents.length === 0) {
+          // Add new event only if no existing events are found
+          events.push({
+            eventId: `${roomType}_${dateStr}_airbnb`,
+            roomType,
+            date: new Date(dateStr),
+            source: "airbnb",
+            status: "booked",
+          });
+        } else {
+          console.warn(`Duplicate event detected for ${dateStr}, skipping.`);
+        }
+
         currentDate.setDate(currentDate.getDate() + 1);
       }
+    }
 
-      // Prepare Booking model entries
-      bookings.push({
-        bookingId: `${roomType}_${entry.checkInDate.getTime()}_${source}`,
-        firstName: "External", // Dummy data for external bookings
-        lastName: "Booking",
-        email: "external@booking.com",
-        phoneNumber: "0000000000",
-        idDocument: "N/A",
-        rooms: [
-          {
-            roomId: `${roomType}_${entry.checkInDate.getTime()}`,
-            roomName:
-              roomType === "single" ? "Single Bedroom" : "Panoramic View",
-            price: 0, // Price is unavailable from external sources
-          },
-        ],
-        checkInDate: entry.checkInDate,
-        checkOutDate: entry.checkOutDate,
-        paymentStatus: "completed", // Assume external bookings are confirmed
-        totalPayment: 0, // External systems may not provide payment details
-        paymentBreakdown: [],
-        numberOfAdults: 0, // No data available for adults/children
-        numberOfChildren: 0,
-        numberOfInfants: 0,
-        source: source || "external",
-      });
-    });
-
-    // Insert into Calendar model
-    await Calendar.insertMany(events, { ordered: false }).catch((err) => {
-      if (err.code !== 11000) throw err;
-    });
-
-    // Insert into Booking model
-    await Booking.insertMany(bookings, { ordered: false }).catch((err) => {
-      if (err.code !== 11000) throw err;
-    });
-
-    res
-      .status(200)
-      .json({ message: "Calendar and bookings synced successfully." });
+    if (events.length > 0) {
+      await Calendar.insertMany(events, { ordered: false });
+      console.log(`Successfully synced calendar for ${roomType}.`);
+      res.status(200).json({ message: "Calendar synced successfully." });
+    } else {
+      console.log(`No new events to sync for ${roomType}.`);
+      res.status(200).json({ message: "No new events to sync." });
+    }
   } catch (error) {
+    console.error("Error syncing calendar:", error);
     res.status(500).json({ message: error.message });
   }
 };
 
+// Generate .ics file for rooms
+
+const generateICalFile = async (req, res) => {
+  const { roomType } = req.params;
+
+  try {
+    // Fetch bookings from Booking model
+    const bookings = await Booking.find({
+      "rooms.roomName": roomType,
+      checkOutDate: { $gte: new Date() }, // Only future bookings
+      source: "website", // Only include bookings from our website
+    }).select("checkInDate checkOutDate");
+
+    const events = [];
+
+    // Process bookings (only from our website)
+    bookings.forEach((booking) => {
+      let currentDate = new Date(booking.checkInDate);
+      const checkOutDate = new Date(booking.checkOutDate);
+
+      while (currentDate < checkOutDate) {
+        events.push({
+          dtstamp: new Date().toISOString(),
+          dtstart: currentDate.toISOString().split("T")[0], // Format as YYYY-MM-DD
+          dtend: new Date(currentDate.setDate(currentDate.getDate() + 1))
+            .toISOString()
+            .split("T")[0],
+          summary: `${roomType} Room Unavailable`,
+          uid: uuidv4(), // Generate a unique identifier for the event
+        });
+      }
+    });
+
+    // Build the iCal file
+    let icalData = "BEGIN:VCALENDAR\n";
+    icalData += "PRODID:-//Tranquil Trails//Hosting Calendar 1.0//EN\n";
+    icalData += "CALSCALE:GREGORIAN\n";
+    icalData += "VERSION:2.0\n";
+
+    events.forEach((event) => {
+      icalData += "BEGIN:VEVENT\n";
+      icalData += `DTSTAMP:${
+        event.dtstamp.replace(/[-:]/g, "").split(".")[0]
+      }Z\n`;
+      icalData += `DTSTART;VALUE=DATE:${event.dtstart.replace(/-/g, "")}\n`;
+      icalData += `DTEND;VALUE=DATE:${event.dtend.replace(/-/g, "")}\n`;
+      icalData += `SUMMARY:${event.summary}\n`;
+      icalData += `UID:${event.uid}\n`;
+      icalData += "END:VEVENT\n";
+    });
+
+    icalData += "END:VCALENDAR";
+
+    // Send the response
+    res.setHeader("Content-Type", "text/calendar");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${roomType}.ics"`
+    );
+    res.send(icalData);
+  } catch (error) {
+    console.error("Error fetching calendar data:", error);
+    res.status(500).json({ message: "Failed to fetch calendar data" });
+  }
+};
+
+// Clear old events
 const clearOldEvents = async (req, res) => {
   try {
     const today = new Date();
@@ -209,7 +186,7 @@ const clearOldEvents = async (req, res) => {
 };
 
 module.exports = {
+  syncCalendar,
+  generateICalFile,
   clearOldEvents,
-  syncExternalCalendar,
-  addCalendarEvent,
 };
