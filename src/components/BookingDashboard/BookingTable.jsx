@@ -26,29 +26,7 @@ const BookingTable = () => {
     fetchBookings(); 
   }, [currentPage]);
 
-  const handleCreateBooking = async (bookingData) => {
-    try {
-      const response = await fetch(`${process.VITE_HOST_URL}/api/admin/bookings`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(bookingData),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to create booking');
-      }
-
-      const newBooking = await response.json();
-      setBookings(prev => [...prev, newBooking]);
-      // Optionally navigate to the new booking details
-      navigate(`/admin/booking/details/${newBooking.bookingId}`);
-    } catch (error) {
-      console.error('Error creating booking:', error);
-      // Handle error (show notification, etc.)
-    }
-  };
+  
 
   const totalItems = bookings.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -204,7 +182,6 @@ const BookingTable = () => {
       <CreateBookingForm
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={handleCreateBooking}
       />
     </>
   );

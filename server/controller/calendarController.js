@@ -4,6 +4,74 @@ const ical = require("ical");
 const { createEvents } = require("ics");
 const { v4: uuidv4 } = require("uuid");
 
+const getUnavailableDatesByRoomType = async (req, res) => {
+  const { roomType } = req.query;
+
+  if (!roomType) {
+    return res.status(400).json({ message: "Room type is required" });
+  }
+
+  try {
+    const today = new Date();
+
+    // Fetch bookings from the Booking model
+    const bookings = await Booking.find({
+      "rooms.roomName": roomType,
+      checkOutDate: { $gte: today }, // Only future bookings
+    }).select("checkInDate checkOutDate source"); // Include source field if available
+
+    // Fetch events from the Calendar model
+    const calendarEvents = await Calendar.find({
+      roomType,
+      date: { $gte: today },
+      status: "booked",
+    }).select("date source");
+
+    const unavailableDates = [];
+
+    // Process bookings
+    bookings.forEach((booking) => {
+      let currentDate = new Date(booking.checkInDate);
+      const checkOutDate = new Date(booking.checkOutDate);
+
+      while (currentDate <= checkOutDate) {
+        unavailableDates.push({
+          date: currentDate.toISOString().split("T")[0],
+          status: "fullyBooked",
+          source: booking.source || "Website", // Default to "Website" if no source is specified
+        });
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    });
+
+    // Process calendar events
+    calendarEvents.forEach((event) => {
+      unavailableDates.push({
+        date: event.date.toISOString().split("T")[0],
+        status: "fullyBooked",
+        source: event.source || "External", // Default to "External" if no source is specified
+      });
+    });
+
+    // Deduplicate dates
+    const uniqueUnavailableDates = unavailableDates.reduce((acc, current) => {
+      if (
+        !acc.find(
+          (date) => date.date === current.date && date.source === current.source
+        )
+      ) {
+        acc.push(current);
+      }
+      return acc;
+    }, []);
+
+    res.status(200).json({ unavailableDates: uniqueUnavailableDates });
+  } catch (error) {
+    console.error("Error fetching unavailable dates:", error);
+    res.status(500).json({ message: "Failed to fetch unavailable dates" });
+  }
+};
+
 // Sync external calendars
 
 const syncCalendar = async (req, res) => {
@@ -187,6 +255,7 @@ const clearOldEvents = async (req, res) => {
 
 module.exports = {
   syncCalendar,
+  getUnavailableDatesByRoomType,
   generateICalFile,
   clearOldEvents,
 };

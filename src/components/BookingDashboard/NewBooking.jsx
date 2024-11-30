@@ -50,6 +50,7 @@ function NewBooking() {
 
   return (
     <section className="flex flex-col rounded-none">
+      {latestBookings.length > 0 && (
       <div className="flex flex-col items-start w-full pr-20 bg-white py-7 pl-7 rounded-3xl max-md:px-5 max-md:max-w-full">
         <h1 className="text-2xl font-semibold text-slate-700">New Booking</h1>
         <div className="mt-3 w-full max-w-[976px] max-md:max-w-full">
@@ -60,6 +61,7 @@ function NewBooking() {
           </div>
         </div>
       </div>
+      )}
     </section>
   );
 }

@@ -4,6 +4,7 @@ const Room = require("../models/Room");
 const fs = require("fs");
 const path = require("path");
 const pdf = require("html-pdf"); // Import html-pdf
+const { v4: uuidv4 } = require("uuid");
 
 // Helper function to get dates between two dates
 // const getDatesBetween = (startDate, endDate) => {
@@ -102,9 +103,12 @@ const getAllRooms = async (req, res) => {
     console.log(req.query);
     const { checkinDate, checkoutDate } = req.query;
 
+    console.log(checkinDate, checkoutDate);
     // Parse dates and check if they are valid
     const parsedCheckIn = new Date(checkinDate);
     const parsedCheckOut = new Date(checkoutDate);
+
+    console.log(parsedCheckIn);
 
     if (isNaN(parsedCheckIn) || isNaN(parsedCheckOut)) {
       return res.status(400).json({
@@ -585,6 +589,12 @@ const fetchBookingsAdmin = async (req, res) => {
 
     let query = Booking.find();
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Ensure we compare only the date part
+
+    // Filter bookings based on check-in dates
+    query = query.where("checkInDate").gte(today);
+
     if (timeframe) {
       const now = new Date();
       let startDate;
@@ -956,6 +966,96 @@ const updateRoomPrice = async (req, res) => {
   }
 };
 
+const createCustomBooking = async (req, res) => {
+  try {
+    const {
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      idDocument,
+      checkInDate,
+      checkOutDate,
+      guestCount,
+      selectedRooms,
+      paymentMethod,
+      totalAmount,
+    } = req.body;
+
+    console.log(req.body);
+
+    // Validate required fields
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !phoneNumber ||
+      !idDocument ||
+      !checkInDate ||
+      !checkOutDate ||
+      !guestCount ||
+      !selectedRooms.length ||
+      !paymentMethod ||
+      !totalAmount
+    ) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
+
+    // Generate a unique booking ID
+    const bookingId = `CBK-${uuidv4()}`;
+
+    // Calculate adults and children (assuming all guests are adults if guestCount is provided as a total)
+    const numberOfAdults = guestCount;
+    const numberOfChildren = 0;
+    const numberOfInfants = 0;
+
+    // Build the payment breakdown
+    const paymentBreakdown = [
+      { description: "Room Charges", amount: totalAmount },
+    ];
+
+    // Ensure `roomId` and `roomName` are extracted correctly
+    const rooms = selectedRooms.map((room) => ({
+      roomId: room.id, // Use `room.id` instead of `room.roomId`
+      roomName: room.name, // Use `room.name` instead of `room.roomName`
+      price: room.price,
+    }));
+
+    // Create a new booking object
+    const newBooking = new Booking({
+      bookingId,
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      idDocument,
+      rooms,
+      checkInDate: new Date(checkInDate),
+      checkOutDate: new Date(checkOutDate),
+      totalPayment: totalAmount,
+      paymentBreakdown,
+      numberOfAdults,
+      numberOfChildren,
+      numberOfInfants,
+      paymentStatus: paymentMethod === "cash" ? "pending" : "completed",
+      transactions: [], // No transactions for cash payments
+      source: "website", // Assuming custom bookings are made via the website
+      isCustom: true, // Mark as custom booking
+    });
+
+    // Save the booking to the database
+    await newBooking.save();
+
+    return res.status(201).json({
+      message: "Custom booking created successfully",
+      booking: newBooking,
+    });
+  } catch (error) {
+    console.error("Error creating custom booking:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   checkIfAvailable,
   getRoomDetails,
@@ -973,4 +1073,5 @@ module.exports = {
   get5Rooms,
   getAllRoomsStatic,
   getUnavailableDatesAdmin,
+  createCustomBooking,
 };

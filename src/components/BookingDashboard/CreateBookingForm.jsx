@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { X, Plus, Minus, AlertCircle } from "lucide-react";
-import { Alert, AlertDescription } from "../ui/alert";
+import React, { useEffect, useState } from "react";
+import { X } from "lucide-react";
+import axios from "axios";
+import { differenceInCalendarDays, format } from "date-fns";
+
 const process = import.meta.env;
 
-const CreateBookingForm = ({ isOpen, onClose, onSubmit }) => {
+const CreateBookingForm = ({ isOpen, onClose}) => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -12,9 +14,7 @@ const CreateBookingForm = ({ isOpen, onClose, onSubmit }) => {
     idDocument: "",
     checkInDate: "",
     checkOutDate: "",
-    numberOfAdults: 1,
-    numberOfChildren: 0,
-    numberOfInfants: 0,
+    guestCount: 1,
     selectedRooms: [],
     paymentMethod: "",
     transactionId: "",
@@ -24,296 +24,178 @@ const CreateBookingForm = ({ isOpen, onClose, onSubmit }) => {
   const [rooms, setRooms] = useState([]);
   const [globalSettings, setGlobalSettings] = useState(null);
   const [errors, setErrors] = useState({});
+  const [unavailableDates, setUnavailableDates] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [totalAmount, setTotalAmount] = useState(0);
-  const [selectedRooms, setSelectedRooms] = useState([]);
+  const [step, setStep] = useState(1); // Step tracking state
+
+  const fetchRooms = async () => {
+    if (!formData.checkInDate || !formData.checkOutDate) return;
+
+    try {
+      const checkInDateISO = new Date(formData.checkInDate).toISOString();
+      const checkOutDateISO = new Date(formData.checkOutDate).toISOString();
+      const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/rooms`, {
+        params: {
+          checkinDate: checkInDateISO,
+          checkoutDate: checkOutDateISO,
+        },
+      });
+      setRooms(response.data);
+    } catch (error) {
+      console.error("Error fetching rooms:", error);
+      setRooms([]);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-       
-        const [roomsResponse, settingsResponse] = await Promise.all([
-          fetch(`${process.VITE_HOST_URL}/api/allRooms`),
-          fetch(`${process.VITE_HOST_URL}/api/admin/global-settings`),
+        const [settingsResponse, unavailableDatesResponse] = await Promise.all([
+          axios.get(`${process.VITE_HOST_URL}/api/admin/global-settings`),
+          axios.get(`${process.VITE_HOST_URL}/api/unavailable_dates`),
         ]);
-        const roomsData = await roomsResponse.json();
-        const settingsData = await settingsResponse.json();
-        
-    //     console.log('Rooms Data:', roomsData); // Debug this
-    // console.log('Settings Data:', settingsData); // Debug this
-
-        // setRooms(roomsData);
-        console.log(Array.isArray(roomsData) ? roomsData : [])
-        setRooms(Array.isArray(roomsData) ? roomsData : []);
-        setGlobalSettings(settingsData);
+        setGlobalSettings(settingsResponse.data);
+        setUnavailableDates(unavailableDatesResponse.data.unavailableDates || []);
       } catch (error) {
-        console.error("Failed to fetch data:", error);
+        console.error("Failed to fetch global settings or unavailable dates:", error);
       }
     };
+
     fetchData();
   }, []);
 
+  useEffect(() => {
+    fetchRooms();
+  }, [formData.checkInDate, formData.checkOutDate]);
+
+  const isDateUnavailable = (date) => {
+    if (!date || isNaN(new Date(date))) {
+      return false;
+    }
+    const formattedDate = format(new Date(date), "yyyy-MM-dd");
+    return unavailableDates.some((unavailableDate) => unavailableDate.date === formattedDate);
+  };
+
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
-    
-    setFormData((prev) => {
-      const newValue = type === "number" ? parseInt(value, 10) : value;
-      const updatedData = { ...prev, [name]: newValue };
-  
-     
-      if (["numberOfAdults", "numberOfChildren"].includes(name) && 
-          updatedData.selectedRooms.length > 0 && 
-          globalSettings) {
-        
-        const isWeekendStay =
-          isWeekend(updatedData.checkInDate) || isWeekend(updatedData.checkOutDate);
-        
-        const newTotal = calculateTotalAmount(
-          updatedData.selectedRooms,
-          isWeekendStay,
-          updatedData
-        );
-  
-        updatedData.totalAmount = newTotal;
-      }
-  
-      return updatedData;
-    });
-  };
-  
- 
-  useEffect(() => {
-    if (formData.selectedRooms.length > 0 && globalSettings) {
-      const isWeekendStay =
-        isWeekend(formData.checkInDate) || isWeekend(formData.checkOutDate);
-      
-      const newTotal = calculateTotalAmount(
-        formData.selectedRooms,
-        isWeekendStay,
-        formData
-      );
-      
-      setFormData(prev => ({
-        ...prev,
-        totalAmount: newTotal
+    const { name, value } = e.target;
+
+    if ((name === "checkInDate" || name === "checkOutDate") && isDateUnavailable(value)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        dates: "Selected date is unavailable. Please choose another date.",
       }));
+      return;
     }
-  }, [
-    formData.selectedRooms,
-    formData.numberOfAdults,
-    formData.numberOfChildren,
-    formData.checkInDate,
-    formData.checkOutDate,
-    formData.paymentMethod,
-    globalSettings,
-  ]);
-  
-  const handleGuestChange = (type, increment) => {
-    setFormData((prev) => {
-     
-      const newValue = Math.max(
-        type === "numberOfAdults" ? 1 : 0,
-        prev[type] + increment
-      );
-  
-      
-      const updatedData = {
-        ...prev,
-        [type]: newValue
-      };
-  
-     
-      if (updatedData.selectedRooms.length > 0 && globalSettings) {
-        const isWeekendStay =
-          isWeekend(updatedData.checkInDate) || isWeekend(updatedData.checkOutDate);
-        
-        const newTotal = calculateTotalAmount(
-          updatedData.selectedRooms,
-          isWeekendStay,
-          {
-            ...updatedData,
-            numberOfAdults: type === "numberOfAdults" ? newValue : updatedData.numberOfAdults,
-            numberOfChildren: type === "numberOfChildren" ? newValue : updatedData.numberOfChildren
-          }
-        );
-  
-        updatedData.totalAmount = newTotal;
-      }
-  
-      return updatedData;
-    });
-  };
-  
 
-  const calculateTotalCapacity = (selectedRooms) => {
-    return selectedRooms.reduce((total, room) => {
-      return total + (room.id === "1729158937285" ? 10 : 3);
-    }, 0);
+    setErrors((prevErrors) => ({ ...prevErrors, dates: null }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const isWeekend = (date) => {
-    const day = new Date(date).getDay();
-    return day === 0 || day === 6;
-  };
+  useEffect(() => {
+    calculateTotalAmount();
+  }, [formData.checkInDate, formData.checkOutDate, formData.selectedRooms]);
+  
 
-  const calculateTotalAmount = (selectedRooms, isWeekend, currentFormData = {}) => {
-    if (!selectedRooms || selectedRooms.length === 0) {
-      return 0;
+  const calculateTotalAmount = () => {
+    if (!formData.checkInDate || !formData.checkOutDate || formData.selectedRooms.length === 0) {
+      setFormData((prev) => ({ ...prev, totalAmount: 0 }));
+      return;
     }
   
-    // Calculate the base amount for selected rooms
-    const baseAmount = selectedRooms.reduce((total, room) => {
-      let roomPrice = Number(room.price) || 0;
-      if (isWeekend && room.weekend) {
-        roomPrice = Number(room.weekend) || roomPrice;
-      }
-      return total + roomPrice;
-    }, 0);
+    const numberOfNights = differenceInCalendarDays(
+      new Date(formData.checkOutDate),
+      new Date(formData.checkInDate)
+    );
   
-    let totalAmount = baseAmount;
+    // Base room price calculation
+    let baseAmount = formData.selectedRooms.reduce(
+      (total, room) => total + room.price * numberOfNights,
+      0
+    );
   
-    // Extract required properties with fallback values
-    const { numberOfAdults = 0, numberOfChildren = 0, paymentMethod } = currentFormData;
-  
-    // Add taxes, service charges, and service tax if global settings exist
     if (globalSettings) {
-      const { tax = 0, serviceCharges = 0, serviceTaxRate = 0 } = globalSettings.roomTaxesAndCharges || {};
+      const { tax, serviceCharges } = globalSettings.roomTaxesAndCharges || {};
+      const taxAmount = (baseAmount * tax) / 100;
   
-      const totalGuests = numberOfAdults + numberOfChildren;
-      const serviceTax = serviceTaxRate * totalGuests;
+      // Service charge calculation (fixed per person)
+      const totalGuests = formData.guestCount || formData.numberOfAdults + formData.numberOfChildren;
+      const serviceChargeAmount = totalGuests * serviceCharges;
   
-      if (paymentMethod === "cash") {
-        // Add tax and service charges as a percentage of the base amount
-        const taxAndServiceCharge = (baseAmount * (Number(tax) + Number(serviceCharges))) / 100;
-        totalAmount += taxAndServiceCharge;
-      }
-  
-      // Add the fixed service tax per person (applies to all payment methods)
-      totalAmount += serviceTax;
+      baseAmount += taxAmount + serviceChargeAmount;
     }
   
-    // Return the rounded total amount
-    return Math.round(totalAmount) || 0;
+    setFormData((prev) => ({ ...prev, totalAmount: baseAmount }));
   };
   
   
-
-  const handleRoomSelection = (room) => {
-    setFormData((prev) => {
-      const isLargeRoom = room.id === '1729158937285';
-      const isSelected = prev.selectedRooms.some((r) => r.id === room.id);
-  
-      let updatedRooms;
-  
-      if (isLargeRoom) {
-        // If the selected room is a large room, toggle its selection
-        updatedRooms = isSelected ? [] : [room];
-      } else {
-        // For regular rooms, toggle their selection while excluding large rooms if selected
-        updatedRooms = isSelected
-          ? prev.selectedRooms.filter((r) => r.id !== room.id)
-          : [...prev.selectedRooms, room].filter((r) => r.id !== '1729158937285');
-      }
-  
-      const totalCapacity = calculateTotalCapacity(updatedRooms);
-      const totalGuests = prev.numberOfAdults + prev.numberOfChildren;
-  
-      if (totalCapacity >= totalGuests || isSelected) {
-        const isWeekendStay = isWeekend(prev.checkInDate) || isWeekend(prev.checkOutDate);
-        const newTotal = calculateTotalAmount(updatedRooms, isWeekendStay, {
-          ...prev,
-          selectedRooms: updatedRooms,
-        });
-  
-        return {
-          ...prev,
-          selectedRooms: updatedRooms,
-          totalAmount: newTotal,
-        };
-      }
-  
-      // If deselection fails due to capacity constraints, return the current state
-      return prev;
-    });
-  };
-  
-  
-
-  useEffect(() => {
-  
-  
-    if (formData.selectedRooms.length > 0 && globalSettings) {
-      const isWeekendStay =
-        isWeekend(formData.checkInDate) || isWeekend(formData.checkOutDate);
-      
-      const newTotal = calculateTotalAmount(
-        formData.selectedRooms,
-        isWeekendStay
-      );
-  
-      
-      
-      setTotalAmount(newTotal);
-      setFormData(prev => ({
-        ...prev,
-        totalAmount: newTotal
-      }));
-    }
-  }, [
-    formData.selectedRooms,
-    formData.numberOfAdults,
-    formData.numberOfChildren,
-    formData.checkInDate,
-    formData.checkOutDate,
-    formData.paymentMethod,
-    globalSettings,
-  ]);
 
   const validateForm = () => {
     const newErrors = {};
-    const totalGuests = formData.numberOfAdults + formData.numberOfChildren;
-    const totalCapacity = calculateTotalCapacity(formData.selectedRooms);
 
-    if (totalGuests > totalCapacity) {
-      newErrors.rooms = "Selected rooms cannot accommodate all guests";
+    if (step === 1) {
+      if (!formData.checkInDate || !formData.checkOutDate) {
+        newErrors.dates = "Check-in and Check-out dates are required.";
+      } else if (isDateUnavailable(formData.checkInDate) || isDateUnavailable(formData.checkOutDate)) {
+        newErrors.dates = "Selected dates are unavailable.";
+      }
     }
 
-    if (!formData.paymentMethod) {
-      newErrors.paymentMethod = "Payment method is required";
+    if (step === 2 && formData.selectedRooms.length === 0) {
+      newErrors.rooms = "Select at least one room.";
     }
-
-    if (formData.paymentMethod === "online" && !formData.transactionId) {
-      newErrors.transactionId = "Transaction ID is required for online payment";
-    }
-
-     
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleNext = () => {
     if (validateForm()) {
-      setIsSubmitting(true);
-      const isWeekendStay =
-        isWeekend(formData.checkInDate) || isWeekend(formData.checkOutDate);
-      const totalAmount = calculateTotalAmount(
-        formData.selectedRooms,
-        isWeekendStay
-      );
-
-      const bookingData = {
-        ...formData,
-        totalAmount,
-        paymentStatus:
-          formData.paymentMethod === "cash" ? "pending" : "completed",
-      };
-
-      onSubmit(bookingData);
-      onClose();
+      setStep((prevStep) => prevStep + 1);
     }
   };
+
+  const handlePrevious = () => {
+    setStep((prevStep) => prevStep - 1);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    if (validateForm()) {
+      setIsSubmitting(true);
+  
+      // Prepare the payload to match the required backend format
+      const payload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        idDocument: formData.idDocument,
+        checkInDate: formData.checkInDate,
+        checkOutDate: formData.checkOutDate,
+        guestCount: formData.guestCount,
+        selectedRooms: formData.selectedRooms.map((room) => ({
+          id: room.id,
+          name: room.name,
+          price: room.price,
+        })),
+        paymentMethod: formData.paymentMethod,
+        totalAmount: formData.totalAmount,
+      };
+  
+      try {
+        const response = await axios.post(`${process.VITE_HOST_URL}/api/custom_booking`, payload);
+        // onSubmit(response.data);
+        onClose();
+      } catch (error) {
+        console.error("Error submitting booking:", error);
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+  };
+  
+
   if (!isOpen) return null;
 
   return (
@@ -325,208 +207,51 @@ const CreateBookingForm = ({ isOpen, onClose, onSubmit }) => {
         >
           <X className="w-6 h-6" />
         </button>
+        <h2 className="mb-6 text-2xl font-bold text-gray-900">Create New Booking</h2>
 
-        <h2 className="mb-6 text-2xl font-bold text-gray-900">
-          Create New Booking
-        </h2>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                First Name
-              </label>
-              <input
-                type="text"
-                name="firstName"
-                required
-                value={formData.firstName}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Last Name
-              </label>
-              <input
-                type="text"
-                name="lastName"
-                required
-                value={formData.lastName}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                name="phoneNumber"
-                required
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              ID Document (Aadhar/Passport)
-            </label>
-            <input
-              type="text"
-              name="idDocument"
-              required
-              value={formData.idDocument}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border rounded-md"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Check-in Date
-              </label>
-              <input
-                type="date"
-                name="checkInDate"
-                required
-                value={formData.checkInDate}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Check-out Date
-              </label>
-              <input
-                type="date"
-                name="checkOutDate"
-                required
-                value={formData.checkOutDate}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Adults
-              </label>
-              <div className="flex items-center space-x-2">
-                <button
-                  type="button"
-                  onClick={() => handleGuestChange("numberOfAdults", -1)}
-                  className="p-1 border rounded"
-                >
-                  <Minus className="w-4 h-4" />
-                </button>
+        {/* Step 1: Select Dates */}
+        {step === 1 && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Check-in Date</label>
                 <input
-                  type="number"
-                  name="numberOfAdults"
-                  required
-                  min="1"
-                  value={formData.numberOfAdults}
+                  type="date"
+                  name="checkInDate"
+                  value={formData.checkInDate}
                   onChange={handleChange}
-                  className="w-16 px-2 py-1 text-center border rounded-md"
+                  className="w-full px-3 py-2 border rounded-md"
+                  min={format(new Date(), "yyyy-MM-dd")}
+                  required
                 />
-                <button
-                  type="button"
-                  onClick={() => handleGuestChange("numberOfAdults", 1)}
-                  className="p-1 border rounded"
-                >
-                  <Plus className="w-4 h-4" />
-                </button>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Check-out Date</label>
+                <input
+                  type="date"
+                  name="checkOutDate"
+                  value={formData.checkOutDate}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                  min={formData.checkInDate || format(new Date(), "yyyy-MM-dd")}
+                  required
+                />
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Children
-              </label>
-              <div className="flex items-center space-x-2">
-                <button
-                  type="button"
-                  onClick={() => handleGuestChange("numberOfChildren", -1)}
-                  className="p-1 border rounded"
-                >
-                  <Minus className="w-4 h-4" />
-                </button>
-                <input
-                  type="number"
-                  name="numberOfChildren"
-                  required
-                  min="0"
-                  value={formData.numberOfChildren}
-                  onChange={handleChange}
-                  className="w-16 px-2 py-1 text-center border rounded-md"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleGuestChange("numberOfChildren", 1)}
-                  className="p-1 border rounded"
-                >
-                  <Plus className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Infants
-              </label>
-              <div className="flex items-center space-x-2">
-                <button
-                  type="button"
-                  onClick={() => handleGuestChange("numberOfInfants", -1)}
-                  className="p-1 border rounded"
-                >
-                  <Minus className="w-4 h-4" />
-                </button>
-                <input
-                  type="number"
-                  name="numberOfInfants"
-                  required
-                  min="0"
-                  value={formData.numberOfInfants}
-                  onChange={handleChange}
-                  className="w-16 px-2 py-1 text-center border rounded-md"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleGuestChange("numberOfInfants", 1)}
-                  className="p-1 border rounded"
-                >
-                  <Plus className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
+            {errors.dates && <p className="text-red-500">{errors.dates}</p>}
+            <button
+              type="button"
+              onClick={handleNext}
+              className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+            >
+              Next
+            </button>
           </div>
+        )}
 
-          {/* Room Selection */}
-          <div className="space-y-4">
+        {/* Step 2: Select Rooms and Fill Guest Details */}
+        {step === 2 && (
+          <div className="space-y-6">
             <h3 className="text-lg font-medium">Room Selection</h3>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {rooms.map((room) => (
@@ -541,40 +266,131 @@ const CreateBookingForm = ({ isOpen, onClose, onSubmit }) => {
                   <div className="flex items-start space-x-4">
                     <input
                       type="checkbox"
-                      checked={formData.selectedRooms.some(
-                        (r) => r.id === room.id
-                      )}
-                      onChange={() => handleRoomSelection(room)}
+                      checked={formData.selectedRooms.some((r) => r.id === room.id)}
+                      onChange={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          selectedRooms: prev.selectedRooms.some((r) => r.id === room.id)
+                            ? prev.selectedRooms.filter((r) => r.id !== room.id)
+                            : [...prev.selectedRooms, room],
+                        }))
+                      }
                       className="mt-1"
                     />
                     <div className="flex-1">
                       <h4 className="font-medium">{room.name}</h4>
-                      {/* <p className="text-sm text-gray-500">{room.description}</p> */}
-                      <p className="mt-1">
-                        Capacity: {room.id === "1729158937285" ? "10" : "3"}{" "}
-                        guests
-                      </p>
-                      <p className="mt-1">
-                        Price: ₹{room.price}{" "}
-                        {room.weekend && `(Weekend: ₹${room.weekend})`}
-                      </p>
+                      <p className="mt-1">Capacity: {room.capacity} guests</p>
+                      <p className="mt-1">Price: ₹{room.price}</p>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-            {errors.rooms && (
-              <Alert variant="destructive">
-                <AlertCircle className="w-4 h-4" />
-                <AlertDescription>{errors.rooms}</AlertDescription>
-              </Alert>
-            )}
+            {errors.rooms && <p className="text-red-500">{errors.rooms}</p>}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">First Name</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Last Name</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+                <input
+                  type="tel"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                  required
+                />
+              </div>
+              <div>
+                  <label className="block text-sm font-medium text-gray-700">ID Document Number (Aadhar/Passport)</label>
+                  <input
+                    type="text"
+                    name="idDocument"
+                    value={formData.idDocument}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border rounded-md"
+                    required
+                  />
+                </div>  
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Number of Guests</label>
+                  <input
+                    type="number"
+                    name="guestCount"
+                    value={formData.guestCount || formData.numberOfAdults + formData.numberOfChildren}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        guestCount: Math.max(1, parseInt(e.target.value, 10)), // Ensure at least 1 guest
+                      }))
+                    }
+                    className="w-full px-3 py-2 border rounded-md"
+                    required
+                  />
+                </div>
+                
+              </div>
+            
+            </div>
+            <div className="flex justify-between">
+              <button
+                type="button"
+                onClick={handlePrevious}
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                onClick={handleNext}
+                className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+              >
+                Next
+              </button>
+            </div>
           </div>
+        )}
 
-          {/* Payment Method */}
-          <div className="space-y-4">
+        {/* Step 3: Payment Details */}
+        {step === 3 && (
+          <div className="space-y-6">
             <h3 className="text-lg font-medium">Payment Details</h3>
-            <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Payment Method</label>
               <div className="flex space-x-4">
                 <label className="flex items-center space-x-2">
                   <input
@@ -582,16 +398,9 @@ const CreateBookingForm = ({ isOpen, onClose, onSubmit }) => {
                     name="paymentMethod"
                     value="cash"
                     checked={formData.paymentMethod === "cash"}
-                    onChange={(e) =>
-                      handleChange({
-                        target: {
-                          name: "paymentMethod",
-                          value: e.target.value,
-                        },
-                      })
-                    }
+                    onChange={handleChange}
                   />
-                  <span>Cash Payment</span>
+                  <span>Cash</span>
                 </label>
                 <label className="flex items-center space-x-2">
                   <input
@@ -599,86 +408,54 @@ const CreateBookingForm = ({ isOpen, onClose, onSubmit }) => {
                     name="paymentMethod"
                     value="online"
                     checked={formData.paymentMethod === "online"}
-                    onChange={(e) =>
-                      handleChange({
-                        target: {
-                          name: "paymentMethod",
-                          value: e.target.value,
-                        },
-                      })
-                    }
-                  />
-                  <span>Online Payment</span>
-                </label>
-              </div>
-
-              {formData.paymentMethod === "online" && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Transaction ID
-                  </label>
-                  <input
-                    type="text"
-                    name="transactionId"
-                    value={formData.transactionId}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-md"
-                    required
                   />
-                </div>
-              )}
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Total Amount
+                  <span>Online</span>
                 </label>
-                <input
-                  type="text" 
-                  name="totalAmount"
-                  value={`₹${formData.totalAmount.toLocaleString()}`} 
-                  className="w-full px-3 py-2 border rounded-md bg-gray-50"
-                  readOnly
-                />
-                {formData.paymentMethod === "cash" && globalSettings && (
-                  <div className="mt-1 text-sm text-gray-500">
-                    <p>Includes:</p>
-                    <ul className="ml-4 list-disc">
-                      <li>{globalSettings.roomTaxesAndCharges.tax}% tax</li>
-                      <li>
-                        {globalSettings.roomTaxesAndCharges.serviceCharges}%
-                        service charges
-                      </li>
-                      <li>
-                        Service tax of ₹
-                        {globalSettings.roomTaxesAndCharges.serviceTaxRate} per
-                        person (
-                        {formData.numberOfAdults + formData.numberOfChildren}{" "}
-                        guests)
-                      </li>
-                    </ul>
-                  </div>
-                )}
               </div>
             </div>
-          </div>
+            {formData.paymentMethod === "online" && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Transaction ID</label>
+                <input
+                  type="text"
+                  name="transactionId"
+                  value={formData.transactionId}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                  required
+                />
+              </div>
+            )}
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Total Amount</label>
+              <input
+                type="text"
+                value={`₹${formData.totalAmount.toLocaleString()}`}
+                className="w-full px-3 py-2 border rounded-md bg-gray-100"
+                readOnly
+              />
+              </div>
 
-          <div className="flex justify-end space-x-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-gray-700 border rounded-md hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 disabled:bg-blue-300"
-            >
-              {isSubmitting ? "Creating Booking..." : "Create Booking"}
-            </button>
+            <div className="flex justify-between">
+              <button
+                type="button"
+                onClick={handlePrevious}
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+              >
+                Previous
+              </button>
+              <button
+                type="submit"
+                onClick={handleSubmit}
+                className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Submitting..." : "Create Booking"}
+              </button>
+            </div>
           </div>
-        </form>
+        )}
       </div>
     </div>
   );

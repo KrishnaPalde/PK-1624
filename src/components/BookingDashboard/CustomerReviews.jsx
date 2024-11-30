@@ -95,18 +95,23 @@ const CustomerReviews = () => {
     fetchReviews();
   });
 
-  return (
-    <article className="flex flex-col items-start max-w-[579px] bg-white rounded-lg p-4">
-      <header className="flex flex-wrap self-stretch justify-between w-full gap-5 text-2xl font-semibold text-slate-700 max-md:max-w-full">
-        <h2>Latest Customer Review</h2>
-      </header>
-      <main>
-        {reviews.map((review, index) => (
-          <ReviewCard key={index} {...review} />
-        ))}
-      </main>
-    </article>
-  );
+  if(reviews.length > 0){
+    return (
+      <article className="flex flex-col items-start max-w-[579px] bg-white rounded-lg p-4">
+        <header className="flex flex-wrap self-stretch justify-between w-full gap-5 text-2xl font-semibold text-slate-700 max-md:max-w-full">
+          <h2>Latest Customer Review</h2>
+        </header>
+        <main>
+          {reviews.map((review, index) => (
+            <ReviewCard key={index} {...review} />
+          ))}
+        </main>
+      </article>
+    );
+  } else {
+    return (<div></div>)
+  }
+  
 };
 
 export default CustomerReviews;

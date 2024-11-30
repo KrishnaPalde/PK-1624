@@ -25,6 +25,7 @@ const {
   updateRoomPrice,
   get5Rooms,
   getAllRoomsStatic,
+  createCustomBooking,
 } = require("../controller/bookingsController");
 const {
   createFeedback,
@@ -56,6 +57,7 @@ const {
 
 const router = express.Router();
 
+router.post("/custom_booking", createCustomBooking);
 router.post("/authenticateAdmin", login);
 router.get("/check_availability_dates", checkIfAvailable);
 router.get("/unavailable_dates", getUnavailableDates);

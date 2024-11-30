@@ -33,7 +33,7 @@ function AdminRoomCard({ title, price, iconSrc, weekend }) {
           className="self-stretch object-contain w-6 my-auto shrink-0 aspect-square"
         />
       </header> */}
-      <div className="flex flex-col items-start self-start mt-1 text-2xl font-semibold text-gray-400">
+      <div className="flex flex-col items-start self-start mt-1 text-2xl font-semibold text-gray-400" >
         <h2
           className="text-base font-medium text-gray-500"
           style={{ maxWidth: "22ch", wordBreak: "break-word", textAlign: "left" }} // Allow wrapping

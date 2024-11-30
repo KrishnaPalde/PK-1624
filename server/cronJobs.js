@@ -5,7 +5,7 @@ const {
 } = require("./controller/calendarController");
 
 // Sync external calendars every hour
-cron.schedule("28 * * * *", async () => {
+cron.schedule("0 * * * *", async () => {
   console.log("Syncing external calendars...");
   try {
     await syncCalendar({

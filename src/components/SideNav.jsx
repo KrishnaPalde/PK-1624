@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { FaHome, FaBook, FaBed } from 'react-icons/fa';
+import { FaHome, FaBook, FaBed, FaCalendar } from 'react-icons/fa';
 import { MdReviews } from "react-icons/md";
 import { BiSolidOffer } from "react-icons/bi";
 import { useAuth } from '../AuthContext';
@@ -35,15 +35,16 @@ const SideNav = () => {
 
 
   const goToMainWebsite = () => {
-    logoutAndNoNav();
-    window.location.href = '/'; 
+    window.open('/', '_blank');
   }
+
   const Logout = () => {
     logout();
   };
 
   const menuItems = [
     { icon: <FaHome />, label: 'Dashboard', location: '/admin/dashboard' },
+    { icon: <FaCalendar/>, label: 'Calendar', location: '/admin/calendar'},
     { icon: <FaBook />, label: 'Bookings', location: '/admin/booking' },
     { icon: <FaBed />, label: 'Rooms', location: '/admin/room' },
     { icon: <MdReviews/>, label: 'Reviews', location: '/admin/reviews'},
