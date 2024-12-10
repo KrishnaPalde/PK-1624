@@ -20,8 +20,9 @@ function AdminNav({ title }) {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [isCalendarLinksPopupVisible, setCalendarLinksPopupVisible] = useState(false); // New state for Calendar Links popup
-  const [calendarLinks, setCalendarLinks] = useState([]); // State for fetched calendar links
-  const [editedLinks, setEditedLinks] = useState([]); // State for inline edits of calendar links
+  const [calendarLinks, setCalendarLinks] = useState([]); // Fetched calendar links
+  const [editedLinks, setEditedLinks] = useState([]); // Editable links
+
   
   const [settings, setSettings] = useState({
     _id: "",
@@ -74,37 +75,58 @@ function AdminNav({ title }) {
     if (!isCalendarLinksPopupVisible) {
       try {
         const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/calendar-links`);
-        setCalendarLinks(response.data); // Load calendar links
-        setEditedLinks([...response.data]); // Initialize editable links
+        console.log(response.data);
+        setCalendarLinks(response.data); // Store fetched links
+        setEditedLinks(response.data.map((link) => ({ ...link }))); // Initialize editable links
       } catch (error) {
-        console.error("Failed to fetch calendar links", error);
+        console.error("Failed to fetch calendar links:", error);
       }
     }
     setCalendarLinksPopupVisible(!isCalendarLinksPopupVisible);
   };
+  
 
-  const handleLinkChange = (index, field, value) => {
+  const handleLinkChange = (roomIndex, sourceIndex, field, value) => {
     setEditedLinks((prevLinks) => {
       const updatedLinks = [...prevLinks];
-      updatedLinks[index][field] = value;
+      updatedLinks[roomIndex].sources[sourceIndex][field] = value;
       return updatedLinks;
     });
   };
-
+  
+  const handleAddSource = (roomIndex) => {
+    setEditedLinks((prevLinks) => {
+      const updatedLinks = [...prevLinks];
+      updatedLinks[roomIndex].sources.push({ source: "", url: "" });
+      return updatedLinks;
+    });
+  };
+  
+  const handleRemoveSource = (roomIndex, sourceIndex) => {
+    setEditedLinks((prevLinks) => {
+      const updatedLinks = [...prevLinks];
+      updatedLinks[roomIndex].sources.splice(sourceIndex, 1);
+      return updatedLinks;
+    });
+  };
+  
   const handleSaveCalendarLinks = async () => {
     try {
-      await axios.put(`${process.VITE_HOST_URL}/api/admin/calendar-links`, editedLinks);
-      console.log("Calendar links updated successfully");
+      await axios.put(`${process.VITE_HOST_URL}/api/admin/calendar-links`, { links: editedLinks });
+      alert("Calendar links updated successfully!");
       setCalendarLinksPopupVisible(false);
     } catch (error) {
-      console.error("Failed to update calendar links", error);
+      console.error("Failed to update calendar links:", error);
     }
   };
+  
+  
 
   const handleCancelCalendarLinks = () => {
-    setEditedLinks([...calendarLinks]); // Revert to original links
+    setEditedLinks([...calendarLinks]); // Reset to original state
     setCalendarLinksPopupVisible(false);
   };
+  
   
 
   const toggleSettingsPopup = async () => {
@@ -690,104 +712,121 @@ function AdminNav({ title }) {
 
 {isCalendarLinksPopupVisible && (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-    <div className="w-full max-w-4xl p-6 bg-white rounded-lg shadow-xl calendar-links-popup">
+    <div className="relative w-full max-w-4xl p-6 bg-white rounded-lg shadow-xl overflow-hidden">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold text-gray-800">Edit Calendar Links</h2>
+        <h2 className="text-2xl font-bold text-[#255d69]">Manage Calendar Links</h2>
         <button
           onClick={handleCancelCalendarLinks}
-          className="text-gray-500 hover:text-gray-700"
+          className="text-gray-500 hover:text-[#255d69]"
         >
           <FaTimes size={24} />
         </button>
       </div>
-      <form>
-        <div className="space-y-4">
-          {editedLinks.map((link, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 items-center gap-4"
+      {/* Scrollable form content */}
+      <div className="max-h-[70vh] overflow-y-auto">
+        <form>
+          <div className="space-y-6">
+            {editedLinks.map((room, roomIndex) => (
+              <div key={roomIndex} className="p-4 border rounded-lg shadow-sm bg-[#f5fafd]">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-medium text-[#255d69]">
+                    Room Type: {room.roomType}
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => copyICalLink(room.roomType)}
+                    className="px-4 py-2 text-white bg-[#255d69] hover:bg-[#243947] rounded-md focus:outline-none focus:ring-2 focus:ring-[#255d69]"
+                  >
+                    Export iCal Link
+                  </button>
+                </div>
+                <div className="mt-4 space-y-4">
+                  {room.sources.map((source, sourceIndex) => (
+                    <div
+                      key={sourceIndex}
+                      className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 items-center gap-4"
+                    >
+                      <div>
+                        <label
+                          htmlFor={`source-${roomIndex}-${sourceIndex}`}
+                          className="block mb-1 text-sm font-medium text-gray-700"
+                        >
+                          Source
+                        </label>
+                        <input
+                          type="text"
+                          id={`source-${roomIndex}-${sourceIndex}`}
+                          value={source.source}
+                          onChange={(e) =>
+                            handleLinkChange(roomIndex, sourceIndex, "source", e.target.value)
+                          }
+                          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#255d69]"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor={`url-${roomIndex}-${sourceIndex}`}
+                          className="block mb-1 text-sm font-medium text-gray-700"
+                        >
+                          iCal URL
+                        </label>
+                        <input
+                          type="text"
+                          id={`url-${roomIndex}-${sourceIndex}`}
+                          value={source.url}
+                          onChange={(e) =>
+                            handleLinkChange(roomIndex, sourceIndex, "url", e.target.value)
+                          }
+                          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#255d69]"
+                        />
+                      </div>
+                      <div className="flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveSource(roomIndex, sourceIndex)}
+                          className="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="flex justify-end mt-2">
+                    <button
+                      type="button"
+                      onClick={() => handleAddSource(roomIndex)}
+                      className="px-4 py-2 text-white bg-green-500 hover:bg-green-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    >
+                      Add New Source
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end space-x-2 mt-4">
+            <button
+              type="button"
+              onClick={handleCancelCalendarLinks}
+              className="px-4 py-2 text-gray-900 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
             >
-              <div>
-                <label
-                  htmlFor={`roomType-${index}`}
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  Room Type
-                </label>
-                <input
-                  type="text"
-                  id={`roomType-${index}`}
-                  value={link.roomType}
-                  disabled
-                  className="w-full px-3 py-2 border bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 cursor-not-allowed"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor={`source-${index}`}
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  Source
-                </label>
-                <input
-                  type="text"
-                  id={`source-${index}`}
-                  value={link.source}
-                  onChange={(e) =>
-                    handleLinkChange(index, "source", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor={`url-${index}`}
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  iCal URL
-                </label>
-                <input
-                  type="text"
-                  id={`url-${index}`}
-                  value={link.url}
-                  onChange={(e) =>
-                    handleLinkChange(index, "url", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => copyICalLink(link.roomType)}
-                  className="px-4 py-2 text-white bg-[#255d69] hover:bg-[#243947] rounded-md focus:outline-none focus:ring-2 focus:ring-[#255d69]"
-                >
-                  Export iCal Link
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="flex justify-end space-x-2 mt-4">
-          <button
-            type="button"
-            onClick={handleCancelCalendarLinks}
-            className="px-4 py-2 text-gray-900 bg-gray-300 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={handleSaveCalendarLinks}
-            className="px-4 py-2 text-white bg-[#255d69] hover:bg-[#243947] focus:outline-none focus:ring-2 focus:ring-[#255d69]"
-          >
-            Save
-          </button>
-        </div>
-      </form>
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleSaveCalendarLinks}
+              className="px-4 py-2 text-white bg-[#255d69] hover:bg-[#243947] focus:outline-none focus:ring-2 focus:ring-[#255d69]"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 )}
+
+
 
 
           </div>

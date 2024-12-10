@@ -978,46 +978,54 @@ const createCustomBooking = async (req, res) => {
       checkOutDate,
       guestCount,
       selectedRooms,
-      paymentMethod,
+      bookingPurpose,
+      bookingStatus,
+      bookingSource,
+      paymentMethods,
+      paymentAmounts,
       totalAmount,
+      discountPercentage,
+      discountAmount,
+      commissionPercentage,
+      commissionAmount,
+      netPayable,
     } = req.body;
-
-    console.log(req.body);
 
     // Validate required fields
     if (
       !firstName ||
       !lastName ||
-      !email ||
-      !phoneNumber ||
-      !idDocument ||
       !checkInDate ||
       !checkOutDate ||
       !guestCount ||
       !selectedRooms.length ||
-      !paymentMethod ||
       !totalAmount
     ) {
-      return res.status(400).json({ message: "All fields are required." });
+      return res.status(400).json({ message: "Required fields are missing." });
     }
 
     // Generate a unique booking ID
     const bookingId = `CBK-${uuidv4()}`;
 
-    // Calculate adults and children (assuming all guests are adults if guestCount is provided as a total)
+    // Calculate adults and children
     const numberOfAdults = guestCount;
     const numberOfChildren = 0;
     const numberOfInfants = 0;
 
     // Build the payment breakdown
-    const paymentBreakdown = [
-      { description: "Room Charges", amount: totalAmount },
-    ];
+    const paymentBreakdown = Object.entries(paymentAmounts).map(
+      ([method, amount]) => ({
+        description: `${
+          method.charAt(0).toUpperCase() + method.slice(1)
+        } Payment`,
+        amount,
+      })
+    );
 
-    // Ensure `roomId` and `roomName` are extracted correctly
+    // Map selected rooms
     const rooms = selectedRooms.map((room) => ({
-      roomId: room.id, // Use `room.id` instead of `room.roomId`
-      roomName: room.name, // Use `room.name` instead of `room.roomName`
+      roomId: room.id,
+      roomName: room.name,
       price: room.price,
     }));
 
@@ -1026,9 +1034,9 @@ const createCustomBooking = async (req, res) => {
       bookingId,
       firstName,
       lastName,
-      email,
-      phoneNumber,
-      idDocument,
+      email: email || null,
+      phoneNumber: phoneNumber || null,
+      idDocument: idDocument || null,
       rooms,
       checkInDate: new Date(checkInDate),
       checkOutDate: new Date(checkOutDate),
@@ -1037,10 +1045,12 @@ const createCustomBooking = async (req, res) => {
       numberOfAdults,
       numberOfChildren,
       numberOfInfants,
-      paymentStatus: paymentMethod === "cash" ? "pending" : "completed",
-      transactions: [], // No transactions for cash payments
-      source: "website", // Assuming custom bookings are made via the website
-      isCustom: true, // Mark as custom booking
+      paymentStatus: paymentMethods.includes("cash") ? "pending" : "completed",
+      transactions: [], // Populate if needed
+      source: bookingSource || "website",
+      bookingPurpose: bookingPurpose || "Other",
+      bookingStatus: bookingStatus || "Confirmed",
+      isCustom: true,
     });
 
     // Save the booking to the database

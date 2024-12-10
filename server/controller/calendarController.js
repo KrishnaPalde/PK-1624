@@ -72,8 +72,6 @@ const getUnavailableDatesByRoomType = async (req, res) => {
   }
 };
 
-// Sync external calendars
-
 const syncCalendar = async (req, res) => {
   const { roomType, url } = req.query;
 
@@ -113,7 +111,6 @@ const syncCalendar = async (req, res) => {
     }
 
     const parsedData = ical.parseICS(icsData);
-    console.log(parsedData);
     const dates = Object.values(parsedData)
       .filter((event) => event.type === "VEVENT" && event.start && event.end)
       .map((event) => ({
@@ -121,15 +118,19 @@ const syncCalendar = async (req, res) => {
         checkOutDate: new Date(event.end),
       }));
 
+    console.log("DATES :-\n\n");
+    console.log(dates);
+    // Exclude the last event
+    if (dates.length > 0) {
+      dates.pop();
+    }
+
     // Clear existing events for this room type
     await Calendar.deleteMany({ roomType });
 
     const events = [];
 
-    console.log(dates);
     for (const entry of dates) {
-      console.log(`Processing entry:`, entry);
-
       let currentDate = new Date(entry.checkInDate);
       const endDate = new Date(entry.checkOutDate);
 
@@ -182,16 +183,26 @@ const generateICalFile = async (req, res) => {
   const { roomType } = req.params;
 
   try {
+    // Define sources to filter
+    const allowedSources = [
+      "Google",
+      "website",
+      "Instagram",
+      "Friends",
+      "Competitor Ref",
+      "Repeat Guest",
+    ];
+
     // Fetch bookings from Booking model
     const bookings = await Booking.find({
       "rooms.roomName": roomType,
       checkOutDate: { $gte: new Date() }, // Only future bookings
-      source: "website", // Only include bookings from our website
+      source: { $in: allowedSources }, // Include bookings from specified sources
     }).select("checkInDate checkOutDate");
 
     const events = [];
 
-    // Process bookings (only from our website)
+    // Process bookings
     bookings.forEach((booking) => {
       let currentDate = new Date(booking.checkInDate);
       const checkOutDate = new Date(booking.checkOutDate);

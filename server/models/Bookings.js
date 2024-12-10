@@ -39,17 +39,18 @@ const BookingSchema = new Schema({
   bookingId: { type: String, required: true, unique: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
-  email: { type: String, required: true },
-  phoneNumber: { type: String, required: true },
+  email: { type: String, required: false, default: null }, // Optional
+  phoneNumber: { type: String, required: false, default: null }, // Optional
   idDocument: {
     type: String,
-    required: true,
+    required: false, // Optional
     validate: {
       validator: function (v) {
         return (
-          /^[0-9]{12}$/.test(v) || // Aadhar number (12 digits)
-          /^[A-PR-WYa-pr-wy][1-9]\d\s?\d{4}[1-9]$/.test(v) // Passport number (format)
-        ); // Aadhar or Passport number validation
+          !v || // Allow null or empty
+          /^[0-9]{12}$/.test(v) || // Aadhar number
+          /^[A-PR-WYa-pr-wy][1-9]\d\s?\d{4}[1-9]$/.test(v) // Passport number
+        );
       },
       message: (props) =>
         `${props.value} is not a valid Aadhar or Passport number!`,
@@ -72,10 +73,23 @@ const BookingSchema = new Schema({
   transactions: [TransactionSchema],
   source: {
     type: String,
-    enum: ["website", "airbnb", "makemytrip", "bookings.com", "external"],
+    enum: [
+      "AirBNB",
+      "Booking.com",
+      "MMT",
+      "Agoda",
+      "Google",
+      "website",
+      "Instagram",
+      "Friends",
+      "Competitor Ref",
+      "Repeat Guest",
+    ],
     required: true,
     default: "website",
   },
+  bookingPurpose: { type: String, required: false, default: "Other" }, // Optional
+  bookingStatus: { type: String, required: false, default: "Confirmed" }, // Optional
   createdAt: { type: Date, default: Date.now },
   isCustom: { type: Boolean, default: false },
 });

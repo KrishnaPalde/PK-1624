@@ -6,7 +6,13 @@ const getCalendarLinks = async (req, res) => {
     if (!globalSettings || !globalSettings.calendarLinks) {
       return res.status(404).json({ message: "No calendar links found." });
     }
-    res.status(200).json(globalSettings.calendarLinks);
+
+    const formattedLinks = globalSettings.calendarLinks.map((link) => ({
+      roomType: link.roomType,
+      sources: link.sources, // Grouped sources for each roomType
+    }));
+
+    res.status(200).json(formattedLinks);
   } catch (error) {
     console.error("Error fetching calendar links:", error.message);
     res.status(500).json({ message: "Failed to fetch calendar links." });
@@ -15,15 +21,33 @@ const getCalendarLinks = async (req, res) => {
 
 const updateCalendarLinks = async (req, res) => {
   try {
-    const updatedLinks = req.body; // Expect an array of calendar links
+    const { links } = req.body; // Expect a grouped array of links
+
+    if (!Array.isArray(links)) {
+      return res.status(400).json({ message: "Invalid data format." });
+    }
 
     const globalSettings = await GlobalSetting.findOne();
     if (!globalSettings) {
       return res.status(404).json({ message: "Global settings not found." });
     }
 
-    // Replace the existing calendar links with the updated ones
-    globalSettings.calendarLinks = updatedLinks;
+    // Validate the incoming data structure
+    const validLinks = links.every(
+      (link) =>
+        link.roomType &&
+        Array.isArray(link.sources) &&
+        link.sources.every((source) => source.source && source.url)
+    );
+
+    if (!validLinks) {
+      return res
+        .status(400)
+        .json({ message: "Invalid calendar link structure." });
+    }
+
+    // Update the calendar links
+    globalSettings.calendarLinks = links;
 
     await globalSettings.save();
 
