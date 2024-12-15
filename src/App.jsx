@@ -26,6 +26,7 @@ import TermsAndConditions from './pages/TermsAndConditions';
 import HouseRules from './pages/HouseRules';
 import NearbyAttractions from './pages/NearbyAttractions';
 import AdminCalendarPage from './pages/AdminCalendarPage';
+import AdminReports from './pages/AdminReports';
 
 function App() {
   return (
@@ -60,6 +61,7 @@ function App() {
           <Route path="/admin/blogs" element={<ProtectedRoute><AdminBlog/></ProtectedRoute>}/>
           <Route path="/admin/createblog" element={<ProtectedRoute><AdminCreatePost/></ProtectedRoute>}/>
           <Route path="/admin/room" element={<ProtectedRoute><AdminRoom/></ProtectedRoute>}/>
+          <Route path="/admin/reports" element={<ProtectedRoute><AdminReports/></ProtectedRoute>}/>
           <Route path="/admin/reviews" element={<ProtectedRoute><AdminReviewsPage/></ProtectedRoute>}/>
           <Route path='/admin/offers' element={<ProtectedRoute><AdminOffersPage/></ProtectedRoute>}/>
           <Route path='/admin/calendar' element={<ProtectedRoute><AdminCalendarPage/></ProtectedRoute>}/>

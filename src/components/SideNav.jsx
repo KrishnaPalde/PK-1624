@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { FaHome, FaBook, FaBed, FaCalendar } from 'react-icons/fa';
+import { FaHome, FaBook, FaBed, FaCalendar, FaFile } from 'react-icons/fa';
 import { MdReviews } from "react-icons/md";
 import { BiSolidOffer } from "react-icons/bi";
 import { useAuth } from '../AuthContext';
@@ -49,6 +49,7 @@ const SideNav = () => {
     { icon: <FaBed />, label: 'Rooms', location: '/admin/room' },
     { icon: <MdReviews/>, label: 'Reviews', location: '/admin/reviews'},
     { icon: <BiSolidOffer/>, label: 'Offers', location: '/admin/offers'},
+    { icon: <FaFile/>, label: 'Reports', location: '/admin/reports'},
   ];
 
   const variants = {

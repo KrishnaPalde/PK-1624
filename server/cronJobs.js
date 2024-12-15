@@ -49,20 +49,28 @@ cron.schedule("12 * * * *", async () => {
       .exec();
 
     if (globalSettings && globalSettings.calendarLinks) {
-      for (const link of globalSettings.calendarLinks) {
-        try {
-          console.log(`Syncing calendar for room: ${link.roomType}`);
-          await syncCalendar({
-            query: {
-              roomType: link.roomType,
-              url: link.url,
-            },
-          });
-        } catch (error) {
-          console.error(
-            `Error syncing calendar for room: ${link.roomType}`,
-            error.message
-          );
+      for (const room of globalSettings.calendarLinks) {
+        if (room.sources && room.sources.length > 0) {
+          for (const source of room.sources) {
+            try {
+              console.log(
+                `Syncing calendar for room: ${room.roomType}, source: ${source.source}`
+              );
+              await syncCalendar({
+                query: {
+                  roomType: room.roomType,
+                  url: source.url,
+                },
+              });
+            } catch (error) {
+              console.error(
+                `Error syncing calendar for room: ${room.roomType}, source: ${source.source}`,
+                error.message
+              );
+            }
+          }
+        } else {
+          console.log(`No sources found for room: ${room.roomType}`);
         }
       }
     } else {

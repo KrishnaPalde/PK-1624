@@ -26,6 +26,7 @@ const {
   get5Rooms,
   getAllRoomsStatic,
   createCustomBooking,
+  getReportingStats,
 } = require("../controller/bookingsController");
 const {
   createFeedback,
@@ -54,6 +55,7 @@ const {
   getAllCoupons,
   updateCoupon,
 } = require("../controller/couponController");
+const { exportReport } = require("../controller/reportsController");
 
 const router = express.Router();
 
@@ -67,6 +69,8 @@ router.get("/admin/rooms", getAllRooms);
 router.get("/allRooms", getAllRoomsStatic);
 // router.get("/admin/bookings", fetchBookings6Admin);
 router.get("/admin/dashboard_stats", getDashboardStats);
+router.post("/admin/export_report", exportReport);
+router.get("/admin/reporting_stats", getReportingStats);
 router.get("/admin/dashboard_bookings", fetchBookingsAdmin);
 router.get("/admin/bookings", getBookings);
 router.get("/admin/bookings/:bookingId", getBookingById);

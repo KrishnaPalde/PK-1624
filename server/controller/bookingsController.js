@@ -680,10 +680,129 @@ const getDashboardStats = async (req, res) => {
   }
 };
 
+const getReportingStats = async (req, res) => {
+  try {
+    // Total bookings
+    const totalBookings = await Booking.countDocuments();
+
+    // Revenue generated
+    const revenueData = await Booking.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$totalPayment" }, // Assuming totalPayment holds the payment amount for bookings
+        },
+      },
+    ]);
+    const totalRevenue = revenueData[0]?.totalRevenue || 0;
+
+    // Occupancy rate calculation
+    const totalRooms = await Room.countDocuments(); // Assuming Room collection holds all rooms
+
+    // Get the earliest and latest booking dates
+    const bookingDates = await Booking.aggregate([
+      {
+        $group: {
+          _id: null,
+          earliestBooking: { $min: "$checkInDate" },
+          latestBooking: { $max: "$checkOutDate" },
+        },
+      },
+    ]);
+    const earliestBooking = bookingDates[0]?.earliestBooking || new Date();
+    const latestBooking = bookingDates[0]?.latestBooking || new Date();
+
+    // Total days covered by the bookings
+    const totalDays = Math.ceil(
+      (new Date(latestBooking) - new Date(earliestBooking)) /
+        (1000 * 60 * 60 * 24)
+    );
+
+    // Total room nights available
+    const totalRoomNightsAvailable = totalRooms * totalDays;
+
+    // Total room nights sold
+    const roomNightsData = await Booking.aggregate([
+      {
+        $project: {
+          _id: 0,
+          nights: {
+            $divide: [
+              { $subtract: ["$checkOutDate", "$checkInDate"] },
+              1000 * 60 * 60 * 24, // Convert milliseconds to days
+            ],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalNights: { $sum: "$nights" },
+        },
+      },
+    ]);
+    const totalRoomNightsSold = roomNightsData[0]?.totalNights || 0;
+
+    // Calculate occupancy rate
+    const occupancyRate = totalRoomNightsAvailable
+      ? ((totalRoomNightsSold / totalRoomNightsAvailable) * 100).toFixed(2)
+      : 0;
+
+    // Send response with all stats
+    res.status(200).json({
+      totalBookings,
+      revenueGenerated: totalRevenue,
+      occupancyRate: `${occupancyRate}%`,
+    });
+  } catch (error) {
+    console.error("Error fetching reporting stats:", error.message);
+    res.status(500).json({ message: "Failed to fetch reporting stats." });
+  }
+};
+
 const getBookings = async (req, res) => {
   try {
-    // Fetch all bookings sorted by creation date
-    const bookings = await Booking.find({}).sort({ createdAt: -1 });
+    // Extract filters from query parameters
+    const { startDate, endDate, preset, limit } = req.query;
+
+    let filterCriteria = {};
+    if (preset) {
+      const now = new Date();
+      switch (preset) {
+        case "1_month":
+          filterCriteria.checkInDate = {
+            $gte: new Date(now.setMonth(now.getMonth() - 1)),
+          };
+          break;
+        case "3_months":
+          filterCriteria.checkInDate = {
+            $gte: new Date(now.setMonth(now.getMonth() - 3)),
+          };
+          break;
+        case "6_months":
+          filterCriteria.checkInDate = {
+            $gte: new Date(now.setMonth(now.getMonth() - 6)),
+          };
+          break;
+        default:
+          break;
+      }
+    } else if (startDate && endDate) {
+      filterCriteria.checkInDate = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      };
+    }
+
+    // Fetch filtered bookings or all if no filter applied
+    let bookingsQuery = Booking.find(filterCriteria).sort({ createdAt: -1 });
+
+    // Apply limit if specified
+    if (limit) {
+      bookingsQuery = bookingsQuery.limit(parseInt(limit, 10));
+    }
+
+    const bookings = await bookingsQuery.exec();
 
     // Process each booking and map relevant data
     const bookingsWithRoomNames = bookings.map((booking) => {
@@ -696,7 +815,7 @@ const getBookings = async (req, res) => {
       const bookingId = booking.bookingId.slice(-4);
 
       // Prepare the booking data
-      const bookingData = {
+      return {
         bookingId,
         firstName: booking.firstName,
         lastName: booking.lastName,
@@ -709,8 +828,6 @@ const getBookings = async (req, res) => {
         numberOfChildren: booking.numberOfChildren,
         source: booking.source,
       };
-
-      return bookingData;
     });
 
     res.json(bookingsWithRoomNames);
@@ -1084,4 +1201,5 @@ module.exports = {
   getAllRoomsStatic,
   getUnavailableDatesAdmin,
   createCustomBooking,
+  getReportingStats,
 };
