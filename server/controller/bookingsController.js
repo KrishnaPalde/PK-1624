@@ -696,7 +696,7 @@ const getReportingStats = async (req, res) => {
     ]);
     const totalRevenue = revenueData[0]?.totalRevenue || 0;
 
-    // Occupancy rate calculation
+    // Total rooms
     const totalRooms = await Room.countDocuments(); // Assuming Room collection holds all rooms
 
     // Get the earliest and latest booking dates
@@ -748,11 +748,17 @@ const getReportingStats = async (req, res) => {
       ? ((totalRoomNightsSold / totalRoomNightsAvailable) * 100).toFixed(2)
       : 0;
 
+    // Calculate average room rate (ARR)
+    const averageRoomRate = totalRoomNightsSold
+      ? (totalRevenue / totalRoomNightsSold).toFixed(2)
+      : 0;
+
     // Send response with all stats
     res.status(200).json({
       totalBookings,
       revenueGenerated: totalRevenue,
-      occupancyRate: `${occupancyRate}%`,
+      occupancyRate: occupancyRate,
+      averageRoomRate: `₹${averageRoomRate}`,
     });
   } catch (error) {
     console.error("Error fetching reporting stats:", error.message);
@@ -804,33 +810,40 @@ const getBookings = async (req, res) => {
 
     const bookings = await bookingsQuery.exec();
 
-    // Process each booking and map relevant data
-    const bookingsWithRoomNames = bookings.map((booking) => {
-      // Extract all room names from the rooms array
+    // Process each booking and map all relevant data
+    const bookingsWithDetails = bookings.map((booking) => {
+      // Extract room names
       const roomNames = booking.rooms.map(
         (room) => room.roomName || "Unknown Room"
       );
 
-      // Generate a shortened booking ID
-      const bookingId = booking.bookingId.slice(-4);
-
-      // Prepare the booking data
       return {
-        bookingId,
+        bookingId: booking.bookingId,
         firstName: booking.firstName,
         lastName: booking.lastName,
+        email: booking.email || "N/A",
         phoneNumber: booking.phoneNumber,
-        totalPayment: booking.totalPayment,
+        idDocument: booking.idDocument || "N/A",
         checkInDate: booking.checkInDate,
         checkOutDate: booking.checkOutDate,
         rooms: roomNames,
-        numberOfAdults: booking.numberOfAdults,
-        numberOfChildren: booking.numberOfChildren,
-        source: booking.source,
+        numberOfAdults: booking.numberOfAdults || 0,
+        numberOfChildren: booking.numberOfChildren || 0,
+        numberOfInfants: booking.numberOfInfants || 0,
+        totalPayment: booking.totalPayment || 0,
+        paymentStatus: booking.paymentStatus || "N/A",
+        paymentBreakdown: booking.paymentBreakdown || [],
+        source: booking.source || "N/A",
+        bookingPurpose: booking.bookingPurpose || "N/A",
+        bookingStatus: booking.bookingStatus || "N/A",
+        feedbackLink: booking.feedbackLink || false,
+        transactions: booking.transactions || [],
+        createdAt: booking.createdAt,
+        updatedAt: booking.updatedAt,
       };
     });
 
-    res.json(bookingsWithRoomNames);
+    res.json(bookingsWithDetails);
   } catch (error) {
     console.error("Error fetching bookings:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -1138,6 +1151,9 @@ const createCustomBooking = async (req, res) => {
         amount,
       })
     );
+
+    paymentBreakdown.append("Discount", discountAmount);
+    paymentBreakdown.append("Commision", commissionAmount);
 
     // Map selected rooms
     const rooms = selectedRooms.map((room) => ({

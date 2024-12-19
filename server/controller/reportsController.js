@@ -2,6 +2,7 @@ const PDFDocument = require("pdfkit");
 const ExcelJS = require("exceljs");
 const path = require("path");
 const nodemailer = require("nodemailer");
+const Booking = require("../models/Bookings");
 
 const generateExcel = (data) => {
   return new Promise((resolve, reject) => {
@@ -29,17 +30,28 @@ const generateExcel = (data) => {
       const headers = [
         "Booking ID",
         "Name",
+        "Email",
+        "Phone Number",
+        "ID Document",
+        "Adults",
+        "Children",
         "Room Type",
         "Check-In",
         "Check-Out",
         "Total Payment",
+        "Payment Breakdown",
         "Source",
+        "Booking Purpose",
       ];
       worksheet.addRow(headers);
       const headerRow = worksheet.getRow(4);
       headerRow.eachCell((cell) => {
         cell.font = { bold: true };
-        cell.alignment = { vertical: "middle", horizontal: "center" };
+        cell.alignment = {
+          vertical: "middle",
+          horizontal: "center",
+          wrapText: true,
+        };
         cell.border = {
           top: { style: "thin" },
           left: { style: "thin" },
@@ -55,28 +67,57 @@ const generateExcel = (data) => {
 
       // Add booking data rows
       data.forEach((booking, index) => {
-        const bookingId = booking.bookingId || "N/A";
+        const bookingId = booking.bookingId.slice(-4) || "N/A";
         const name = `${booking.firstName} ${booking.lastName}` || "N/A";
+        const email = booking.email || "N/A";
+        const phoneNumber = booking.phoneNumber || "N/A";
+        const IDDocument = booking.idDocument || "N/A";
+        const adults = booking.numberOfAdults || "N/A";
+        const children = booking.numberOfChildren || "N/A";
         const roomType = booking.rooms.join(", ") || "N/A";
         const checkIn = booking.checkInDate
-          ? new Date(booking.checkInDate).toLocaleDateString("en-US")
+          ? new Date(booking.checkInDate).toLocaleDateString("en-GB")
           : "N/A";
         const checkOut = booking.checkOutDate
-          ? new Date(booking.checkOutDate).toLocaleDateString("en-US")
+          ? new Date(booking.checkOutDate).toLocaleDateString("en-GB")
           : "N/A";
         const totalPayment = `₹${booking.totalPayment || 0}`;
+        const paymentBreakdownString =
+          booking.paymentBreakdown
+            .map((pb) => `${pb.description}: ${pb.amount}`)
+            .join(", ") || "N/A";
         const source = booking.source || "N/A";
+        const bookingPurpose = booking.bookingPurpose || "N/A";
 
         const row = worksheet.addRow([
           bookingId,
           name,
+          email,
+          phoneNumber,
+          IDDocument,
+          adults,
+          children,
           roomType,
           checkIn,
           checkOut,
           totalPayment,
+          paymentBreakdownString,
           source,
+          bookingPurpose,
         ]);
 
+        row.height = 60;
+        row.eachCell((cell) => {
+          cell.alignment = { wrapText: true };
+        });
+
+        for (let rowIndex = 1; rowIndex <= worksheet.rowCount; rowIndex++) {
+          worksheet.getRow(rowIndex).alignment = {
+            vertical: "middle",
+            horizontal: "center",
+            wrapText: true,
+          };
+        }
         // Alternate row color
         if (index % 2 === 0) {
           row.eachCell((cell) => {
@@ -107,7 +148,11 @@ const generateExcel = (data) => {
       // Adjust column widths
       worksheet.columns.forEach((column) => {
         column.width = 25;
-        column.alignment = { vertical: "middle", horizontal: "center" };
+        column.alignment = {
+          vertical: "middle",
+          horizontal: "center",
+          wrapText: true,
+        };
       });
 
       worksheet.addRow([]);
@@ -115,9 +160,7 @@ const generateExcel = (data) => {
       worksheet.addRow([]);
       // Add footer
       const footerRow = worksheet.addRow([]);
-      footerRow.getCell(1).value = `Generated on: ${new Date().toLocaleString(
-        "en-IN"
-      )}`;
+      footerRow.getCell(1).value = `Generated on: ${getISTDateTime()}`;
       footerRow.getCell(1).font = { italic: true };
       footerRow.getCell(1).alignment = {
         vertical: "middle",
@@ -301,20 +344,26 @@ const generatePDF = (data, reportInfo) => {
       doc
         .font("Helvetica")
         .fontSize(10)
-        .text(
-          `Generated on: ${new Date().toLocaleString("en-IN")}`,
-          40,
-          doc.page.height - 55,
-          {
-            align: "right",
-          }
-        );
+        .text(`Generated on: ${getISTDateTime()}`, 40, doc.page.height - 55, {
+          align: "right",
+        });
 
       doc.end();
     } catch (error) {
       reject(error);
     }
   });
+};
+
+const getISTDateTime = () => {
+  const now = new Date();
+  // Using Intl.DateTimeFormat to get the correct IST time
+  const options = {
+    timeZone: "Asia/Kolkata",
+    dateStyle: "short",
+    timeStyle: "medium",
+  };
+  return new Intl.DateTimeFormat("en-IN", options).format(now);
 };
 
 const exportReport = async (req, res) => {

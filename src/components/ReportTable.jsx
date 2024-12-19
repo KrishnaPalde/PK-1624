@@ -63,7 +63,7 @@ const ReportTable = ({ bookings, headers }) => {
                 className="border-t border-gray-200 hover:bg-gray-50"
               >
                 <td className="px-4 py-3 text-sm text-gray-700">
-                  #{booking.bookingId}
+                  #{booking.bookingId.slice(-4)}
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-700">
                   {`${booking.firstName} ${booking.lastName}`}

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import axios from "axios";
-import { differenceInCalendarDays, format } from "date-fns";
+import { addDays, differenceInCalendarDays, format } from "date-fns";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const process = import.meta.env;
 
@@ -85,20 +87,44 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
     return unavailableDates.some((unavailableDate) => unavailableDate.date === formattedDate);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
 
-    if ((name === "checkInDate" || name === "checkOutDate") && isDateUnavailable(value)) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        dates: "Selected date is unavailable. Please choose another date.",
-      }));
-      return;
+  //   if ((name === "checkInDate" || name === "checkOutDate") && isDateUnavailable(value)) {
+  //     console.log(value);
+  //     setErrors((prevErrors) => ({
+  //       ...prevErrors,
+  //       dates: "Selected date is unavailable. Please choose another date.",
+  //     }));
+  //     return;
+  //   }
+
+  //   setErrors((prevErrors) => ({ ...prevErrors, dates: null }));
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  // };
+  const handleChange = (date, fieldName) => {
+    // Convert date to string in ISO format for consistent handling
+    const formattedDate = date ? date.toISOString() : null;
+  
+    // Validate date availability
+    if (fieldName === "checkInDate" || fieldName === "checkOutDate") {
+      if (formattedDate && isDateUnavailable(formattedDate)) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          dates: "Selected date is unavailable. Please choose another date.",
+        }));
+        return;
+      }
+      setErrors((prevErrors) => ({ ...prevErrors, dates: null }));
     }
-
-    setErrors((prevErrors) => ({ ...prevErrors, dates: null }));
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  
+    // Update the form data
+    setFormData((prev) => ({
+      ...prev,
+      [fieldName]: formattedDate,
+    }));
   };
+  
 
   const handlePaymentAmountChange = (method, amount) => {
     setFormData((prev) => ({
@@ -164,6 +190,9 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
   };
   
   
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
 
   const validateForm = () => {
     const newErrors = {};
@@ -260,7 +289,7 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Check-in Date</label>
-                <input
+                {/* <input
                   type="date"
                   name="checkInDate"
                   value={formData.checkInDate}
@@ -268,11 +297,24 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
                   className="w-full px-3 py-2 border rounded-md"
                   min={format(new Date(), "yyyy-MM-dd")}
                   required
-                />
+                /> */}
+
+<DatePicker
+          id="checkInDate"
+          selected={
+            formData.checkInDate ? new Date(formData.checkInDate) : null
+          }
+          onChange={(date) => handleChange(date, "checkInDate")}
+          dateFormat="dd/MM/yyyy"
+          className="w-full px-3 py-2 border rounded-md"
+          minDate={new Date()}
+          excludeDates={unavailableDates}
+          required
+        />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Check-out Date</label>
-                <input
+                {/* <input
                   type="date"
                   name="checkOutDate"
                   value={formData.checkOutDate}
@@ -280,25 +322,41 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
                   className="w-full px-3 py-2 border rounded-md"
                   min={formData.checkInDate || format(new Date(), "yyyy-MM-dd")}
                   required
-                />
+                /> */}
+                <DatePicker
+  id="checkOutDate"
+  selected={
+    formData.checkOutDate ? new Date(formData.checkOutDate) : null
+  }
+  onChange={(date) => handleChange(date, "checkOutDate")}
+  dateFormat="dd/MM/yyyy"
+  className="w-full px-3 py-2 border rounded-md"
+  minDate={
+    formData.checkInDate
+      ? addDays(new Date(formData.checkInDate), 1) // Set min date to one day after checkInDate
+      : new Date() // Default to today if checkInDate is not set
+  }
+  excludeDates={unavailableDates}
+  required
+/>
               </div>
             </div>
             {errors.dates && <p className="text-red-500">{errors.dates}</p>}
             <div>
               <label className="block text-sm font-medium text-gray-700">Number of Nights</label>
               <input
-                type="text"
-                value={
-                  formData.checkInDate && formData.checkOutDate
-                    ? differenceInCalendarDays(
-                        formData.checkOutDate,
-                        formData.checkInDate
-                      )
-                    : 0
-                }
-                className="w-full px-3 py-2 border rounded-md bg-gray-100"
-                readOnly
-              />
+        type="text"
+        value={
+          formData.checkInDate && formData.checkOutDate
+            ? differenceInCalendarDays(
+                new Date(formData.checkOutDate),
+                new Date(formData.checkInDate)
+              )
+            : 0
+        }
+        className="w-full px-3 py-2 border rounded-md bg-gray-100"
+        readOnly
+      />
             </div>
             <button
               type="button"

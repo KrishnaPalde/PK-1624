@@ -15,6 +15,7 @@ const AdminReports = () => {
     total: 0,
     revenue: 0,
     occupancy: 0,
+    averageRoomRate: 0,
   });
   const [bookings, setBookings] = useState([]);
   const [filter, setFilter] = useState({
@@ -36,8 +37,11 @@ const AdminReports = () => {
           total: statsResponse.data.totalBookings,
           revenue: statsResponse.data.revenueGenerated,
           occupancy: statsResponse.data.occupancyRate,
+          averageRoomRate: statsResponse.data.averageRoomRate,
         });
+        
         setBookings(bookingsResponse.data);
+        console.log(bookings);
 
         // Default report info
         setReportInfo({
@@ -101,6 +105,7 @@ const AdminReports = () => {
 
   const exportReport = async (format, action) => {
     try {
+      console.log(bookings);
       const response = await axios.post(
         `${process.VITE_HOST_URL}/api/admin/export_report`,
         { data: bookings, format, action, reportInfo },
@@ -138,7 +143,7 @@ const AdminReports = () => {
         <AdminNav title="Reports" />
         <main className="p-6 space-y-6">
           {/* Stat Cards */}
-          <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <section className="grid grid-cols-1 gap-4 sm:grid-cols-4">
             <StatCard
               title="Total Bookings"
               value={stats.total}
@@ -158,6 +163,13 @@ const AdminReports = () => {
               value={`${stats.occupancy}%`}
               bgColor="bg-purple-100"
               icon={FaHotel}
+              iconColor="text-purple-400"
+            />
+             <StatCard
+              title="Average Room Rate"
+              value={`${stats.averageRoomRate}`}
+              bgColor="bg-purple-100"
+              icon={FaRupeeSign}
               iconColor="text-purple-400"
             />
           </section>
