@@ -312,7 +312,7 @@ const generatePDF = (data, reportInfo) => {
         }
 
         const rowData = [
-          booking.bookingId || "N/A",
+          booking.bookingId.slice(-4) || "N/A",
           `${booking.firstName} ${booking.lastName}` || "N/A",
           booking.rooms.join(", ") || "N/A",
           new Date(booking.checkInDate).toLocaleDateString("en-US") || "N/A",
