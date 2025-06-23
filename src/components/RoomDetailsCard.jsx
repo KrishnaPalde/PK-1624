@@ -2,10 +2,12 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
+import { RiMapPinLine } from "react-icons/ri";
 
 const RoomDetailsCard = ({ 
   title, 
   name,
+  city,
   id,
   description, 
   rating, 
@@ -29,6 +31,7 @@ const RoomDetailsCard = ({
           id: id,
           title: title,
           name: name,
+          city: city,
           description: description,
           images: images,
           rating: rating,
@@ -78,13 +81,28 @@ const RoomDetailsCard = ({
   return (
     <article className="flex flex-col items-start justify-between gap-5 p-4 mt-6 mb-6 sm:flex-row">
       <div className="flex flex-col w-full sm:w-2/3 text-neutral-900">
-        <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-          <h2 className="text-xl font-bold sm:text-2xl">{name }</h2>
-          <div className="flex items-center gap-1 text-xs font-medium">
-            <div className="flex">{renderStars()}</div>
-            <div>{rating} Star</div>
+        <header className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          {/* Left Section: Name + City + Rating */}
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
+            {/* Hotel Name */}
+            <h2 className="text-xl font-bold sm:text-2xl">{name}</h2>
+
+            {/* City */}
+            {city && (
+              <div className="flex items-center gap-1 text-sm text-gray-500">
+                <RiMapPinLine className="text-[#335064] w-4 h-4" />
+                <span className="capitalize">{city}</span>
+              </div>
+            )}
+
+            {/* Rating (shifted closer to name & city) */}
+            <div className="flex items-center gap-1 text-sm text-gray-600">
+              <div className="flex">{renderStars()}</div>
+              <span>{rating} Star</span>
+            </div>
           </div>
         </header>
+
         <div className="flex flex-col mt-3 font-medium">
           <p className="text-sm">{description}</p>
           <div className="flex items-center mt-2">

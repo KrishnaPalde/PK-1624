@@ -8,19 +8,20 @@ const reviewSchema = new mongoose.Schema({
 });
 
 const roomSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true }, 
+  id: { type: String, required: true, unique: true },
   name: { type: String, required: true },
+  city: { type: String, required: true },
   title: { type: String, required: true },
   description: { type: String, required: true },
-  amenities: { type: [String], default: [] }, 
-  freebies: {type: [String], default:[]},
-  weekend: {type: Number},
+  amenities: { type: [String], default: [] },
+  freebies: { type: [String], default: [] },
+  weekend: { type: Number },
   rating: { type: Number, default: 0 },
   price: { type: Number, required: true },
-  status: { 
-    type: String, 
-    enum: ['Available', 'Occupied', 'Reserved', 'Check-in Today'],
-    default: 'Available'
+  status: {
+    type: String,
+    enum: ["Available", "Occupied", "Reserved", "Check-in Today"],
+    default: "Available",
   },
   reviews: [reviewSchema],
   totalReviews: { type: Number, default: 0 },

@@ -15,30 +15,43 @@ import {
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import { Check,ChevronDown } from "lucide-react";
+import { RiMapPinLine } from "react-icons/ri";
 
 const process = import.meta.env;
 
 function SelectedRooms({ rooms }) {
+  console.log(rooms)
   return (
-    <div className="mt-4">
-      <h2 className="mb-2 text-xl font-bold">Selected Rooms</h2>
-      {rooms.map((room, index) => (
-        <div key={index} className="flex items-center p-2 mb-4 bg-gray-100 rounded-lg">
-          <img
+    
+  <div className="mt-4">
+    <h2 className="mb-2 text-xl font-bold">Selected Rooms</h2>
+    {rooms.map((room, index) => (
+      <div key={index} className="flex items-center p-2 mb-4 bg-gray-100 rounded-lg">
+        <img
           loading="lazy"
-            src={room.images[0]}
-            alt={room.name}
-            className="object-cover w-24 h-24 mr-4 rounded-md"
-          />
-          <div>
-            <h3 className="font-semibold">{room.name}</h3>
-            <p>{room.title}</p>
-            <p className="font-medium">₹{room.price} per night</p>
-          </div>
+          src={room.images[0]}
+          alt={room.name}
+          className="object-cover w-24 h-24 mr-4 rounded-md"
+        />
+        <div>
+          <h3 className="font-semibold text-lg">{room.name}</h3>
+          <p className="text-sm text-gray-600">{room.title}</p>
+          
+          {/* City Line */}
+          {room.city && (
+            <p className="flex items-center gap-1 text-sm text-gray-500 mt-1">
+              <RiMapPinLine className="text-[#335064] w-4 h-4" />
+              <span className="capitalize">{room.city}</span>
+            </p>
+          )}
+          
+          <p className="font-medium mt-1">₹{room.price} per night</p>
         </div>
-      ))}
-    </div>
-  );
+      </div>
+    ))}
+  </div>
+);
+
 }
 
 function StayDetails({ formData }) {
@@ -192,6 +205,7 @@ function StayDetails({ formData }) {
     return <div>Loading... Please wait.</div>;
   }
 
+  console.log(selectedRooms);
   return (
     <section className="flex flex-col rounded-xl">
       <h1 className="self-start ml-9 text-2xl font-bold text-neutral-900 max-md:ml-2.5">

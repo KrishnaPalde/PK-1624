@@ -17,6 +17,7 @@ const BookingProvider = ({ children }) => {
         adults: parsedBooking.adults || 2,
         children: parsedBooking.children || 0,
         rooms: parsedBooking.rooms || 1, 
+        city: parsedBooking.city || "",
       };
     }
 
@@ -26,6 +27,7 @@ const BookingProvider = ({ children }) => {
       adults: 2,
       children: 0,
       rooms: 1, 
+      city: "",
     };
   };
 
@@ -36,6 +38,7 @@ const BookingProvider = ({ children }) => {
       ...bookingInfo,
       checkIn: bookingInfo.checkIn.toISOString(),
       checkOut: bookingInfo.checkOut.toISOString(),
+      city: bookingInfo.city || "",
     }));
   }, [bookingInfo]);
 
@@ -62,6 +65,10 @@ const BookingProvider = ({ children }) => {
         updatedInfo.rooms = Math.max(1, Math.min(4, Number(newInfo.rooms))); 
       }
 
+      if (newInfo.city !== undefined) {
+        updatedInfo.city = newInfo.city;
+      }
+      
       return updatedInfo;
     });
   };

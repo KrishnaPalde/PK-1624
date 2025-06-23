@@ -26,6 +26,7 @@ const {
   get5Rooms,
   getAllRoomsStatic,
   createCustomBooking,
+  getCitiesByRoom,
   getReportingStats,
 } = require("../controller/bookingsController");
 const {
@@ -56,6 +57,7 @@ const {
   updateCoupon,
 } = require("../controller/couponController");
 const { exportReport } = require("../controller/reportsController");
+const Room = require("../models/Room");
 
 const router = express.Router();
 
@@ -106,5 +108,6 @@ router.patch("/admin/offers/deactivate/:couponCode", deactivateCoupon);
 router.get("/offers/active", getAllActiveCoupons);
 router.get("/offers/all-coupons", getAllCoupons);
 router.put("/offers/update-coupon/:id", updateCoupon);
+router.get("/cities", getCitiesByRoom);
 
 module.exports = router;

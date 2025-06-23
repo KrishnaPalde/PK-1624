@@ -7,6 +7,7 @@ function AddRoomForm({ onSubmit, onCancel }) {
   const [room, setRoom] = useState({
     name: "",
     title: "",
+    city: "",
     description: "",
     price: "",
     weekend: "",
@@ -73,6 +74,18 @@ function AddRoomForm({ onSubmit, onCancel }) {
           />
         </div>
       </div>
+      <div className="mt-4">
+  <label className="block mb-1 font-medium text-gray-700">City</label>
+  <input
+    type="text"
+    name="city"
+    value={room.city}
+    onChange={handleChange}
+    className="w-full px-3 py-2 border rounded"
+    placeholder="e.g., Mumbai"
+    required
+  />
+</div>
       <div>
         <label className="block mb-1">Description</label>
         <textarea

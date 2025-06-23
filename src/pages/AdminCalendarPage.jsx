@@ -15,22 +15,35 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 const process = import.meta.env;
 
 const AdminCalendarPage = () => {
-  const [roomOptions] = useState([
-    "Cozy Corner",
-    "Sunset View",
-    "Stunning Stars",
-    "Live Canvas",
-    "Panoramic View",
-  ]);
-  const [selectedRoom, setSelectedRoom] = useState(roomOptions[0]);
+  const [roomOptions, setRoomOptions] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState("");
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [unavailableDates, setUnavailableDates] = useState([]);
 
+   useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_HOST_URL}/api/allRooms`);
+        const roomNames = response.data.map((room) => room.name); // assuming 'name' is the field
+        setRoomOptions(roomNames);
+        if (roomNames.length > 0) {
+          setSelectedRoom(roomNames[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching rooms:", error);
+      }
+    };
+
+    fetchRooms();
+  }, []);
+
+  // Fetch unavailable dates whenever selected room changes
   useEffect(() => {
     const fetchUnavailableDates = async () => {
+      if (!selectedRoom) return;
       try {
         const response = await axios.get(
-          `${process.VITE_HOST_URL}/api/calendar/unavailable_dates?roomType=${selectedRoom}`
+          `${import.meta.env.VITE_HOST_URL}/api/calendar/unavailable_dates?roomType=${selectedRoom}`
         );
         setUnavailableDates(response.data.unavailableDates || []);
       } catch (error) {

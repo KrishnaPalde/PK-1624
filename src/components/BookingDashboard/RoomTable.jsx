@@ -212,6 +212,12 @@ function RoomTable({ addRoom }) {
                   scope="col"
                   className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
                 >
+                  City
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+                >
                   Title
                 </th>
                 <th
@@ -247,6 +253,9 @@ function RoomTable({ addRoom }) {
               {displayedRooms.map((room, index) => (
                 <tr key={index}>
                   {/* <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{room.id}</td> */}
+                  <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap capitalize">
+                    {room.city}
+                  </td>
                   <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                     {room.name}
                   </td>

@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import { RiMapPinLine } from "react-icons/ri";
 
 function HotelCard({
   id,
@@ -9,6 +10,7 @@ function HotelCard({
   imageCount,
   title,
   name,
+  city,
   description,
   guestCount,
   rating,
@@ -35,6 +37,7 @@ function HotelCard({
       imageCount,
       title,
       name,
+      city,
       description,
       guestCount,
       rating,
@@ -54,6 +57,7 @@ function HotelCard({
       imageCount,
       title,
       name,
+      city,
       description,
       guestCount,
       rating,
@@ -182,9 +186,17 @@ function HotelCard({
         <div className="flex flex-col justify-between p-4 sm:p-6 sm:w-3/5 md:w-2/3">
           <div>
             <div className="flex items-start justify-between">
-              <h2 className="mb-2 text-xl font-bold text-gray-800">
-                {name}
-              </h2>
+              <div className="mb-2">
+                <h2 className="text-xl font-bold text-gray-800">{name}</h2>
+               {city && (
+                  <div className="flex items-center gap-1 mt-1 text-sm text-gray-500">
+                    <RiMapPinLine className="text-[#335064] w-4 h-4" />
+                    <span className="capitalize">{city}</span>
+                  </div>
+                )}
+
+              </div>
+
               <div className="text-right">
                 <p className="text-xs text-gray-500">starting from</p>
                 <p className="text-2xl font-bold text-[#335064]">

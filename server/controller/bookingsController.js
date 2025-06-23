@@ -5,6 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const pdf = require("html-pdf"); // Import html-pdf
 const { v4: uuidv4 } = require("uuid");
+const GlobalSetting = require("../models/GlobalSetting");
 
 // Helper function to get dates between two dates
 // const getDatesBetween = (startDate, endDate) => {
@@ -77,6 +78,7 @@ const getRoomDetails = async (req, res) => {
     res.json({
       id: room.id,
       name: room.name,
+      city: room.city,
       title: room.title,
       description: room.description,
       rating: room.rating,
@@ -96,6 +98,29 @@ const getAllRoomsStatic = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+const getCitiesByRoom = async (req, res) => {
+  try {
+    const rooms = await Room.find({}, "city"); // fetch only city field
+    const citySet = new Set();
+
+    rooms.forEach((room) => {
+      if (room.city) {
+        citySet.add(capitalize(room.city.trim()));
+      }
+    });
+
+    const uniqueCities = Array.from(citySet).sort(); // optional sorting
+    res.status(200).json(uniqueCities);
+  } catch (error) {
+    console.error("Error fetching cities:", error);
+    res.status(500).json({ message: "Failed to fetch cities" });
+  }
+};
+
+const capitalize = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
 
 const getAllRooms = async (req, res) => {
@@ -919,6 +944,7 @@ const getRoomDetailsForm = async (req, res) => {
         return {
           id: roomData?.id || room.roomId, // Fallback to the room ID in booking if not found
           name: roomData?.name || "Unknown Room",
+          city: roomData?.city || "",
           title: roomData?.title || "No Title Available",
           description: roomData?.description || "No Description Available",
           rating: roomData?.rating || 0,
@@ -963,11 +989,12 @@ const getRoomDetailsForm = async (req, res) => {
 
 const addRoom = async (req, res) => {
   try {
-    const { name, title, description, price, weekend, images, rating } =
+    const { name, city, title, description, price, weekend, images, rating } =
       req.body;
     const newRoom = new Room({
       id: Date.now().toString(),
       name,
+      city,
       title,
       description,
       price,
@@ -976,6 +1003,16 @@ const addRoom = async (req, res) => {
       rating,
     });
     const savedRoom = await newRoom.save();
+
+    const globalSetting = await GlobalSetting.findOne();
+    if (globalSetting) {
+      globalSetting.calendarLinks.push({
+        roomType: name,
+        sources: [], // initially empty, can be filled later
+      });
+      await globalSetting.save();
+    }
+
     res.status(200).json(savedRoom);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -1218,4 +1255,5 @@ module.exports = {
   getUnavailableDatesAdmin,
   createCustomBooking,
   getReportingStats,
+  getCitiesByRoom,
 };
