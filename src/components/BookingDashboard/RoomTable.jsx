@@ -6,6 +6,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { motion, AnimatePresence } from "framer-motion";
 const process = import.meta.env;
 import axios from 'axios';
+import EditRoomForm from "../EditRoomForm";
 
 function RoomTable({ addRoom }) {
   const [rooms, setRooms] = useState([]);
@@ -18,6 +19,8 @@ function RoomTable({ addRoom }) {
   const [weekdayPrice, setWeekdayPrice] = useState("");
   const [weekendPrice, setWeekendPrice] = useState("");
   const itemsPerPage = 10;
+  const [editRoomData, setEditRoomData] = useState(null);
+const [showEditForm, setShowEditForm] = useState(false);
 
   const filterRooms = (status) => {
     setCurrentFilter(status);
@@ -201,7 +204,8 @@ function RoomTable({ addRoom }) {
             </div>
           </div>
         </div>
-        <div className="overflow-x-auto">
+        <div className="relative overflow-visible">
+
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -323,6 +327,20 @@ function RoomTable({ addRoom }) {
                           >
                             <div className="py-1">
                               <ul>
+                                <li>
+                                    <button
+                                      onClick={() => {
+                                        setEditRoomData(room);
+                                        setShowEditForm(true);
+                                        setActivePopup(null); // close the menu
+                                      }}
+                                      className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                    >
+                                      <PencilLine className="w-4 h-4 mr-2 text-yellow-500" />
+                                      Edit Room
+                                    </button>
+                                  </li>
+
                                 <li>
                                   <button
                                     onClick={() => handleUpdateRoom(room)}
@@ -479,6 +497,44 @@ function RoomTable({ addRoom }) {
             </div>
           </div>
         )}
+        {showEditForm && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="w-full max-w-4xl p-8 bg-white rounded-lg">
+      <EditRoomForm
+        initialData={editRoomData}
+        onCancel={() => setShowEditForm(false)}
+        onSubmit={async (updatedData) => {
+          try {
+            const res = await fetch(
+              `${process.VITE_HOST_URL}/api/admin/editroom/${editRoomData.id}`,
+              {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedData),
+              }
+            );
+
+            if (!res.ok) throw new Error("Update failed");
+
+            const updatedRoom = await res.json();
+
+            setRooms((prev) =>
+              prev.map((r) => (r.id === updatedRoom.id ? updatedRoom : r))
+            );
+            setFilteredRooms((prev) =>
+              prev.map((r) => (r.id === updatedRoom.id ? updatedRoom : r))
+            );
+
+            setShowEditForm(false);
+          } catch (error) {
+            console.error("Edit room failed:", error);
+          }
+        }}
+      />
+    </div>
+  </div>
+)}
+
       </div>
     </div>
   );

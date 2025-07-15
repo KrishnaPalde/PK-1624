@@ -11,8 +11,8 @@ function getRoomType(rooms) {
   }
 
   // Check if the array contains only one room and its name is "Panoramic View"
-  if (rooms.length === 1 && rooms[0].name === "Panoramic View") {
-    return { roomType: "penthouse", roomCount: 1 };
+  if (rooms.length === 1 && rooms[0].isProperty) {
+    return { roomType: "entire", roomCount: 1 };
   }
 
   // Count the total number of rooms and return "single" as roomType

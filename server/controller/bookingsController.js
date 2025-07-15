@@ -7,19 +7,6 @@ const pdf = require("html-pdf"); // Import html-pdf
 const { v4: uuidv4 } = require("uuid");
 const GlobalSetting = require("../models/GlobalSetting");
 
-// Helper function to get dates between two dates
-// const getDatesBetween = (startDate, endDate) => {
-//   const dates = [];
-//   let currentDate = new Date(startDate);
-
-//   while (currentDate <= endDate) {
-//     dates.push(new Date(currentDate));
-//     currentDate.setDate(currentDate.getDate() + 1);
-//   }
-
-//   return dates;
-// };
-
 // Method to check if dates are available for booking
 const checkIfAvailable = async (req, res) => {
   const { checkinDate, checkoutDate } = req.query;
@@ -125,24 +112,45 @@ const capitalize = (str) => {
 
 const getAllRooms = async (req, res) => {
   try {
-    console.log(req.query);
-    const { checkinDate, checkoutDate } = req.query;
+    const { checkinDate, checkoutDate, city } = req.query;
+    console.log(city);
+    if (!checkinDate || !checkoutDate || !city)
+      return res.status(400).json({ message: "Missing required parameters" });
 
-    console.log(checkinDate, checkoutDate);
-    // Parse dates and check if they are valid
     const parsedCheckIn = new Date(checkinDate);
     const parsedCheckOut = new Date(checkoutDate);
+    if (isNaN(parsedCheckIn) || isNaN(parsedCheckOut))
+      return res
+        .status(400)
+        .json({ message: "Invalid check-in/check-out dates" });
 
-    console.log(parsedCheckIn);
+    const allRooms = await Room.find({ city: city.trim().toLowerCase() });
 
-    if (isNaN(parsedCheckIn) || isNaN(parsedCheckOut)) {
-      return res.status(400).json({
-        message: "Invalid date format for check-in or check-out date",
-      });
+    // STEP 1: Build maps and helpers
+    const roomMap = new Map();
+    const roomNameMap = new Map();
+    const propertyRoomCount = {}; // propertyId -> total child rooms
+
+    allRooms.forEach((room) => {
+      const id = room._id.toString();
+      roomMap.set(id, room);
+      roomNameMap.set(room.name, room);
+      if (!room.isProperty && room.propertyRef) {
+        const propId = room.propertyRef.toString();
+        propertyRoomCount[propId] = (propertyRoomCount[propId] || 0) + 1;
+      }
+    });
+
+    const dateRange = [];
+    let curr = new Date(parsedCheckIn);
+    while (curr <= parsedCheckOut) {
+      dateRange.push(curr.toISOString().split("T")[0]);
+      curr.setDate(curr.getDate() + 1);
     }
 
-    // Find bookings that overlap with the requested date range
+    // STEP 2: Get bookings overlapping the range
     const bookings = await Booking.find({
+      "rooms.roomId": { $in: [...roomMap.keys()] },
       $or: [
         {
           checkInDate: { $lte: parsedCheckOut },
@@ -151,54 +159,97 @@ const getAllRooms = async (req, res) => {
       ],
     }).select("rooms checkInDate checkOutDate");
 
-    // Initialize tracking variables
-    const bookedRoomNames = new Set();
-    let isPenthouseBooked = false;
-
-    // Process bookings
-    bookings.forEach((booking) => {
-      booking.rooms.forEach((room) => {
-        if (room.roomName === "Panoramic View") {
-          isPenthouseBooked = true;
-        } else {
-          bookedRoomNames.add(room.roomName);
-        }
-      });
-    });
-
-    // Fetch calendar events that overlap with the requested date range
     const calendarEvents = await Calendar.find({
       date: { $gte: parsedCheckIn, $lte: parsedCheckOut },
       status: "booked",
+    }).select("roomType date");
+
+    const blockedProps = new Set();
+    const blockedRoomNames = new Set();
+
+    // STEP 3: Process Booking data
+    bookings.forEach((booking) => {
+      const roomCounts = {}; // temp for per-day counts per property
+
+      const overlapDates = [];
+      let dt = new Date(booking.checkInDate);
+      while (dt <= booking.checkOutDate) {
+        const dateStr = dt.toISOString().split("T")[0];
+        if (dateRange.includes(dateStr)) overlapDates.push(dateStr);
+        dt.setDate(dt.getDate() + 1);
+      }
+
+      booking.rooms.forEach((r) => {
+        const meta = roomMap.get(r.roomId);
+        if (!meta) return;
+
+        overlapDates.forEach(() => {
+          if (meta.isProperty) {
+            blockedProps.add(meta._id.toString());
+          } else if (meta.propertyRef) {
+            const propId = meta.propertyRef.toString();
+            roomCounts[propId] = (roomCounts[propId] || 0) + 1;
+            if (roomCounts[propId] >= propertyRoomCount[propId]) {
+              blockedProps.add(propId);
+            }
+          } else {
+            blockedRoomNames.add(meta.name);
+          }
+        });
+      });
     });
 
-    // Process calendar events
+    // STEP 4: Process Calendar data
     calendarEvents.forEach((event) => {
-      if (event.roomType === "Panoramic View") {
-        isPenthouseBooked = true;
+      const meta = roomNameMap.get(event.roomType);
+      if (!meta) return;
+
+      if (meta.isProperty) {
+        blockedProps.add(meta._id.toString());
+      } else if (meta.propertyRef) {
+        const propId = meta.propertyRef.toString();
+        blockedProps.add(propId);
       } else {
-        bookedRoomNames.add(event.roomType);
+        blockedRoomNames.add(meta.name);
       }
     });
 
-    let rooms;
-    if (isPenthouseBooked) {
-      // If penthouse is booked, exclude all rooms
-      rooms = [];
-    } else if (bookedRoomNames.size > 0) {
-      // If any individual room (1-4) is booked, exclude penthouse and booked rooms
-      rooms = await Room.find({
-        name: { $nin: ["Panoramic View", ...Array.from(bookedRoomNames)] },
-      }).select("-reviews");
-    } else {
-      // If no rooms are booked, return all available rooms
-      rooms = await Room.find().select("-reviews");
-    }
+    // STEP 5: Final filter
+    const availableRooms = allRooms.filter((room) => {
+      const id = room._id.toString();
 
-    res.status(200).json(rooms);
+      if (room.isProperty) return !blockedProps.has(id);
+
+      if (room.propertyRef && blockedProps.has(room.propertyRef.toString()))
+        return false;
+
+      if (!room.propertyRef && blockedRoomNames.has(room.name)) return false;
+
+      return true;
+    });
+
+    res.status(200).json(availableRooms);
+  } catch (err) {
+    console.error("Error fetching rooms:", err.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const getAllProperties = async (req, res) => {
+  try {
+    // Find rooms that are marked as full property packages
+    const properties = await Room.find({ isProperty: true }).select("_id name");
+
+    // Format: [{ id, name }]
+    const result = properties.map((property) => ({
+      id: property._id,
+      name: property.name,
+    }));
+
+    res.status(200).json(result);
   } catch (error) {
-    console.error("Error fetching available rooms:", error.message);
-    res.status(500).json({ message: error.message });
+    console.error("Error fetching properties:", error.message);
+    res.status(500).json({ message: "Failed to fetch properties" });
   }
 };
 
@@ -214,80 +265,49 @@ const get5Rooms = async (req, res) => {
   }
 };
 
-// const getUnavailableDates = async (req, res) => {
-//   try {
-//     const today = new Date();
-//     const thirtyDaysFromNow = new Date();
-//     const tomorrow = today.getDate()+1;
-//     thirtyDaysFromNow.setDate(today.getDate() + 30);
-
-//     const bookings = await Booking.find({
-//       checkInDate: { $gte: today, $lte: thirtyDaysFromNow },
-//       checkOutDate: {$gte: tomorrow},
-//     }).select("checkInDate checkOutDate");
-
-//     bookings.forEach((booking)=>{
-//       console.log(booking);
-//     })
-
-//     const unavailableDates = [];
-
-//     bookings.forEach((booking) => {
-//       let currentDate = new Date(booking.checkInDate);
-//       while (currentDate <= new Date(booking.checkOutDate)) {
-//         unavailableDates.push(
-//           new Date(currentDate).toISOString().split("T")[0]
-//         ); // Store the date in YYYY-MM-DD format
-//         currentDate.setDate(currentDate.getDate() + 1);
-//       }
-//     });
-
-//     res.status(200).json({ unavailableDates });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-// const getUnavailableDates = async (req, res) => {
-//   try {
-//     const today = new Date();
-//     const thirtyDaysFromNow = new Date();
-//     thirtyDaysFromNow.setDate(today.getDate() + 365);
-
-//     const bookings = await Booking.find({
-//       $or: [
-//         {
-//           checkInDate: { $gte: today, $lte: thirtyDaysFromNow },
-//           checkOutDate: { $gte: today },
-//         },
-//         { checkOutDate: { $gte: today, $lte: thirtyDaysFromNow } },
-//       ],
-//     }).select("checkInDate checkOutDate");
-
-//     const unavailableDates = [];
-
-//     bookings.forEach((booking) => {
-//       let currentDate = new Date(booking.checkInDate);
-//       while (currentDate <= new Date(booking.checkOutDate)) {
-//         unavailableDates.push(
-//           new Date(currentDate).toISOString().split("T")[0]
-//         );
-//         currentDate.setDate(currentDate.getDate() + 1);
-//       }
-//     });
-
-//     res.status(200).json({ unavailableDates });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-// const getUnavailableDates = async (req, res) => {
+// const getUnavailableDatesAdmin = async (req, res) => {
 //   try {
 //     const today = new Date();
 //     const oneYearFromNow = new Date();
 //     oneYearFromNow.setDate(today.getDate() + 365);
 
+//     const unavailableDates = {}; // Tracks dates and their statuses
+
+//     // Helper function to process a date
+//     const processDate = (dateStr, roomName) => {
+//       const isPenthouse = roomName === "Panoramic View";
+
+//       if (!unavailableDates[dateStr]) {
+//         unavailableDates[dateStr] = {
+//           singleCount: 0,
+//           penthouse: false,
+//           status: "available",
+//         };
+//       }
+
+//       if (isPenthouse) {
+//         // If penthouse is booked, mark the date as fully booked
+//         unavailableDates[dateStr] = {
+//           singleCount: 0,
+//           penthouse: true,
+//           status: "fullyBooked",
+//         };
+//       } else {
+//         // Increment single room count only if the penthouse is not booked
+//         if (!unavailableDates[dateStr].penthouse) {
+//           unavailableDates[dateStr].singleCount += 1;
+
+//           // Update status based on single room bookings
+//           if (unavailableDates[dateStr].singleCount >= 4) {
+//             unavailableDates[dateStr].status = "fullyBooked";
+//           } else {
+//             unavailableDates[dateStr].status = "partiallyBooked";
+//           }
+//         }
+//       }
+//     };
+
+//     // Step 1: Process Bookings
 //     const bookings = await Booking.find({
 //       $or: [
 //         {
@@ -298,88 +318,74 @@ const get5Rooms = async (req, res) => {
 //       ],
 //     }).select("checkInDate checkOutDate rooms");
 
-//     const unavailableDates = new Set();
-//     const singleRoomBookings = {}; // Track bookings per date for single rooms
-
 //     bookings.forEach((booking) => {
-//       const isPenthouse = booking.rooms.some(
-//         (room) => room.roomName === "Panoramic View"
-//       );
-
-//       let currentDate = new Date(booking.checkInDate);
-//       while (currentDate <= new Date(booking.checkOutDate)) {
-//         const dateStr = new Date(currentDate).toISOString().split("T")[0];
-
-//         if (isPenthouse) {
-//           // Mark date as unavailable if the penthouse is booked
-//           unavailableDates.add(dateStr);
-//         } else {
-//           // Count single room bookings per date
-//           booking.rooms.forEach((room) => {
-//             if (room.roomName !== "Panoramic View") {
-//               singleRoomBookings[dateStr] =
-//                 (singleRoomBookings[dateStr] || 0) + 1;
-
-//               // If all 4 single bedrooms are booked, mark the date as unavailable
-//               if (singleRoomBookings[dateStr] >= 4) {
-//                 unavailableDates.add(dateStr);
-//               }
-//             }
-//           });
+//       booking.rooms.forEach((room) => {
+//         let currentDate = new Date(booking.checkInDate);
+//         while (currentDate <= new Date(booking.checkOutDate)) {
+//           const dateStr = currentDate.toISOString().split("T")[0];
+//           processDate(dateStr, room.roomName);
+//           currentDate.setDate(currentDate.getDate() + 1);
 //         }
-//         currentDate.setDate(currentDate.getDate() + 1);
-//       }
+//       });
 //     });
 
-//     res.status(200).json({ unavailableDates: Array.from(unavailableDates) });
+//     // Step 2: Process Calendar Events
+//     const calendarEvents = await Calendar.find({
+//       date: { $gte: today, $lte: oneYearFromNow },
+//       status: "booked",
+//     });
+
+//     calendarEvents.forEach((event) => {
+//       const dateStr = event.date.toISOString().split("T")[0];
+//       processDate(dateStr, event.roomType); // Assuming `roomType` maps to room names
+//     });
+
+//     // Step 3: Format the response
+//     const formattedUnavailableDates = Object.entries(unavailableDates).map(
+//       ([date, { status }]) => ({ date, status })
+//     );
+
+//     res.status(200).json({ unavailableDates: formattedUnavailableDates });
 //   } catch (error) {
+//     console.error("Error fetching unavailable dates:", error);
 //     res.status(500).json({ message: error.message });
 //   }
 // };
-
 const getUnavailableDatesAdmin = async (req, res) => {
   try {
     const today = new Date();
     const oneYearFromNow = new Date();
     oneYearFromNow.setDate(today.getDate() + 365);
 
-    const unavailableDates = {}; // Tracks dates and their statuses
+    const allRooms = await Room.find().select(
+      "_id name isProperty propertyRef"
+    );
+    const roomIdToMeta = new Map();
+    const nameToRoomMeta = new Map();
+    const properties = new Map();
 
-    // Helper function to process a date
-    const processDate = (dateStr, roomName) => {
-      const isPenthouse = roomName === "Panoramic View";
+    allRooms.forEach((room) => {
+      const roomId = room._id.toString();
+      const propertyId = room.isProperty
+        ? roomId
+        : room.propertyRef?.toString();
+      if (!propertyId) return;
 
-      if (!unavailableDates[dateStr]) {
-        unavailableDates[dateStr] = {
-          singleCount: 0,
-          penthouse: false,
-          status: "available",
-        };
+      roomIdToMeta.set(roomId, room);
+      nameToRoomMeta.set(room.name, room);
+
+      if (!properties.has(propertyId)) {
+        properties.set(propertyId, {
+          totalRooms: 0,
+          bookedCountByDate: {},
+          isParentBooked: new Set(),
+        });
       }
 
-      if (isPenthouse) {
-        // If penthouse is booked, mark the date as fully booked
-        unavailableDates[dateStr] = {
-          singleCount: 0,
-          penthouse: true,
-          status: "fullyBooked",
-        };
-      } else {
-        // Increment single room count only if the penthouse is not booked
-        if (!unavailableDates[dateStr].penthouse) {
-          unavailableDates[dateStr].singleCount += 1;
+      const property = properties.get(propertyId);
+      property.totalRooms += 1;
+    });
 
-          // Update status based on single room bookings
-          if (unavailableDates[dateStr].singleCount >= 4) {
-            unavailableDates[dateStr].status = "fullyBooked";
-          } else {
-            unavailableDates[dateStr].status = "partiallyBooked";
-          }
-        }
-      }
-    };
-
-    // Step 1: Process Bookings
     const bookings = await Booking.find({
       $or: [
         {
@@ -390,36 +396,93 @@ const getUnavailableDatesAdmin = async (req, res) => {
       ],
     }).select("checkInDate checkOutDate rooms");
 
-    bookings.forEach((booking) => {
-      booking.rooms.forEach((room) => {
-        let currentDate = new Date(booking.checkInDate);
-        while (currentDate <= new Date(booking.checkOutDate)) {
-          const dateStr = currentDate.toISOString().split("T")[0];
-          processDate(dateStr, room.roomName);
-          currentDate.setDate(currentDate.getDate() + 1);
-        }
-      });
-    });
+    const getDateRange = (start, end) => {
+      const dates = [];
+      const cur = new Date(start);
+      while (cur <= end) {
+        dates.push(cur.toISOString().split("T")[0]);
+        cur.setDate(cur.getDate() + 1);
+      }
+      return dates;
+    };
 
-    // Step 2: Process Calendar Events
+    for (const booking of bookings) {
+      const dates = getDateRange(booking.checkInDate, booking.checkOutDate);
+
+      for (const roomEntry of booking.rooms) {
+        const room = roomIdToMeta.get(roomEntry.roomId);
+        if (!room) continue;
+
+        const propertyId = room.isProperty
+          ? room._id.toString()
+          : room.propertyRef?.toString();
+        if (!propertyId || !properties.has(propertyId)) continue;
+
+        const property = properties.get(propertyId);
+
+        for (const dateStr of dates) {
+          if (room.isProperty) {
+            property.isParentBooked.add(dateStr);
+          } else {
+            property.bookedCountByDate[dateStr] =
+              (property.bookedCountByDate[dateStr] || 0) + 1;
+          }
+        }
+      }
+    }
+
     const calendarEvents = await Calendar.find({
       date: { $gte: today, $lte: oneYearFromNow },
       status: "booked",
     });
 
-    calendarEvents.forEach((event) => {
+    for (const event of calendarEvents) {
+      const room = nameToRoomMeta.get(event.roomType);
+      if (!room) continue;
+
+      const propertyId = room.isProperty
+        ? room._id.toString()
+        : room.propertyRef?.toString();
+      if (!propertyId || !properties.has(propertyId)) continue;
+
+      const property = properties.get(propertyId);
       const dateStr = event.date.toISOString().split("T")[0];
-      processDate(dateStr, event.roomType); // Assuming `roomType` maps to room names
-    });
 
-    // Step 3: Format the response
-    const formattedUnavailableDates = Object.entries(unavailableDates).map(
-      ([date, { status }]) => ({ date, status })
-    );
+      if (room.isProperty) {
+        property.isParentBooked.add(dateStr);
+      } else {
+        property.bookedCountByDate[dateStr] =
+          (property.bookedCountByDate[dateStr] || 0) + 1;
+      }
+    }
 
-    res.status(200).json({ unavailableDates: formattedUnavailableDates });
+    const formatted = [];
+
+    for (const [propertyId, prop] of properties.entries()) {
+      const allDates = new Set([
+        ...Object.keys(prop.bookedCountByDate),
+        ...Array.from(prop.isParentBooked),
+      ]);
+
+      for (const dateStr of allDates) {
+        const isParentBooked = prop.isParentBooked.has(dateStr);
+        const childBookings = prop.bookedCountByDate[dateStr] || 0;
+
+        const status = isParentBooked
+          ? "fullyBooked"
+          : childBookings >= prop.totalRooms
+          ? "fullyBooked"
+          : childBookings > 0
+          ? "partiallyBooked"
+          : "available";
+
+        formatted.push({ date: dateStr, propertyId, status });
+      }
+    }
+
+    res.status(200).json({ unavailableDates: formatted });
   } catch (error) {
-    console.error("Error fetching unavailable dates:", error);
+    console.error("Error fetching unavailable dates:", error.message);
     res.status(500).json({ message: error.message });
   }
 };
@@ -444,34 +507,31 @@ const getUnavailableDatesAdmin = async (req, res) => {
 //       ],
 //     }).select("checkInDate checkOutDate rooms");
 
-//     // Process bookings
 //     bookings.forEach((booking) => {
-//       const isPenthouse = booking.rooms.some(
-//         (room) => room.roomName === "Panoramic View"
-//       );
+//       booking.rooms.forEach((room) => {
+//         const isPenthouse = room.roomName === "Panoramic View";
+//         let currentDate = new Date(booking.checkInDate);
 
-//       let currentDate = new Date(booking.checkInDate);
-//       while (currentDate <= new Date(booking.checkOutDate)) {
-//         const dateStr = currentDate.toISOString().split("T")[0];
+//         while (currentDate <= new Date(booking.checkOutDate)) {
+//           const dateStr = currentDate.toISOString().split("T")[0];
 
-//         if (isPenthouse) {
-//           unavailableDates.add(dateStr); // Block all rooms if penthouse is booked
-//         } else {
-//           booking.rooms.forEach((room) => {
-//             if (room.roomName !== "Panoramic View") {
-//               singleRoomBookings[dateStr] =
-//                 (singleRoomBookings[dateStr] || 0) + 1;
+//           if (isPenthouse) {
+//             // Block all rooms if the penthouse is booked
+//             unavailableDates.add(dateStr);
+//           } else {
+//             // Track single-room bookings if the penthouse is not booked
+//             singleRoomBookings[dateStr] =
+//               (singleRoomBookings[dateStr] || 0) + 1;
 
-//               // If all 4 single rooms are booked, block the date
-//               if (singleRoomBookings[dateStr] >= 4) {
-//                 unavailableDates.add(dateStr);
-//               }
+//             // If 4 or more single rooms are booked, mark the date as unavailable
+//             if (singleRoomBookings[dateStr] >= 4) {
+//               unavailableDates.add(dateStr);
 //             }
-//           });
-//         }
+//           }
 
-//         currentDate.setDate(currentDate.getDate() + 1);
-//       }
+//           currentDate.setDate(currentDate.getDate() + 1);
+//         }
+//       });
 //     });
 
 //     // Step 2: Fetch Calendar Events
@@ -480,133 +540,203 @@ const getUnavailableDatesAdmin = async (req, res) => {
 //       status: "booked", // Only consider booked events
 //     });
 
-//     // Process calendar events
 //     calendarEvents.forEach((event) => {
 //       const { roomType, date } = event;
+//       const dateStr = date.toISOString().split("T")[0];
 
-//       if (roomType === "penthouse") {
+//       if (roomType === "Panoramic View") {
 //         // Block date for all rooms if the penthouse is booked
-//         unavailableDates.add(date.toISOString().split("T")[0]);
+//         unavailableDates.add(dateStr);
 //       } else {
 //         // Count single-room bookings from the calendar
-//         singleRoomBookings[date.toISOString().split("T")[0]] =
-//           (singleRoomBookings[date.toISOString().split("T")[0]] || 0) + 1;
+//         singleRoomBookings[dateStr] = (singleRoomBookings[dateStr] || 0) + 1;
 
-//         // If all 4 single rooms are booked, block the date
-//         if (singleRoomBookings[date.toISOString().split("T")[0]] >= 4) {
-//           unavailableDates.add(date.toISOString().split("T")[0]);
+//         // If 4 or more single rooms are booked, mark the date as unavailable
+//         if (singleRoomBookings[dateStr] >= 4) {
+//           unavailableDates.add(dateStr);
 //         }
 //       }
 //     });
 
+//     // Respond with the unavailable dates
 //     res.status(200).json({ unavailableDates: Array.from(unavailableDates) });
 //   } catch (error) {
+//     console.error("Error fetching unavailable dates:", error.message);
 //     res.status(500).json({ message: error.message });
 //   }
 // };
+
 const getUnavailableDates = async (req, res) => {
   try {
+    const { city } = req.query;
+    if (!city) return res.status(400).json({ message: "City is required" });
+
     const today = new Date();
     const oneYearFromNow = new Date();
-    oneYearFromNow.setDate(today.getDate() + 365);
+    oneYearFromNow.setFullYear(today.getFullYear() + 1);
 
     const unavailableDates = new Set();
-    const singleRoomBookings = {}; // To track single-room bookings per date
 
-    // Step 1: Fetch Bookings
+    // Step 1: Fetch rooms in the city
+    const rooms = await Room.find({ city: city.toLowerCase().trim() }).select(
+      "_id isProperty propertyRef name"
+    );
+
+    const properties = new Map(); // propertyId => { totalRooms, bookedCountByDate }
+
+    rooms.forEach((room) => {
+      const roomId = room._id.toString();
+      const propertyId = room.isProperty
+        ? roomId
+        : room.propertyRef?.toString();
+      if (!propertyId) return;
+
+      if (!properties.has(propertyId)) {
+        properties.set(propertyId, {
+          totalRooms: 0,
+          bookedCountByDate: {},
+          isParentBooked: new Set(), // Tracks dates parent property itself is booked
+        });
+      }
+
+      const property = properties.get(propertyId);
+      property.totalRooms += 1;
+    });
+
+    const roomIds = rooms.map((r) => r._id.toString());
+
+    // Helper: get all dates in range
+    const getDateRange = (start, end) => {
+      const dates = [];
+      const cur = new Date(start);
+      while (cur <= end) {
+        dates.push(cur.toISOString().split("T")[0]);
+        cur.setDate(cur.getDate() + 1);
+      }
+      return dates;
+    };
+
+    // Step 2: Bookings
     const bookings = await Booking.find({
-      $or: [
-        {
-          checkInDate: { $gte: today, $lte: oneYearFromNow },
-          checkOutDate: { $gte: today },
-        },
-        { checkOutDate: { $gte: today, $lte: oneYearFromNow } },
-      ],
-    }).select("checkInDate checkOutDate rooms");
+      "rooms.roomId": { $in: roomIds },
+      checkInDate: { $lte: oneYearFromNow },
+      checkOutDate: { $gte: today },
+    });
 
-    bookings.forEach((booking) => {
-      booking.rooms.forEach((room) => {
-        const isPenthouse = room.roomName === "Panoramic View";
-        let currentDate = new Date(booking.checkInDate);
+    for (const booking of bookings) {
+      const dates = getDateRange(booking.checkInDate, booking.checkOutDate);
 
-        while (currentDate <= new Date(booking.checkOutDate)) {
-          const dateStr = currentDate.toISOString().split("T")[0];
+      for (const roomEntry of booking.rooms) {
+        const room = rooms.find((r) => r._id.toString() === roomEntry.roomId);
+        if (!room) continue;
 
-          if (isPenthouse) {
-            // Block all rooms if the penthouse is booked
-            unavailableDates.add(dateStr);
+        const propertyId = room.isProperty
+          ? room._id.toString()
+          : room.propertyRef?.toString();
+        if (!propertyId || !properties.has(propertyId)) continue;
+
+        const property = properties.get(propertyId);
+
+        for (const dateStr of dates) {
+          if (room.isProperty) {
+            property.isParentBooked.add(dateStr);
           } else {
-            // Track single-room bookings if the penthouse is not booked
-            singleRoomBookings[dateStr] =
-              (singleRoomBookings[dateStr] || 0) + 1;
-
-            // If 4 or more single rooms are booked, mark the date as unavailable
-            if (singleRoomBookings[dateStr] >= 4) {
-              unavailableDates.add(dateStr);
-            }
+            property.bookedCountByDate[dateStr] =
+              (property.bookedCountByDate[dateStr] || 0) + 1;
           }
-
-          currentDate.setDate(currentDate.getDate() + 1);
-        }
-      });
-    });
-
-    // Step 2: Fetch Calendar Events
-    const calendarEvents = await Calendar.find({
-      date: { $gte: today, $lte: oneYearFromNow },
-      status: "booked", // Only consider booked events
-    });
-
-    calendarEvents.forEach((event) => {
-      const { roomType, date } = event;
-      const dateStr = date.toISOString().split("T")[0];
-
-      if (roomType === "Panoramic View") {
-        // Block date for all rooms if the penthouse is booked
-        unavailableDates.add(dateStr);
-      } else {
-        // Count single-room bookings from the calendar
-        singleRoomBookings[dateStr] = (singleRoomBookings[dateStr] || 0) + 1;
-
-        // If 4 or more single rooms are booked, mark the date as unavailable
-        if (singleRoomBookings[dateStr] >= 4) {
-          unavailableDates.add(dateStr);
         }
       }
+    }
+
+    // Step 3: Calendar Events
+    const calendarEvents = await Calendar.find({
+      date: { $gte: today, $lte: oneYearFromNow },
+      status: "booked",
     });
 
-    // Respond with the unavailable dates
-    res.status(200).json({ unavailableDates: Array.from(unavailableDates) });
+    for (const event of calendarEvents) {
+      const room = rooms.find((r) => r.name === event.roomType);
+      if (!room) continue;
+
+      const propertyId = room.isProperty
+        ? room._id.toString()
+        : room.propertyRef?.toString();
+      if (!propertyId || !properties.has(propertyId)) continue;
+
+      const property = properties.get(propertyId);
+      const dateStr = event.date.toISOString().split("T")[0];
+
+      if (room.isProperty) {
+        property.isParentBooked.add(dateStr);
+      } else {
+        property.bookedCountByDate[dateStr] =
+          (property.bookedCountByDate[dateStr] || 0) + 1;
+      }
+    }
+
+    // Step 4: Final date evaluation
+    const dateAvailabilityMap = {}; // dateStr => count of available properties
+
+    for (const [propertyId, prop] of properties.entries()) {
+      const allDates = new Set([
+        ...Object.keys(prop.bookedCountByDate),
+        ...Array.from(prop.isParentBooked),
+      ]);
+
+      for (const dateStr of allDates) {
+        const isParentBooked = prop.isParentBooked.has(dateStr);
+        const childBookings = prop.bookedCountByDate[dateStr] || 0;
+
+        const isFullyBooked =
+          isParentBooked || childBookings >= prop.totalRooms;
+
+        if (!isFullyBooked) {
+          dateAvailabilityMap[dateStr] =
+            (dateAvailabilityMap[dateStr] || 0) + 1;
+        }
+      }
+    }
+
+    // Step 5: Mark unavailable dates (all properties are fully booked)
+    // Final Step: Unavailable Dates - A date is unavailable if ALL properties are booked on that date
+    // const unavailableDates = new Set();
+    const allDates = new Set();
+
+    for (const [, prop] of properties) {
+      Object.keys(prop.bookedCountByDate).forEach((d) => allDates.add(d));
+      prop.isParentBooked.forEach((d) => allDates.add(d));
+    }
+
+    for (const dateStr of allDates) {
+      let fullyBookedProps = 0;
+
+      for (const [propId, prop] of properties) {
+        const isParentBooked = prop.isParentBooked.has(dateStr);
+        const childBookedCount = prop.bookedCountByDate[dateStr] || 0;
+
+        const isFullyBooked =
+          isParentBooked || childBookedCount >= prop.totalRooms;
+
+        if (isFullyBooked) {
+          fullyBookedProps++;
+        }
+      }
+
+      if (fullyBookedProps === properties.size) {
+        unavailableDates.add(dateStr);
+      }
+    }
+
+    console.log("Unavailable Dates:", unavailableDates);
+
+    return res.status(200).json({
+      unavailableDates: Array.from(unavailableDates).sort(),
+    });
   } catch (error) {
     console.error("Error fetching unavailable dates:", error.message);
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
-// const fetchBookingsAdmin = async (req, res) => {
-//   try {
-//     const { recent, limit } = req.query;
-
-//     const today = new Date();
-//     today.setHours(0, 0, 0, 0);
-
-//     // Fetch only upcoming bookings where check-in date is today or later
-//     let query = Booking.find({ checkInDate: { $gte: today } });
-
-//     // If 'recent' parameter is provided and true, fetch the most recently added bookings
-//     if (recent === "true") {
-//       query = query.sort({ _id: -1 }).limit(parseInt(limit) || 5); // Default limit is 5 if not specified
-//     }
-
-//     // Execute the query
-//     const bookings = await query.exec();
-
-//     // Return the fetched bookings
-//     res.status(200).json(bookings);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 
 const fetchBookingsAdmin = async (req, res) => {
   try {
@@ -961,38 +1091,9 @@ const getRoomDetailsForm = async (req, res) => {
   }
 };
 
-// const addRoom = async (req, res) => {
-//   try {
-//     const { name, title, description, price, weekend } = req.body;
-//     const amenities = req.body.amenities ? JSON.parse(req.body.amenities) : [];
-//     const freebies = req.body.freebies ? JSON.parse(req.body.freebies) : [];
-//     const images = req.files ? req.files.map((file) => file.path) : [];
-
-//     const newRoom = new Room({
-//       id: Date.now().toString(),
-//       name,
-//       title,
-//       description,
-//       price,
-//       weekend,
-//       amenities,
-//       freebies,
-//       images,
-//     });
-
-//     const savedRoom = await newRoom.save();
-//     res.status(201).json(savedRoom);
-//   } catch (error) {
-//     res.status(400).json({ message: error.message });
-//   }
-// };
-
 const addRoom = async (req, res) => {
   try {
-    const { name, city, title, description, price, weekend, images, rating } =
-      req.body;
-    const newRoom = new Room({
-      id: Date.now().toString(),
+    const {
       name,
       city,
       title,
@@ -1001,20 +1102,42 @@ const addRoom = async (req, res) => {
       weekend,
       images,
       rating,
+      isProperty,
+      propertyRef,
+      amenities,
+      freebies,
+    } = req.body;
+
+    const newRoom = new Room({
+      id: Date.now().toString(),
+      name,
+      city: city.toLowerCase().trim(),
+      title,
+      description,
+      price,
+      weekend,
+      images,
+      rating,
+      isProperty,
+      propertyRef: isProperty ? null : propertyRef, // null if it's a standalone property
+      amenities,
+      freebies,
     });
+
     const savedRoom = await newRoom.save();
 
     const globalSetting = await GlobalSetting.findOne();
     if (globalSetting) {
       globalSetting.calendarLinks.push({
         roomType: name,
-        sources: [], // initially empty, can be filled later
+        sources: [],
       });
       await globalSetting.save();
     }
 
     res.status(200).json(savedRoom);
   } catch (error) {
+    console.error("Error adding room:", error);
     res.status(400).json({ message: error.message });
   }
 };
@@ -1133,6 +1256,26 @@ const updateRoomPrice = async (req, res) => {
   }
 };
 
+const updateRoom = async (req, res) => {
+  const { id } = req.params;
+  const { name, title, description, price, weekend, rating } = req.body;
+
+  try {
+    const updatedRoom = await Room.findOneAndUpdate(
+      { id },
+      { name, title, description, price, weekend, rating },
+      { new: true }
+    );
+
+    if (!updatedRoom)
+      return res.status(404).json({ message: "Room not found" });
+
+    res.json(updatedRoom);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update room", error });
+  }
+};
+
 const createCustomBooking = async (req, res) => {
   try {
     const {
@@ -1189,8 +1332,15 @@ const createCustomBooking = async (req, res) => {
       })
     );
 
-    paymentBreakdown.append("Discount", discountAmount);
-    paymentBreakdown.append("Commision", commissionAmount);
+    paymentBreakdown.push({
+      description: "Discount",
+      amount: discountAmount || 0,
+    });
+
+    paymentBreakdown.push({
+      description: "Commission",
+      amount: commissionAmount || 0,
+    });
 
     // Map selected rooms
     const rooms = selectedRooms.map((room) => ({
@@ -1256,4 +1406,6 @@ module.exports = {
   createCustomBooking,
   getReportingStats,
   getCitiesByRoom,
+  getAllProperties,
+  updateRoom,
 };

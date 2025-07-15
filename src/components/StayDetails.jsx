@@ -6,7 +6,6 @@ import PaymentButton from "./PaymentButton";
 import PriceDetail from "./PriceDetail";
 import DateDisplay from "./DateDisplay";
 import { HiMiniHomeModern } from "react-icons/hi2";
-import { Dialog, DialogContent, DialogTitle, DialogClose } from "./ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -117,7 +116,7 @@ function StayDetails({ formData }) {
     var extraPersonCharges = 0;
     var extraPersonCount = 0;
     console.log(selectedRooms);
-    if(!(selectedRooms.length === 1 && selectedRooms[0].name === "Panoramic View")) {
+    if(!(selectedRooms.length === 1 && selectedRooms[0].isProperty)) {
       const res = calculateExtraPersonCharges(bookingInfo.adults, selectedRooms.length, globalSettings.extraPersonCharges);
       extraPersonCharges = res[0];
       extraPersonCount = res[1];
@@ -140,7 +139,7 @@ function StayDetails({ formData }) {
       { label: `Extra Person Charges (x${extraPersonCount})`, amount:extraPersonCharges },
       { label: "Discount", amount: -discountAmount },
     ];
-  }, [totalBasePrice, calculateNights, countGuests, globalSettings, discountAmount]);
+  }, [totalBasePrice, globalSettings.tax, globalSettings.serviceCharges, globalSettings.extraPersonCharges, countGuests, selectedRooms, calculateNights, discountAmount, bookingInfo.adults]);
 
   const totalPrice = useMemo(() => {
     return priceDetails.reduce((sum, detail) => sum + detail.amount, 0);

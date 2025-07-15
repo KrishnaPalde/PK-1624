@@ -29,6 +29,14 @@ const roomSchema = new mongoose.Schema({
     type: [String],
     validate: [arrayLimit, "{PATH} exceeds the limit of 5"],
   },
+
+  // 🆕 Added Fields
+  isProperty: { type: Boolean, default: false },
+  propertyRef: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Room",
+    default: null,
+  },
 });
 
 function arrayLimit(val) {

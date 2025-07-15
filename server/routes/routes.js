@@ -28,6 +28,8 @@ const {
   createCustomBooking,
   getCitiesByRoom,
   getReportingStats,
+  getAllProperties,
+  updateRoom,
 } = require("../controller/bookingsController");
 const {
   createFeedback,
@@ -60,6 +62,7 @@ const { exportReport } = require("../controller/reportsController");
 const Room = require("../models/Room");
 
 const router = express.Router();
+// routes/adminUtils.js
 
 router.post("/custom_booking", createCustomBooking);
 router.post("/authenticateAdmin", login);
@@ -68,6 +71,7 @@ router.get("/unavailable_dates", getUnavailableDates);
 router.get("/admin/unavailable_dates", getUnavailableDatesAdmin);
 router.get("/rooms/:roomId", getRoomDetails);
 router.get("/admin/rooms", getAllRooms);
+router.get("/admin/rooms/properties", getAllProperties);
 router.get("/allRooms", getAllRoomsStatic);
 // router.get("/admin/bookings", fetchBookings6Admin);
 router.get("/admin/dashboard_stats", getDashboardStats);
@@ -109,5 +113,6 @@ router.get("/offers/active", getAllActiveCoupons);
 router.get("/offers/all-coupons", getAllCoupons);
 router.put("/offers/update-coupon/:id", updateCoupon);
 router.get("/cities", getCitiesByRoom);
+router.put("/admin/editroom/:id", updateRoom);
 
 module.exports = router;

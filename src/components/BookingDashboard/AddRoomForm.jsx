@@ -1,9 +1,209 @@
-import React, { useState } from "react";
-import { X } from "lucide-react";
+// import React, { useState } from "react";
+// import { X } from "lucide-react";
 
+
+// function AddRoomForm({ onSubmit, onCancel }) {
+
+//   const [room, setRoom] = useState({
+//     name: "",
+//     title: "",
+//     city: "",
+//     description: "",
+//     price: "",
+//     weekend: "",
+//     images: [],
+//     amenities: "",
+//     freebies: "",
+//     rating: "",
+//   });
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setRoom((prev) => ({ ...prev, [name]: value }));
+//   };
+
+//   const handleImageChange = (e) => {
+//     const files = Array.from(e.target.files);
+//     setRoom((prev) => ({ ...prev, images: [...prev.images, ...files] }));
+//   };  
+
+//   const handleRemoveImage = (index) => {
+//     setRoom((prev) => ({
+//       ...prev,
+//       images: prev.images.filter((_, i) => i !== index),
+//     }));
+//   };
+
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+//     const amenitiesArray = room.amenities
+//       .split(',')
+//       .map(item => item.trim())
+//       .filter(item => item !== '');
+//     const freebiesArray = room.freebies
+//       .split(',')
+//       .map(item => item.trim())
+//       .filter(item => item !== '');
+//     onSubmit({ ...room, amenities: amenitiesArray, freebies: freebiesArray });
+//   };
+
+//   return (
+//     <form onSubmit={handleSubmit} className="space-y-6">
+//       <h2 className="mb-6 text-2xl font-bold">Add New Room</h2>
+//       <div className="flex space-x-4">
+//          <div className="flex-1">
+//            <label className="block mb-1">Name</label>
+//            <input
+//             type="text"
+//             name="name"
+//             value={room.name}
+//             onChange={handleChange}
+//             className="w-full px-3 py-2 border rounded"
+//             required
+//           />
+//         </div>
+//         <div className="flex-1">
+//           <label className="block mb-1">Title</label>
+//           <input
+//             type="text"
+//             name="title"
+//             value={room.title}
+//             onChange={handleChange}
+//             className="w-full px-3 py-2 border rounded"
+//             required
+//           />
+//         </div>
+//       </div>
+//       <div className="mt-4">
+//   <label className="block mb-1 font-medium text-gray-700">City</label>
+//   <input
+//     type="text"
+//     name="city"
+//     value={room.city}
+//     onChange={handleChange}
+//     className="w-full px-3 py-2 border rounded"
+//     placeholder="e.g., Mumbai"
+//     required
+//   />
+// </div>
+//       <div>
+//         <label className="block mb-1">Description</label>
+//         <textarea
+//           name="description"
+//           value={room.description}
+//           onChange={handleChange}
+//           rows={7}
+//           className="w-full px-3 py-2 border rounded"
+//           required
+//         ></textarea>
+//       </div>
+//       <div className="flex space-x-4">
+//         <div className="flex-1">
+//           <label className="block mb-1">Price</label>
+//           <input
+//             type="number"
+//             name="price"
+//             value={room.price}
+//             onChange={handleChange}
+//             className="w-full px-3 py-2 border rounded"
+//             required
+//           />
+//         </div>
+//         <div className="flex-1">
+//           <label className="block mb-1">Weekend Price</label>
+//           <input
+//             type="number"
+//             name="weekend"
+//             value={room.weekend}
+//             onChange={handleChange}
+//             className="w-full px-3 py-2 border rounded"
+//             required
+//           />
+//         </div>
+//         <div className="flex-1">
+//           <label className="block mb-1">Rating</label>
+//           <input
+//             type="number"
+//             name="rating"
+//             value={room.rating}
+//             onChange={handleChange}
+//             className="w-full px-3 py-2 border rounded"
+//           />
+//         </div>
+//       </div>
+
+//       <div className="space-y-2">
+//         <label className="block text-sm font-medium text-gray-700">Images (max 5)</label>
+//         <div className="flex items-center justify-center w-full">
+//           <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+//             <div className="flex flex-col items-center justify-center pt-5 pb-6">
+//               <svg className="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+//                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+//               </svg>
+//               <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+//               <p className="text-xs text-gray-500">PNG, JPG, JPEG up to 10MB</p>
+//             </div>
+//             <input
+//               type="file"
+//               onChange={handleImageChange}
+//               multiple
+//               accept="image/*"
+//               className="hidden"
+//             />
+//           </label>
+//         </div>
+//         {room.images.length > 0 && (
+//           <div className="flex flex-wrap gap-4 mt-4">
+//             {room.images.map((image, index) => (
+//               <div key={index} className="relative group">
+//                 <img
+//                 loading="lazy"
+//                   src={URL.createObjectURL(image)}
+//                   alt={`Room image ${index + 1}`}
+//                   className="object-cover w-24 h-24 rounded-lg shadow-md"
+//                 />
+//                 <button
+//                   type="button"
+//                   onClick={() => handleRemoveImage(index)}
+//                   className="absolute top-0 right-0 p-1 text-white transition-opacity bg-red-500 opacity-0 group-hover:opacity-100"
+//                 >
+//                   <X size={20} />
+//                 </button>
+//               </div>
+//             ))}
+//           </div>
+//         )}
+//       </div>
+
+//       <div className="flex justify-end space-x-2">
+//         <button
+//           type="button"
+//           onClick={onCancel}
+//           className="px-4 py-2 text-gray-600 transition-colors border rounded hover:bg-gray-100"
+//         >
+//           Cancel
+//         </button>
+//         <button
+//           type="submit"
+//           className="px-4 py-2 text-white transition-colors bg-[#255d69] hover:bg-[#243947]"
+//         >
+//           Add Room
+//         </button>
+//       </div>
+//     </form>
+//   );
+// }
+
+// export default AddRoomForm;
+
+
+
+import React, { useState, useEffect } from "react";
+import { X } from "lucide-react";
+import axios from "axios";
+const process = import.meta.env;
 
 function AddRoomForm({ onSubmit, onCancel }) {
-
   const [room, setRoom] = useState({
     name: "",
     title: "",
@@ -15,17 +215,38 @@ function AddRoomForm({ onSubmit, onCancel }) {
     amenities: "",
     freebies: "",
     rating: "",
+    isProperty: true,
+    propertyRef: "",
   });
 
+  const [propertyOptions, setPropertyOptions] = useState([]);
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const res = await axios.get(`${process.VITE_HOST_URL}/api/admin/rooms/properties`);
+        setPropertyOptions(res.data); // [{ id, name }]
+      } catch (error) {
+        console.error("Error fetching properties", error);
+      }
+    };
+
+    if (!room.isProperty) fetchProperties();
+  }, [room.isProperty]);
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setRoom((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setRoom((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+      ...(name === "isProperty" && { propertyRef: "" }),
+    }));
   };
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     setRoom((prev) => ({ ...prev, images: [...prev.images, ...files] }));
-  };  
+  };
 
   const handleRemoveImage = (index) => {
     setRoom((prev) => ({
@@ -36,24 +257,58 @@ function AddRoomForm({ onSubmit, onCancel }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const amenitiesArray = room.amenities
-      .split(',')
-      .map(item => item.trim())
-      .filter(item => item !== '');
-    const freebiesArray = room.freebies
-      .split(',')
-      .map(item => item.trim())
-      .filter(item => item !== '');
-    onSubmit({ ...room, amenities: amenitiesArray, freebies: freebiesArray });
+    const amenitiesArray = room.amenities.split(",").map((item) => item.trim()).filter(Boolean);
+    const freebiesArray = room.freebies.split(",").map((item) => item.trim()).filter(Boolean);
+
+    onSubmit({
+      ...room,
+      amenities: amenitiesArray,
+      freebies: freebiesArray,
+      propertyRef: room.isProperty ? null : room.propertyRef, // Ensure null if it's a property itself
+    });
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <h2 className="mb-6 text-2xl font-bold">Add New Room</h2>
+
+      {/* Checkbox */}
+      <div className="flex items-center space-x-3">
+        <input
+          type="checkbox"
+          name="isProperty"
+          checked={room.isProperty}
+          onChange={handleChange}
+          className="w-4 h-4"
+        />
+        <label className="text-sm font-medium text-gray-700">Is this an entire property package?</label>
+      </div>
+
+      {/* Property dropdown */}
+      {!room.isProperty && (
+        <div>
+          <label className="block mb-1 font-medium text-gray-700">Select Parent Property</label>
+          <select
+            name="propertyRef"
+            value={room.propertyRef}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border rounded"
+          >
+            <option value="">Select a property</option>
+            {propertyOptions.map((prop) => (
+              <option key={prop.id} value={prop.id}>
+                {prop.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <div className="flex space-x-4">
-         <div className="flex-1">
-           <label className="block mb-1">Name</label>
-           <input
+        <div className="flex-1">
+          <label className="block mb-1">Name</label>
+          <input
             type="text"
             name="name"
             value={room.name}
@@ -74,18 +329,20 @@ function AddRoomForm({ onSubmit, onCancel }) {
           />
         </div>
       </div>
+
       <div className="mt-4">
-  <label className="block mb-1 font-medium text-gray-700">City</label>
-  <input
-    type="text"
-    name="city"
-    value={room.city}
-    onChange={handleChange}
-    className="w-full px-3 py-2 border rounded"
-    placeholder="e.g., Mumbai"
-    required
-  />
-</div>
+        <label className="block mb-1 font-medium text-gray-700">City</label>
+        <input
+          type="text"
+          name="city"
+          value={room.city}
+          onChange={handleChange}
+          className="w-full px-3 py-2 border rounded"
+          placeholder="e.g., Mumbai"
+          required
+        />
+      </div>
+
       <div>
         <label className="block mb-1">Description</label>
         <textarea
@@ -97,6 +354,7 @@ function AddRoomForm({ onSubmit, onCancel }) {
           required
         ></textarea>
       </div>
+
       <div className="flex space-x-4">
         <div className="flex-1">
           <label className="block mb-1">Price</label>
@@ -132,13 +390,14 @@ function AddRoomForm({ onSubmit, onCancel }) {
         </div>
       </div>
 
+      {/* Image Upload */}
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-700">Images (max 5)</label>
         <div className="flex items-center justify-center w-full">
           <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
             <div className="flex flex-col items-center justify-center pt-5 pb-6">
-              <svg className="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+              <svg className="w-8 h-8 mb-4 text-gray-500" fill="none" viewBox="0 0 20 16">
+                <path stroke="currentColor" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5A5.5 5.5 0 0 0 5.207 5.021 4 4 0 0 0 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
               </svg>
               <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
               <p className="text-xs text-gray-500">PNG, JPG, JPEG up to 10MB</p>
@@ -157,7 +416,6 @@ function AddRoomForm({ onSubmit, onCancel }) {
             {room.images.map((image, index) => (
               <div key={index} className="relative group">
                 <img
-                loading="lazy"
                   src={URL.createObjectURL(image)}
                   alt={`Room image ${index + 1}`}
                   className="object-cover w-24 h-24 rounded-lg shadow-md"
@@ -165,7 +423,7 @@ function AddRoomForm({ onSubmit, onCancel }) {
                 <button
                   type="button"
                   onClick={() => handleRemoveImage(index)}
-                  className="absolute top-0 right-0 p-1 text-white transition-opacity bg-red-500 opacity-0 group-hover:opacity-100"
+                  className="absolute top-0 right-0 p-1 text-white bg-red-500 opacity-0 group-hover:opacity-100"
                 >
                   <X size={20} />
                 </button>
@@ -175,18 +433,12 @@ function AddRoomForm({ onSubmit, onCancel }) {
         )}
       </div>
 
+      {/* Buttons */}
       <div className="flex justify-end space-x-2">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="px-4 py-2 text-gray-600 transition-colors border rounded hover:bg-gray-100"
-        >
+        <button type="button" onClick={onCancel} className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100">
           Cancel
         </button>
-        <button
-          type="submit"
-          className="px-4 py-2 text-white transition-colors bg-[#255d69] hover:bg-[#243947]"
-        >
+        <button type="submit" className="px-4 py-2 text-white bg-[#255d69] hover:bg-[#243947]">
           Add Room
         </button>
       </div>

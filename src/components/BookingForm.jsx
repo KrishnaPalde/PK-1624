@@ -47,27 +47,48 @@ const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
     setSelectedCity(bookingInfo.city || '');
   }, [bookingInfo]);
 
-  useEffect(() => {
-    const fetchUnavailableDates = async () => {
-      try { 
-        const response = await axios.get(`${process.VITE_HOST_URL}/api/unavailable_dates`);
-        setUnavailableDates(response.data.unavailableDates.map(date => new Date(date)));
-      } catch (error) {
-        console.error('Error fetching unavailable dates:', error);
+useEffect(() => {
+  const fetchUnavailableDates = async () => {
+    try {
+      if (!selectedCity) {
+        setUnavailableDates([]); // clear dates if no city selected
+        return;
       }
-    };
+      console.log(selectedCity);
+      const response = await axios.get(`${process.VITE_HOST_URL}/api/unavailable_dates`, {
+        params: { city: selectedCity }
+      });
 
-    const fetchAllCities = async () => {
-      try{
-        const response = await axios.get(`${process.VITE_HOST_URL}/api/cities`);
-        setCities(response.data);
-      } catch (error) {
-        console.error("Error fetching cities: ", error);
-      }
+      console.log(response.data.unavailableDates);
+      setUnavailableDates(response.data.unavailableDates.map(date => new Date(date)));
+    } catch (error) {
+      console.error('Error fetching unavailable dates:', error);
     }
-    fetchAllCities();
-    fetchUnavailableDates();
-  }, []);
+  };
+
+  fetchUnavailableDates();
+}, [selectedCity]);
+
+
+useEffect(() => {
+  const fetchAllCities = async () => {
+    try {
+      const response = await axios.get(`${process.VITE_HOST_URL}/api/cities`);
+      const cityList = response.data;
+      setCities(cityList);
+      
+      // If bookingInfo.city is already set, use it; otherwise, default to the first city
+      const defaultCity = bookingInfo.city || cityList[0];
+      setSelectedCity(defaultCity);
+      updateBookingInfo({ city: defaultCity });
+    } catch (error) {
+      console.error("Error fetching cities: ", error);
+    }
+  };
+
+  fetchAllCities();
+}, []);
+
 
   const handleCheckInChange = (date) => {
     if (date) {
@@ -184,8 +205,9 @@ const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
     <div className="flex items-center gap-2">
       <RiMapPin2Line className='text-[#335064] w-4 h-4'/>
       <span className="truncate text-[#255d69]">
-        {selectedCity ? `${selectedCity}` : 'All Cities'}
-      </span>
+  {selectedCity}
+</span>
+
     </div>
   </button>
 
@@ -193,22 +215,7 @@ const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
   {isCityDropdownOpen && (
     <div className="absolute top-full left-0 z-20 mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg p-2 max-h-[200px] overflow-y-auto animate-fade-in">
       <ul className="space-y-1">
-        <li>
-          <button
-            onClick={() => {
-              setSelectedCity('');
-              updateBookingInfo({ city: '' });
-              setIsCityDropdownOpen(false);
-            }}
-            className={`w-full text-left px-4 py-2 rounded-md text-sm font-medium ${
-              !selectedCity
-                ? 'bg-[#255d69] text-white'
-                : 'text-[#255d69] hover:bg-gray-100'
-            }`}
-          >
-            All Cities
-          </button>
-        </li>
+        
         {cities.map((city, idx) => (
           <li key={idx}>
             <button

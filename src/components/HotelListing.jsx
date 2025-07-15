@@ -40,13 +40,16 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
         //     },
         //   }
         // );
+        console.log("Fetching rooms with booking info:", bookingInfo.city);
         const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/rooms`, {
           params: {
             checkinDate: bookingInfo.checkIn.toISOString(),
             checkoutDate: bookingInfo.checkOut.toISOString(),
+            city: bookingInfo.city,
           },
         });
         
+        console.log(response.data);
         setHotelData(response.data);
         setFilteredData(response.data);
         setLoading(false);
@@ -62,46 +65,23 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
 
   useEffect(() => {
     const applyFilters = () => {
-    //   const filtered = hotelData.filter((hotel) => {
-    //     const currentPrice =
-    //       isWeekend() && hotel.weekend ? hotel.weekend : hotel.price;
-    //     return (
-    //       currentPrice >= priceRange[0] &&
-    //       currentPrice <= priceRange[1] &&
-    //       hotel.rating >= selectedRating
-    //     );
-    //   });
-    //   setFilteredData(filtered);
-      // setCurrentPage(1);
+      let filtered = hotelData.filter((hotel) => {
+        const currentPrice = isWeekend() && hotel.weekend ? hotel.weekend : hotel.price;
 
+        const matchesFilters =
+          currentPrice >= priceRange[0] &&
+          currentPrice <= priceRange[1] &&
+          hotel.rating >= selectedRating;
 
-    // // Check if no rooms are available
-    // if (filtered.length === 0) {
-    //   setError("No rooms available for the selected dates.");
-    // } else {
-    //   setError("");
-    // }
-    let cityPriorityHotels = [];
-let otherHotels = [];
+        const matchesCity = selectedCity
+          ? hotel.city?.toLowerCase() === selectedCity.toLowerCase()
+          : true;
 
-hotelData.forEach((hotel) => {
-  const currentPrice = isWeekend() && hotel.weekend ? hotel.weekend : hotel.price;
+        return matchesFilters && matchesCity;
+      });
 
-  const matchesFilters =
-    currentPrice >= priceRange[0] &&
-    currentPrice <= priceRange[1] &&
-    hotel.rating >= selectedRating;
+      setFilteredData(filtered);
 
-  if (!matchesFilters) return;
-
-  if (selectedCity && hotel.city?.toLowerCase() === selectedCity.toLowerCase()) {
-    cityPriorityHotels.push(hotel);
-  } else {
-    otherHotels.push(hotel);
-  }
-});
-
-  setFilteredData([...cityPriorityHotels, ...otherHotels]);
   setCurrentPage(1);
     };
 
@@ -279,20 +259,9 @@ hotelData.forEach((hotel) => {
         className="space-y-8"
       >
         {currentCards.map((room, index) => {
-          const isFirstNonCityRoom =
-            selectedCity &&
-            room.city?.toLowerCase() !== selectedCity.toLowerCase() &&
-            currentCards
-              .slice(0, index)
-              .every((r) => r.city?.toLowerCase() === selectedCity.toLowerCase());
-
+          console.log(room)
           return (
             <React.Fragment key={room.id}>
-              {isFirstNonCityRoom && (
-                <div className="mt-6 mb-2 px-2 text-lg font-semibold text-zinc-600 border-b border-gray-300 pb-1">
-                  Other Properties
-                </div>
-              )}
               <HotelCard
                 id={room.id}
                 imageUrl={room.images[0]}
@@ -302,6 +271,7 @@ hotelData.forEach((hotel) => {
                 name={room.name}
                 city={room.city || ""}
                 description={room.description}
+                isProperty={room.isProperty}
                 guestCount={index === currentCards.length - 1 ? null : GUEST_LIMIT_PER_ROOM}
                 rating={room.rating}
                 totalReviews={room.totalReviews}
@@ -330,7 +300,7 @@ hotelData.forEach((hotel) => {
                     !selectedRooms.includes(room)))
                 }
                 selectedRooms={selectedRooms}
-              />
+              /> 
             </React.Fragment>
           );
         })}
