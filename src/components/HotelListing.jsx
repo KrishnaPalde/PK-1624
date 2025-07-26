@@ -31,15 +31,6 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
     const fetchRooms = async () => {
       try {
         console.log(bookingInfo.checkIn.toISOString() + " " + bookingInfo.checkOut.toISOString());
-        // const response = await axios.get(
-        //   `${process.env.VITE_HOST_URL}/api/admin/rooms`,
-        //   {
-        //     params: {
-        //       checkIn: bookingInfo.checkIn.toISOString(), 
-        //       checkOut: bookingInfo.checkOut.toISOString(),
-        //     },
-        //   }
-        // );
         console.log("Fetching rooms with booking info:", bookingInfo.city);
         const response = await axios.get(`${process.VITE_HOST_URL}/api/admin/rooms`, {
           params: {
@@ -288,7 +279,6 @@ function HotelListing({ priceRange, selectedRating, testMode = false }) {
                 }
                 room={room}
                 roomCount={requiredRooms}
-                isLastRoom={index === currentCards.length - 1}
                 disabled={
                   index !== currentCards.length - 1 && 
                   ((guestCount > GUEST_LIMIT_PER_ROOM && 

@@ -77,33 +77,40 @@ const [showEditForm, setShowEditForm] = useState(false);
   };
 
   const handleSavePrice = async () => {
-    try {
-      const updatedRoom = { price: weekdayPrice, weekend: weekendPrice };
+  try {
+    const updatedRoom = { price: weekdayPrice, weekend: weekendPrice };
 
-      const response = await fetch(
-        `${process.VITE_HOST_URL}/api/admin/updateroom/${editRoom.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedRoom),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update room prices");
+    const response = await fetch(
+      `${process.VITE_HOST_URL}/api/admin/updateroom/${editRoom.id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedRoom),
       }
+    );
 
-      const updatedData = await response.json();
-      setRooms((prevRooms) =>
-        prevRooms.map((room) => (room.id === editRoom.id ? updatedData : room))
-      );
-      setEditRoom(null);
-    } catch (error) {
-      console.error("Error updating room prices:", error);
+    if (!response.ok) {
+      throw new Error("Failed to update room prices");
     }
-  };
+
+    const updatedData = await response.json();
+
+    setRooms((prevRooms) =>
+      prevRooms.map((room) => (room.id === editRoom.id ? updatedData : room))
+    );
+
+    setFilteredRooms((prevRooms) =>
+      prevRooms.map((room) => (room.id === editRoom.id ? updatedData : room))
+    );
+
+    setEditRoom(null);
+  } catch (error) {
+    console.error("Error updating room prices:", error);
+  }
+};
+
 
   const handleDeleteRoom = async (roomId) => {
     try {

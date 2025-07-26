@@ -26,7 +26,6 @@ function HotelCard({
   isLastSelected,
   room,
   roomCount,
-  isLastRoom,
   disabled,
 }) {
   const navigate = useNavigate();
@@ -115,17 +114,18 @@ function HotelCard({
       );
     }
 
-    if (isLastRoom) {
-      return (
-        <button
-          onClick={() => onNext(room)}
-          className="w-full px-6 py-2 text-sm font-medium text-white transition-colors duration-300 bg-[#255d69] hover:bg-[#243947] rounded-full sm:w-auto  disabled:bg-gray-400 disabled:cursor-not-allowed"
-          disabled={disabled}
-        >
-          Continue
-        </button>
-      );
-    }
+    if (isProperty) {
+  return (
+    <button
+      onClick={() => onNext(room)}
+      className="w-full px-6 py-2 text-sm font-medium text-white transition-colors duration-300 bg-[#255d69] hover:bg-[#243947] rounded-full sm:w-auto disabled:bg-gray-400 disabled:cursor-not-allowed"
+      disabled={disabled}
+    >
+      Continue
+    </button>
+  );
+}
+
 
     return (
       <button

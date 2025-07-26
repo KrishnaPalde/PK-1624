@@ -63,7 +63,7 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
       try {
         const [settingsResponse, unavailableDatesResponse] = await Promise.all([
           axios.get(`${process.VITE_HOST_URL}/api/admin/global-settings`),
-          axios.get(`${process.VITE_HOST_URL}/api/unavailable_dates`),
+          axios.get(`${process.VITE_HOST_URL}/api/unavailable_dates_admin_booking`),
         ]);
         setGlobalSettings(settingsResponse.data);
         setUnavailableDates(unavailableDatesResponse.data.unavailableDates.map(date => new Date(date)) || []);
@@ -102,29 +102,36 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
   //   setErrors((prevErrors) => ({ ...prevErrors, dates: null }));
   //   setFormData((prev) => ({ ...prev, [name]: value }));
   // };
-  const handleChange = (date, fieldName) => {
-    // Convert date to string in ISO format for consistent handling
-    const formattedDate = date ? date.toISOString() : null;
-  
-    // Validate date availability
-    if (fieldName === "checkInDate" || fieldName === "checkOutDate") {
-      if (formattedDate && isDateUnavailable(formattedDate)) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          dates: "Selected date is unavailable. Please choose another date.",
-        }));
-        return;
-      }
-      setErrors((prevErrors) => ({ ...prevErrors, dates: null }));
+  const handleDateChange = (date, fieldName) => {
+  const dateObj = date instanceof Date ? date : new Date(date);
+  const formattedDate = dateObj && !isNaN(dateObj) ? dateObj.toISOString() : null;
+
+  if (fieldName === "checkInDate" || fieldName === "checkOutDate") {
+    if (formattedDate && isDateUnavailable(formattedDate)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        dates: "Selected date is unavailable. Please choose another date.",
+      }));
+      return;
     }
-  
-    // Update the form data
-    setFormData((prev) => ({
-      ...prev,
-      [fieldName]: formattedDate,
-    }));
-  };
-  
+    setErrors((prevErrors) => ({ ...prevErrors, dates: null }));
+  }
+
+  setFormData((prev) => ({
+    ...prev,
+    [fieldName]: formattedDate,
+  }));
+};
+
+const handleInputChange = (e) => {
+  const { name, value } = e.target;
+
+  setFormData((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
+
 
   const handlePaymentAmountChange = (method, amount) => {
     setFormData((prev) => ({
@@ -304,12 +311,13 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
           selected={
             formData.checkInDate ? new Date(formData.checkInDate) : null
           }
-          onChange={(date) => handleChange(date, "checkInDate")}
+          onChange={(date) => handleDateChange(date, "checkInDate")}
           dateFormat="dd/MM/yyyy"
           className="w-full px-3 py-2 border rounded-md"
-          minDate={new Date()}
+          // minDate={new Date()}
           excludeDates={unavailableDates}
           required
+          withPortal
         />
               </div>
               <div>
@@ -328,16 +336,22 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
   selected={
     formData.checkOutDate ? new Date(formData.checkOutDate) : null
   }
-  onChange={(date) => handleChange(date, "checkOutDate")}
+  onChange={(date) => handleDateChange(date, "checkOutDate")}
   dateFormat="dd/MM/yyyy"
   className="w-full px-3 py-2 border rounded-md"
   minDate={
     formData.checkInDate
       ? addDays(new Date(formData.checkInDate), 1) // Set min date to one day after checkInDate
-      : new Date() // Default to today if checkInDate is not set
+      : new Date()
+  }
+  openToDate={
+    formData.checkInDate
+      ? addDays(new Date(formData.checkInDate), 1)
+      : new Date()
   }
   excludeDates={unavailableDates}
   required
+  withPortal
 />
               </div>
             </div>
@@ -415,7 +429,7 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
           type="text"
           name="firstName"
           value={formData.firstName}
-          onChange={handleChange}
+          onChange={handleInputChange}
           className="w-full px-3 py-2 border rounded-md"
           required
         />
@@ -426,7 +440,7 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
           type="text"
           name="lastName"
           value={formData.lastName}
-          onChange={handleChange}
+          onChange={handleInputChange}
           className="w-full px-3 py-2 border rounded-md"
           required
         />
@@ -439,7 +453,7 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
           type="email"
           name="email"
           value={formData.email}
-          onChange={handleChange}
+          onChange={handleInputChange}
           className="w-full px-3 py-2 border rounded-md"
           required
         />
@@ -450,7 +464,7 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
           type="tel"
           name="phoneNumber"
           value={formData.phoneNumber}
-          onChange={handleChange}
+          onChange={handleInputChange}
           className="w-full px-3 py-2 border rounded-md"
           required
         />
@@ -461,7 +475,7 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
           type="text"
           name="idDocument"
           value={formData.idDocument}
-          onChange={handleChange}
+          onChange={handleInputChange}
           className="w-full px-3 py-2 border rounded-md"
           required
         />
@@ -487,7 +501,7 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
       <select
         name="bookingSource"
         value={formData.bookingSource}
-        onChange={handleChange}
+        onChange={handleInputChange}
         className="w-full px-3 py-2 border rounded-md"
         required
       >
@@ -509,7 +523,7 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
       <select
         name="bookingPurpose"
         value={formData.bookingPurpose}
-        onChange={handleChange}
+        onChange={handleInputChange}
         className="w-full px-3 py-2 border rounded-md"
         required
       >
@@ -529,7 +543,7 @@ const CreateBookingForm = ({ isOpen, onClose}) => {
       <select
         name="bookingStatus"
         value={formData.bookingStatus}
-        onChange={handleChange}
+        onChange={handleInputChange}
         className="w-full px-3 py-2 border rounded-md"
         required
       >

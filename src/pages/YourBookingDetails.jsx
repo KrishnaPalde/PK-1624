@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import BookingForm from "../components/BookingForm";
 import StayDetails from "../components/StayDetails";
@@ -15,6 +15,13 @@ const YourBookingDetails = () => {
     phoneNumber: '',
     idNumber: '',
   });
+
+  useEffect(() => {
+  window.scrollTo({
+    top: 150, // adjust the scroll offset as needed
+    behavior: "smooth",
+  });
+}, []);
 
   const handleFormDataChange = (newFormData) => {
     setFormData(newFormData);

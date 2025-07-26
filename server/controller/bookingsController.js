@@ -114,7 +114,7 @@ const getAllRooms = async (req, res) => {
   try {
     const { checkinDate, checkoutDate, city } = req.query;
     console.log(city);
-    if (!checkinDate || !checkoutDate || !city)
+    if (!checkinDate || !checkoutDate)
       return res.status(400).json({ message: "Missing required parameters" });
 
     const parsedCheckIn = new Date(checkinDate);
@@ -124,7 +124,13 @@ const getAllRooms = async (req, res) => {
         .status(400)
         .json({ message: "Invalid check-in/check-out dates" });
 
-    const allRooms = await Room.find({ city: city.trim().toLowerCase() });
+    let allRooms;
+
+    if (city) {
+      allRooms = await Room.find({ city: city.trim().toLowerCase() });
+    } else {
+      allRooms = await Room.find();
+    }
 
     // STEP 1: Build maps and helpers
     const roomMap = new Map();
@@ -738,6 +744,170 @@ const getUnavailableDates = async (req, res) => {
   }
 };
 
+const getUnavailableDatesAdminBooking = async (req, res) => {
+  try {
+    const today = new Date();
+    const oneYearFromNow = new Date();
+    oneYearFromNow.setFullYear(today.getFullYear() + 1);
+
+    const unavailableDates = new Set();
+
+    // Step 1: Fetch all rooms (no city filter for admin)
+    const rooms = await Room.find().select("_id isProperty propertyRef name");
+
+    const properties = new Map(); // propertyId => { totalRooms, bookedCountByDate }
+
+    rooms.forEach((room) => {
+      const roomId = room._id.toString();
+      const propertyId = room.isProperty
+        ? roomId
+        : room.propertyRef?.toString();
+      if (!propertyId) return;
+
+      if (!properties.has(propertyId)) {
+        properties.set(propertyId, {
+          totalRooms: 0,
+          bookedCountByDate: {},
+          isParentBooked: new Set(),
+        });
+      }
+
+      const property = properties.get(propertyId);
+      property.totalRooms += 1;
+    });
+
+    const roomIds = rooms.map((r) => r._id.toString());
+
+    const getDateRange = (start, end) => {
+      const dates = [];
+      const cur = new Date(start);
+      while (cur <= end) {
+        dates.push(cur.toISOString().split("T")[0]);
+        cur.setDate(cur.getDate() + 1);
+      }
+      return dates;
+    };
+
+    // Step 2: Bookings
+    const bookings = await Booking.find({
+      "rooms.roomId": { $in: roomIds },
+      checkInDate: { $lte: oneYearFromNow },
+      checkOutDate: { $gte: today },
+    });
+
+    for (const booking of bookings) {
+      const dates = getDateRange(booking.checkInDate, booking.checkOutDate);
+
+      for (const roomEntry of booking.rooms) {
+        const room = rooms.find((r) => r._id.toString() === roomEntry.roomId);
+        if (!room) continue;
+
+        const propertyId = room.isProperty
+          ? room._id.toString()
+          : room.propertyRef?.toString();
+        if (!propertyId || !properties.has(propertyId)) continue;
+
+        const property = properties.get(propertyId);
+
+        for (const dateStr of dates) {
+          if (room.isProperty) {
+            property.isParentBooked.add(dateStr);
+          } else {
+            property.bookedCountByDate[dateStr] =
+              (property.bookedCountByDate[dateStr] || 0) + 1;
+          }
+        }
+      }
+    }
+
+    // Step 3: Calendar Events
+    const calendarEvents = await Calendar.find({
+      date: { $gte: today, $lte: oneYearFromNow },
+      status: "booked",
+    });
+
+    for (const event of calendarEvents) {
+      const room = rooms.find((r) => r.name === event.roomType);
+      if (!room) continue;
+
+      const propertyId = room.isProperty
+        ? room._id.toString()
+        : room.propertyRef?.toString();
+      if (!propertyId || !properties.has(propertyId)) continue;
+
+      const property = properties.get(propertyId);
+      const dateStr = event.date.toISOString().split("T")[0];
+
+      if (room.isProperty) {
+        property.isParentBooked.add(dateStr);
+      } else {
+        property.bookedCountByDate[dateStr] =
+          (property.bookedCountByDate[dateStr] || 0) + 1;
+      }
+    }
+
+    // Step 4: Final date evaluation
+    const dateAvailabilityMap = {};
+
+    for (const [propertyId, prop] of properties.entries()) {
+      const allDates = new Set([
+        ...Object.keys(prop.bookedCountByDate),
+        ...Array.from(prop.isParentBooked),
+      ]);
+
+      for (const dateStr of allDates) {
+        const isParentBooked = prop.isParentBooked.has(dateStr);
+        const childBookings = prop.bookedCountByDate[dateStr] || 0;
+
+        const isFullyBooked =
+          isParentBooked || childBookings >= prop.totalRooms;
+
+        if (!isFullyBooked) {
+          dateAvailabilityMap[dateStr] =
+            (dateAvailabilityMap[dateStr] || 0) + 1;
+        }
+      }
+    }
+
+    // Step 5: Mark unavailable dates (all properties fully booked)
+    const allDates = new Set();
+
+    for (const [, prop] of properties) {
+      Object.keys(prop.bookedCountByDate).forEach((d) => allDates.add(d));
+      prop.isParentBooked.forEach((d) => allDates.add(d));
+    }
+
+    for (const dateStr of allDates) {
+      let fullyBookedProps = 0;
+
+      for (const [, prop] of properties) {
+        const isParentBooked = prop.isParentBooked.has(dateStr);
+        const childBookedCount = prop.bookedCountByDate[dateStr] || 0;
+
+        const isFullyBooked =
+          isParentBooked || childBookedCount >= prop.totalRooms;
+
+        if (isFullyBooked) {
+          fullyBookedProps++;
+        }
+      }
+
+      if (fullyBookedProps === properties.size) {
+        unavailableDates.add(dateStr);
+      }
+    }
+
+    console.log("Admin Unavailable Dates:", unavailableDates);
+
+    return res.status(200).json({
+      unavailableDates: Array.from(unavailableDates).sort(),
+    });
+  } catch (error) {
+    console.error("Admin Error fetching unavailable dates:", error.message);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 const fetchBookingsAdmin = async (req, res) => {
   try {
     const { recent, limit, timeframe } = req.query;
@@ -1221,17 +1391,30 @@ const deleteRoom = async (req, res) => {
   }
 
   try {
-    const result = await Room.findOneAndDelete({ id: roomId });
-    if (!result) {
+    // Step 1: Delete the room by `id` (not _id)
+    const room = await Room.findOneAndDelete({ id: roomId });
+    if (!room) {
       return res.status(404).json({ message: "Room not found" });
     }
 
-    res.status(200).json({ message: "Room deleted successfully" });
+    // Step 2: Remove calendar link from GlobalSetting
+    const globalSetting = await GlobalSetting.findOne();
+    if (globalSetting) {
+      globalSetting.calendarLinks = globalSetting.calendarLinks.filter(
+        (link) => link.roomType !== room.name
+      );
+      await globalSetting.save();
+    }
+
+    res
+      .status(200)
+      .json({ message: "Room and calendar link deleted successfully" });
   } catch (error) {
     console.error("Error deleting room:", error);
-    res
-      .status(500)
-      .json({ error: "Internal server error", details: error.message });
+    res.status(500).json({
+      error: "Internal server error",
+      details: error.message,
+    });
   }
 };
 
@@ -1315,7 +1498,22 @@ const createCustomBooking = async (req, res) => {
     }
 
     // Generate a unique booking ID
-    const bookingId = `CBK-${uuidv4()}`;
+    // 1. Format date as DDMMYYYY
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, "0");
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const yyyy = today.getFullYear();
+    const formattedDate = `${dd}${mm}${yyyy}`;
+
+    // 2. Count total bookings in the DB (not just today's)
+    const totalBookings = await Booking.countDocuments({});
+
+    // 3. Increment by 1 for the new booking and pad to at least 4 digits
+    const nextCount = totalBookings + 1;
+    const paddedCount = String(nextCount).padStart(4, "0");
+
+    // 4. Construct booking ID
+    const bookingId = `CBK-${formattedDate}-${paddedCount}`;
 
     // Calculate adults and children
     const numberOfAdults = guestCount;
@@ -1408,4 +1606,5 @@ module.exports = {
   getCitiesByRoom,
   getAllProperties,
   updateRoom,
+  getUnavailableDatesAdminBooking,
 };

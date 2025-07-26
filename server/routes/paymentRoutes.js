@@ -370,7 +370,22 @@ router.post("/verify-payment", async (req, res) => {
     }
 
     // Create a unique booking ID
-    const bookingId = crypto.randomBytes(16).toString("hex");
+    // 1. Format date as DDMMYYYY
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, "0");
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const yyyy = today.getFullYear();
+    const formattedDate = `${dd}${mm}${yyyy}`;
+
+    // 2. Count total bookings in the DB (not just today's)
+    const totalBookings = await Booking.countDocuments({});
+
+    // 3. Increment by 1 for the new booking and pad to at least 4 digits
+    const nextCount = totalBookings + 1;
+    const paddedCount = String(nextCount).padStart(4, "0");
+
+    // 4. Construct booking ID
+    const bookingId = `WB-${formattedDate}-${paddedCount}`;
 
     // Create a new booking entry
     const booking = new Booking({

@@ -37,7 +37,7 @@ function calculateDatesBetween(checkIn, checkOut) {
 }
 
 
-const PaymentButton = ({ roomData, formData, adults, children, amount, priceDetails,calculateNights }) => {
+const PaymentButton = ({ roomData, formData, adults, children, amount, priceDetails,calculateNights, isDisabled }) => {
   const navigate = useNavigate();
   const { bookingInfo } = useBooking();
   const location = useLocation();
@@ -175,9 +175,11 @@ const PaymentButton = ({ roomData, formData, adults, children, amount, priceDeta
   return (
     <>
       <button 
-        onClick={handlePayment}
-        className="w-full py-3 px-2 text-xl text-white transition duration-300 rounded-md bg-[#255d69] hover:bg-[#243947]"
-      >
+  disabled={isDisabled}
+  onClick={handlePayment}
+  className={`w-full py-3 px-2 text-xl text-white transition duration-300 rounded-md 
+    ${isDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#255d69] hover:bg-[#243947]'}`}
+>
         Pay {new Intl.NumberFormat().format(amount)} INR
       </button>
       {isProcessing && <TransactionSpinner />}

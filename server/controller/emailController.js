@@ -187,7 +187,7 @@ const generatePDF = async (bid) => {
   Check In: ${bookingDetails.checkInDate}
   Check Out: ${bookingDetails.checkOutDate}
   Number of Guests: ${bookingDetails.noOfGuest}`,
-    from: "+12564488314",
+    from: "+12513159823",
     to: "+917673992288",
   });
 
@@ -646,13 +646,15 @@ const EnquiryFormEmail = async (req, res) => {
     Email: ${data.email}
     Phone: ${data.phone}
     Message: ${data.message}`,
-      from: "+12564488314",
+      from: "+12513159823",
+
       to: "+917673992288",
     });
     sendAdminEnquiryFormEntry(data);
 
     return res.status(200).send({ message: "Successful" });
   } catch (error) {
+    console.log(error);
     return res.status(500).send({ error: error });
   }
 };

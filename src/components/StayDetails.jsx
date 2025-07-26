@@ -54,6 +54,7 @@ function SelectedRooms({ rooms }) {
 }
 
 function StayDetails({ formData }) {
+  const { guestDetails = {} } = formData;
   const location = useLocation();
   const navigate = useNavigate();
   const { bookingInfo } = useBooking();
@@ -156,6 +157,15 @@ function StayDetails({ formData }) {
   const formatCurrency = (amount) => {
     return `₹${Math.abs(amount).toLocaleString('en-IN')}`;
   };
+  
+  const isGuestValid = () => {
+    return formData.firstName &&
+           formData.lastName &&
+           (formData.email ||
+           formData.phoneNumber) &&
+           formData.idNumber
+};
+
 
   const fetchCoupons = async () => {
     try {
@@ -328,6 +338,7 @@ function StayDetails({ formData }) {
             children={bookingInfo.children}
             priceDetails={priceDetails}
             calculateNights={calculateNights}
+            isDisabled={ !isGuestValid()}
           />
         </div>
       </div>

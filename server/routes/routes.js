@@ -30,6 +30,7 @@ const {
   getReportingStats,
   getAllProperties,
   updateRoom,
+  getUnavailableDatesAdminBooking,
 } = require("../controller/bookingsController");
 const {
   createFeedback,
@@ -68,6 +69,7 @@ router.post("/custom_booking", createCustomBooking);
 router.post("/authenticateAdmin", login);
 router.get("/check_availability_dates", checkIfAvailable);
 router.get("/unavailable_dates", getUnavailableDates);
+router.get("/unavailable_dates_admin_booking", getUnavailableDatesAdminBooking);
 router.get("/admin/unavailable_dates", getUnavailableDatesAdmin);
 router.get("/rooms/:roomId", getRoomDetails);
 router.get("/admin/rooms", getAllRooms);
