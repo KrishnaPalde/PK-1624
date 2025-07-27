@@ -162,8 +162,7 @@ function StayDetails({ formData }) {
     return formData.firstName &&
            formData.lastName &&
            (formData.email ||
-           formData.phoneNumber) &&
-           formData.idNumber
+           formData.phoneNumber)
 };
 
 

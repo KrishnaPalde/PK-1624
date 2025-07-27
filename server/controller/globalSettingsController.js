@@ -23,6 +23,7 @@ const updateCalendarLinks = async (req, res) => {
   try {
     const { links } = req.body; // Expect a grouped array of links
 
+    console.lo;
     if (!Array.isArray(links)) {
       return res.status(400).json({ message: "Invalid data format." });
     }
@@ -34,10 +35,7 @@ const updateCalendarLinks = async (req, res) => {
 
     // Validate the incoming data structure
     const validLinks = links.every(
-      (link) =>
-        link.roomType &&
-        Array.isArray(link.sources) &&
-        link.sources.every((source) => source.source && source.url)
+      (link) => link.roomType && Array.isArray(link.sources)
     );
 
     if (!validLinks) {

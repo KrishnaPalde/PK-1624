@@ -112,14 +112,16 @@ function AdminNav({ title }) {
   
   const handleSaveCalendarLinks = async () => {
     try {
-      await axios.put(`${process.VITE_HOST_URL}/api/admin/calendar-links`, { links: editedLinks });
+      console.log("Saving calendar links:", editedLinks);
+      const res = await axios.put(`${process.VITE_HOST_URL}/api/admin/calendar-links`, { links: editedLinks });
+      console.log(res.data);
       alert("Calendar links updated successfully!");
       setCalendarLinksPopupVisible(false);
     } catch (error) {
       console.error("Failed to update calendar links:", error);
     }
   };
-  
+   
   
 
   const handleCancelCalendarLinks = () => {
