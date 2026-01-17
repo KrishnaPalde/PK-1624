@@ -16,7 +16,7 @@ console.log(process.env.ORIGIN);
 app.use(
   cors({
     // origin: "https://pk-1624-livid.vercel.app",
-    origin: process.env.ORIGIN,
+    origin: [process.env.ORIGIN, "http://localhost:5173"],
     credentials: true,
   })
 );
