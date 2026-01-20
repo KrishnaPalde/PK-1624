@@ -21,6 +21,10 @@ app.use(
   })
 );
 app.use(bodyParser.json());
+// Express example
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
 
 connectDb()
   .then(() => {
